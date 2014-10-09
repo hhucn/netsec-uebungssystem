@@ -8,6 +8,9 @@ import ConfigParser
 
 
 def main():
+	# patching imaplib
+	imaplib.Commands["MOVE"]=("SELECTED",)
+	
 	# Parsing config.ini, making the settings global
 	global smtpmail_server,imapmail_server,mail_address,mail_password,log_level,delay
 	configFile = ConfigParser.ConfigParser()

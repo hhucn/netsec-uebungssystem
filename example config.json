@@ -1,0 +1,13 @@
+{
+	"settings": {
+		"smtpmail_server":  "smtp.gmail.com",
+		"imapmail_server":  "imap.gmail.com",
+		"mail_address": "netsec.imap.test@gmail.com",
+		"mail_password":"",
+		"loglevel":3,
+		"logmethod":1,
+		"delay":3
+	},
+	"rules": {
+	}
+}

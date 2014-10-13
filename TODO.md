@@ -5,7 +5,9 @@ TODO
 
 ~~Move from INI to JSON.~~
 
-Dynamic rule configuration in `config.json` file (allowing creation of a workflow, ex: Move mails containing "Question" into a separate mailbox, auto-reply and notify a third person)
+~~Dynamic rule configuration in `config.json` file (allowing creation of a workflow, ex: Move mails containing "Question" into a separate mailbox, auto-reply and notify a third person)~~ aww yeah.
+
+Time to write a small README to understand the configuration and possibilities in rule creation :blush:
 
 Catch attachments
 

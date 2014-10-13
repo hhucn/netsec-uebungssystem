@@ -9,6 +9,7 @@ import datetime
 import json
 import os.path
 import hashlib
+from sys import exit
 
 
 
@@ -49,19 +50,45 @@ def login():
 
 def processRule(imapmail,rule):
 	for step in rule["steps"]:
-		if step[0] == "filter":
-			id_list = filterMailbox(imapmail,step[1],step[2])
-		elif step[0] == "answer":
-			if len(step)>3:
-				id_list = answerMails(imapmail,id_list,step[1],step[2],step[3])
+		action = step[0]
+		steplen = len(step)
+		if action == "filter":
+			if steplen==3:
+				id_list = filterMailbox(imapmail,step[1],step[2])
+			elif steplen==4:
+				id_list = filterMailbox(imapmail,step[1],step[2],step[3])
 			else:
+				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+		elif action == "answer":
+			if steplen==4:
+				id_list = answerMails(imapmail,id_list,step[1],step[2],step[3])
+			elif steplen==3:
 				id_list = answerMails(imapmail,id_list,step[1],step[2],"")
-		elif step[0] == "move":
-			id_list = moveMails(imapmail,id_list,step[1])
-		elif step[0] == "log":
-			log(step[1],step[2])
+			else:
+				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+		elif action == "move":
+			if steplen==2:
+				id_list = moveMails(imapmail,id_list,step[1])
+			else:
+				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+		elif action == "log":
+			if steplen==3:
+				log(step[1],step[2])
+			else:
+				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+		elif action == "flag":
+			if steplen==2:
+				id_list = flagMails(imapmail,id_list,step[1])
+			else:
+				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+		elif action == "delete":
+			if steplen==1:
+				flagMails(imapmail,id_list,"\\Deleted")
+				imapmail.expunge()
+			else:
+				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
 		else:
-			log("Rule <%s>, Step <%s>: step action unknown."%(rule["title"],step[0]),1)
+			log("Rule <%s>, Step <%s>: step action unknown."%(rule["title"],action),1)
 
 
 
@@ -117,7 +144,8 @@ def answerMails(imapmail,id_list,subject,text,address):
 				log("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject),3)
 			else:
 				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
-				imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
+				flagMails(imapmail,uid,"NETSEC-Answered-" + subject_hash)
+				#imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
 	return id_list
 
 def moveMails(imapmail,id_list,destination):
@@ -130,6 +158,10 @@ def moveMails(imapmail,id_list,destination):
 		if result != "OK":
 			log("Error moving uid%s to %s"%(uid,destination),1)
 
+def flagMails(imapmail,id_list,flag):
+	for uid in id_list:
+		imapmail.uid("STORE",uid,"+FLAGS",flag)
+	return id_list
 
 
 #
@@ -145,8 +177,9 @@ def smtpMail(to,what):
 	smtpmail.quit()
 
 def log(what,level=2):
+	level = int(level)
 	if level<= loglevel:
-		logString = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": " + what
+		logString = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ":\t" + what
 
 		if logmethod==1 or logmethod==3:
 			print(logString)
@@ -154,6 +187,9 @@ def log(what,level=2):
 			logfile = open("logfile.log","a")
 			logfile.write(logString + "\n")
 			logfile.close()
+	if level == 1:
+		print("\t\t\tReceived level 1 error message, shutting down server...")
+		exit(-1)
 
 if __name__ == "__main__":
 	main()

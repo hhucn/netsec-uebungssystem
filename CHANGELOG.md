@@ -5,8 +5,10 @@ _Oct 13, 2014_
 
 * mail processing engine:
 	* `config.json` may now define rules for procession
-	* `main.py` processes mails following the rules; commands may be `filter`, `answer`, `move` and `log`
-* `answerMails`: Now flagging with `NETSEC-ANSWERED` plus subject hash; that allows us to answer a mail multiple times, if the mail subject differs
+	* `main.py` processes mails following the rules; commands may be `filter`, `answer`, `move`, `log`, `flag`, `delete`
+	* checking if argument count is correct
+* `answerMails`: Now flagging with `NETSEC-ANSWERED` plus subject hash; that allows us to answer a mail multiple times, if the mail subject differs 
+* `log` stops the execution if a level 1 message is handed in. At the moment, this can just be achieved by rule argument count mismatch.
 
 
 _Oct 10, 2014_

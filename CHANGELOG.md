@@ -1,6 +1,14 @@
 CHANGELOG
 ---------
 
+_Oct 13, 2014_
+
+* mail processing engine:
+	* `config.json` may now define rules for procession
+	* `main.py` processes mails following the rules; commands may be `filter`, `answer`, `move` and `log`
+* `answerMails`: Now flagging with `NETSEC-ANSWERED` plus subject hash; that allows us to answer a mail multiple times, if the mail subject differs
+
+
 _Oct 10, 2014_
 
 * Configuration file type is now JSON

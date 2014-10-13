@@ -8,36 +8,36 @@ from time import sleep
 import datetime
 import json
 import os.path
+import hashlib
 
+
+
+#
+# core functions
+#
 
 def main():
 	# patching imaplib
 	imaplib.Commands["MOVE"]=("SELECTED",)
 	
-	# Parsing config.ini, making the settings global
+	# Parsing config.json, making the settings global
 	global smtpmail_server,imapmail_server,mail_address,mail_password,loglevel,logmethod,delay
 	configFile = json.load(open("config.json"))
-	mail_address = configFile["settings"]["mail_address"]
-	mail_password = configFile["settings"]["mail_password"]
-	loglevel = configFile["settings"]["loglevel"]
-	logmethod = configFile["settings"]["logmethod"]
-	smtpmail_server = configFile["settings"]["smtpmail_server"]
-	imapmail_server = configFile["settings"]["imapmail_server"]
-	delay = configFile["settings"]["delay"]
+	settings = configFile["settings"]
+	rules = configFile["rules"]
+	mail_address = settings["mail_address"]
+	mail_password = settings["mail_password"]
+	loglevel = settings["loglevel"]
+	logmethod = settings["logmethod"]
+	smtpmail_server = settings["smtpmail_server"]
+	imapmail_server = settings["imapmail_server"]
+	delay = settings["delay"]
 
 	imapmail = login()
 	while(True):
-		# nesting, like in jQuery, are possible because the functions return an id_list.
-		# moveMails(imapmail,answerMails(imapmail,filterMailbox(imapmail,"Subject","Aufgabe","Inbox"),"Mail eingegangen","Ihre E-Mail ist eingegangen"),"Unbearbeitet")
-		# for debugging reasons (and because it's not really beautiful code), it should be used like this:
-		id_list = filterMailbox(imapmail,"Subject","Aufgabe")
-		answerMails(imapmail,id_list,"Mail eingegangen!","Ihre Mail ist eingegangen und wird beantwortet, da sie 'Aufgabe' im Titel traegt. Yay :3")
-		moveMails(imapmail,id_list,"Aufgabencontainer")
-
-		id_list = filterMailbox(imapmail,"Subject","Frage")
-		answerMails(imapmail,id_list,"Frage eingegangen!","Ihre Frage ist eingegangen und wird beantwortet.")
-		moveMails(imapmail,id_list,"Fragencontainer")
-		sleep(delay)
+		for rule in rules:
+			processRule(imapmail,rule)
+			sleep(delay)
 
 def login():
 	imapmail = imaplib.IMAP4_SSL(imapmail_server)
@@ -47,8 +47,27 @@ def login():
 
 	return imapmail
 
+def processRule(imapmail,rule):
+	for step in rule["steps"]:
+		if step[0] == "filter":
+			id_list = filterMailbox(imapmail,step[1],step[2])
+		elif step[0] == "answer":
+			if len(step)>3:
+				id_list = answerMails(imapmail,id_list,step[1],step[2],step[3])
+			else:
+				id_list = answerMails(imapmail,id_list,step[1],step[2],"")
+		elif step[0] == "move":
+			id_list = moveMails(imapmail,id_list,step[1])
+		elif step[0] == "log":
+			log(step[1],step[2])
+		else:
+			log("Rule <%s>, Step <%s>: step action unknown."%(rule["title"],step[0]),1)
 
 
+
+#
+# procession functions
+#
 
 def filterMailbox(imapmail,filterVariable,filterValue,mailbox="Inbox"):
 	# returns all mails where filterVariable == filterValue
@@ -57,7 +76,7 @@ def filterMailbox(imapmail,filterVariable,filterValue,mailbox="Inbox"):
 	imapmail.select(mailbox)
 	result, data = imapmail.uid("search","ALL","*")
 	uidlist = []
-	if data is not '':
+	if data != ['']:
 		for uid in data:
 			if uid:
 				result,data = imapmail.uid("fetch",uid,"(BODY[HEADER])")
@@ -75,24 +94,30 @@ def filterMailbox(imapmail,filterVariable,filterValue,mailbox="Inbox"):
 					uidlist.append(uid)
 	return uidlist
 
-
-
-
-def answerMails(imapmail,id_list,subject,text):
+def answerMails(imapmail,id_list,subject,text,address):
 	# see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
 	for uid in id_list:
-		if "NETSEC-Answered" in imapmail.uid("fetch",uid,"FLAGS")[1][0]:
-			log("Error: Tried to answer to mail (uid %s) which was already answered."%uid,2)
+		hashobj = hashlib.md5()
+		hashobj.update(subject)
+		subject_hash = hashobj.hexdigest()
+
+		result, data = imapmail.uid("fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
+		rawMail = data[0][1]
+		if(address):
+			client_mail_addr = address
 		else:
-			result, data = imapmail.uid("fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
-			client_mail_addr = data[0][1][data[0][1].find("<")+1:data[0][1].find(">")]
+			client_mail_addr = rawMail[rawMail.find("<")+1:rawMail.find(">")]
+
+		if "NETSEC-Answered-" + subject_hash in imapmail.uid("fetch",uid,"FLAGS")[1][0]:
+			log("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(uid,client_mail_addr,subject),3)
+		else:
 			if client_mail_addr == mail_address:
 				log("Error: Tried to answer own mail. (uid %i, Subject '%s')"%(uid,subject),2)
 			elif "noreply" in client_mail_addr:
-				log("Error: Tried to answer automated. (uid %i, Subject '%s', address %s)"%(uid,subject,client_mail_addr),2)
+				log("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject),3)
 			else:
 				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
-				imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered")
+				imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
 	return id_list
 
 def moveMails(imapmail,id_list,destination):
@@ -102,11 +127,14 @@ def moveMails(imapmail,id_list,destination):
 	for uid in id_list:
 		# https://tools.ietf.org/html/rfc6851
 		result,data = imapmail.uid("MOVE",uid,destination)
-		if result == "OK":
-			log("Moved uid%s to %s"%(uid,destination),3)
-		else:
+		if result != "OK":
 			log("Error moving uid%s to %s"%(uid,destination),1)
 
+
+
+#
+# helper functions
+#
 
 def smtpMail(to,what):
 	smtpmail = smtplib.SMTP(smtpmail_server)
@@ -115,7 +143,6 @@ def smtpMail(to,what):
 	smtpmail.login(mail_address, mail_password)
 	smtpmail.sendmail(mail_address, to, what)
 	smtpmail.quit()
-
 
 def log(what,level=2):
 	if level<= loglevel:
@@ -127,5 +154,6 @@ def log(what,level=2):
 			logfile = open("logfile.log","a")
 			logfile.write(logString + "\n")
 			logfile.close()
+
 if __name__ == "__main__":
 	main()

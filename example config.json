@@ -4,10 +4,33 @@
 		"imapmail_server":  "imap.gmail.com",
 		"mail_address": "netsec.imap.test@gmail.com",
 		"mail_password":"",
-		"loglevel":3,
+		"loglevel":2,
 		"logmethod":1,
 		"delay":3
 	},
-	"rules": {
-	}
+	"rules": [
+		{
+			"title":"Fragen",
+			"steps":[
+				["filter","Subject","Testmail"],
+				["answer","Testmail empfangen!","Yippieh."],
+				["answer","Testmail","Uns wurde eine Testmail uebermittelt.","martin.dessauer@uni-duesseldorf.de"],
+				["move","Testmails"]
+			]
+		},
+		{
+			"title":"Block Martin",
+			"steps":[
+				["filter","From","martin"],
+				["answer","Spambot detected","Bitte hoer auf, uns zuzuspammen. kthxbye."]
+			]
+		},
+		{
+			"title":"Datum weiterleiten",
+			"steps":[
+				["filter","Date","14 Oct 2014"],
+				["answer","Mail unbearbeitet","Heute wird keine Mail beantwortet"]
+			]
+		}
+	]
 }

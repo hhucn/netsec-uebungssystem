@@ -6,10 +6,10 @@ import imaplib
 import smtplib
 from time import sleep
 import datetime
-import json
-import os
+from json import load as jsonLoad
 import hashlib
 from sys import exit
+import logging
 
 
 
@@ -20,35 +20,42 @@ from sys import exit
 def main():
 	# patching imaplib
 	imaplib.Commands["MOVE"]=("SELECTED",)
-	
+
 	# Parsing config.json, making the settings global
 	global smtpmail_server,imapmail_server,mail_address,mail_password,loglevel,logmethod,delay
 	
-	if not os.path.isfile("config.json"):
-		log("'config.json' doesn't exist.",1)
+	
+	configFile = jsonLoad(open("config.json"))
+	settings = configFile["settings"]
 
-	configFile = json.load(open("config.json"))
-	settings = loadConfigElement(configFile,"settings")
+	#logging.basicConfig(format="%(asctime)s %(message)s")
+	loglevel = settings.get("loglevel","ERROR")
+	if loglevel == "ALL":
+		logging.basicConfig(format="%(asctime)s %(message)s",level=logging.DEBUG)
+	elif loglevel == "ERROR":
+		logging.basicConfig(format="%(asctime)s %(message)s",level=logging.ERROR)
+	elif loglevel == "CRITICAL":
+		logging.basicConfig(format="%(asctime)s %(message)s",level=logging.CRITICAL)
+
 	rules = configFile["rules"]
-	mail_address = loadConfigElement(settings,"mail_address")
-	mail_password = loadConfigElement(settings,"mail_password")
-	loglevel = loadConfigElement(settings,"loglevel")
-	logmethod = loadConfigElement(settings,"logmethod")
-	smtpmail_server = loadConfigElement(settings,"smtpmail_server")
-	imapmail_server = loadConfigElement(settings,"imapmail_server")
-	delay = loadConfigElement(settings,"delay")
+
+	mail_address = settings.get("mail_address")
+	mail_password = settings.get("mail_password")
+	smtpmail_server = settings.get("smtpmail_server")
+	imapmail_server = settings.get("imapmail_server")
+	delay = settings.get("delay")
 
 	imapmail = login()
 	while(True):
 		for rule in rules:
 			processRule(imapmail,rule)
-			sleep(delay)
+		sleep(delay)
 
 def login():
 	imapmail = imaplib.IMAP4_SSL(imapmail_server)
 	imapmail.login(mail_address, mail_password)
 	imapmail.select()
-	log("IMAP login (%s on %s)" % (mail_address,imapmail_server),3)
+	logging.info("IMAP login (%s on %s)" % (mail_address,imapmail_server))
 
 	return imapmail
 
@@ -62,37 +69,49 @@ def processRule(imapmail,rule):
 			elif steplen==4:
 				id_list = filterMailbox(imapmail,step[1],step[2],step[3])
 			else:
-				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+				logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
+				sys.exit(2)
 		elif action == "answer":
 			if steplen==4:
 				id_list = answerMails(imapmail,id_list,step[1],step[2],step[3])
 			elif steplen==3:
 				id_list = answerMails(imapmail,id_list,step[1],step[2],"")
 			else:
-				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+				logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
+				sys.exit(2)
 		elif action == "move":
 			if steplen==2:
 				id_list = moveMails(imapmail,id_list,step[1])
 			else:
-				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+				logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
+				sys.exit(2)
 		elif action == "log":
 			if steplen==3:
-				log(step[1],step[2])
+				if step[1] == "ERROR":
+					logging.error(step[2])
+				elif step[1] == "CRITICAL":
+					logging.critical(step[2])
+				else:
+					logging.info(step[2])
 			else:
-				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+				logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
+				sys.exit(2)
 		elif action == "flag":
 			if steplen==2:
 				id_list = flagMails(imapmail,id_list,step[1])
 			else:
-				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+				logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
+				sys.exit(2)
 		elif action == "delete":
 			if steplen==1:
 				flagMails(imapmail,id_list,"\\Deleted")
 				imapmail.expunge()
 			else:
-				log("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action),1)
+				logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
+				sys.exit(2)
 		else:
-			log("Rule <%s>, Step <%s>: step action unknown."%(rule["title"],action),1)
+			logging.critical("Rule <%s>, Step <%s>: step is unknown."%(rule["title"],action))
+			sys.exit(2)
 
 
 
@@ -140,12 +159,12 @@ def answerMails(imapmail,id_list,subject,text,address):
 			client_mail_addr = rawMail[rawMail.find("<")+1:rawMail.find(">")]
 
 		if "NETSEC-Answered-" + subject_hash in imapmail.uid("fetch",uid,"FLAGS")[1][0]:
-			log("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(uid,client_mail_addr,subject),3)
+			logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(uid,client_mail_addr,subject))
 		else:
 			if client_mail_addr == mail_address:
-				log("Error: Tried to answer own mail. (uid %i, Subject '%s')"%(uid,subject),2)
+				logging.error("Error: Tried to answer own mail. (uid %i, Subject '%s')"%(uid,subject))
 			elif "noreply" in client_mail_addr:
-				log("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject),3)
+				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
 			else:
 				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
 				flagMails(imapmail,uid,"NETSEC-Answered-" + subject_hash)
@@ -160,7 +179,7 @@ def moveMails(imapmail,id_list,destination):
 		# https://tools.ietf.org/html/rfc6851
 		result,data = imapmail.uid("MOVE",uid,destination)
 		if result != "OK":
-			log("Error moving uid%s to %s"%(uid,destination),1)
+			logging.error("Error moving uid%s to %s"%(uid,destination))
 
 def flagMails(imapmail,id_list,flag):
 	for uid in id_list:
@@ -179,39 +198,6 @@ def smtpMail(to,what):
 	smtpmail.login(mail_address, mail_password)
 	smtpmail.sendmail(mail_address, to, what)
 	smtpmail.quit()
-
-def log(what,level=2):
-	level = int(level)
-
-	try:
-		logmethod
-	except NameError:
-		logmethod = 3
-	try:
-		loglevel
-	except NameError:
-		loglevel = 3
-
-	if level<= loglevel:
-		logString = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ":\t" + what
-
-		if logmethod==1 or logmethod==3:
-			print(logString)
-		if logmethod==2 or logmethod==3:
-			logfile = open("logfile.log","a")
-			logfile.write(logString + "\n")
-			logfile.close()
-	if level == 1:
-		print("\t\t\tReceived level 1 error message, shutting down server...")
-		exit(-1)
-
-def loadConfigElement(config,what):
-	global loglevel, logmethod
-
-	if what in config:
-		return config[what]
-	else:
-		log("Important variable <" + what + "> is not assigned in config.json",1)
 
 if __name__ == "__main__":
 	main()

@@ -4,8 +4,7 @@
 		"imapmail_server":  "imap.gmail.com",
 		"mail_address": "netsec.imap.test@gmail.com",
 		"mail_password":"",
-		"loglevel":2,
-		"logmethod":1,
+		"loglevel":"ALL",
 		"delay":3
 	},
 	"rules": [
@@ -22,14 +21,17 @@
 			"title":"Block Martin",
 			"steps":[
 				["filter","From","martin"],
-				["answer","Spambot detected","Bitte hoer auf, uns zuzuspammen. kthxbye."]
+				["answer","Spambot detected","Bitte hoer auf, uns zuzuspammen. kthxbye."],
+				["log","INFO","Blocked spammer"],
+				["delete"]
 			]
 		},
 		{
 			"title":"Datum weiterleiten",
 			"steps":[
-				["filter","Date","14 Oct 2014"],
-				["answer","Mail unbearbeitet","Heute wird keine Mail beantwortet"]
+				["filter","Date","13 Oct 2014"],
+				["answer","Mail unbearbeitet","Heute wird keine Mail beantwortet"],
+				["flag","Unbearbeitet"]
 			]
 		}
 	]

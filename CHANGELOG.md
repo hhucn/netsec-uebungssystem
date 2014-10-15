@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+_Oct 15, 2014_
+
+* aborting if there is no `config.json`
+* `log()` now checks if the needed variables (`loglevel`,`logmethod`) are defined (so `log()` can be used even if there's no `config.json`, which might happen)
+* checking if `config.json` even defines all needed variables, aborting if it doesn't :zap:
+
+
 _Oct 13, 2014_
 
 * mail processing engine:

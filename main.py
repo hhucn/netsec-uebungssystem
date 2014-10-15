@@ -7,7 +7,7 @@ import smtplib
 from time import sleep
 import datetime
 import json
-import os.path
+import os
 import hashlib
 from sys import exit
 
@@ -23,16 +23,20 @@ def main():
 	
 	# Parsing config.json, making the settings global
 	global smtpmail_server,imapmail_server,mail_address,mail_password,loglevel,logmethod,delay
+	
+	if not os.path.isfile("config.json"):
+		log("'config.json' doesn't exist.",1)
+
 	configFile = json.load(open("config.json"))
-	settings = configFile["settings"]
+	settings = loadConfigElement(configFile,"settings")
 	rules = configFile["rules"]
-	mail_address = settings["mail_address"]
-	mail_password = settings["mail_password"]
-	loglevel = settings["loglevel"]
-	logmethod = settings["logmethod"]
-	smtpmail_server = settings["smtpmail_server"]
-	imapmail_server = settings["imapmail_server"]
-	delay = settings["delay"]
+	mail_address = loadConfigElement(settings,"mail_address")
+	mail_password = loadConfigElement(settings,"mail_password")
+	loglevel = loadConfigElement(settings,"loglevel")
+	logmethod = loadConfigElement(settings,"logmethod")
+	smtpmail_server = loadConfigElement(settings,"smtpmail_server")
+	imapmail_server = loadConfigElement(settings,"imapmail_server")
+	delay = loadConfigElement(settings,"delay")
 
 	imapmail = login()
 	while(True):
@@ -178,6 +182,16 @@ def smtpMail(to,what):
 
 def log(what,level=2):
 	level = int(level)
+
+	try:
+		logmethod
+	except NameError:
+		logmethod = 3
+	try:
+		loglevel
+	except NameError:
+		loglevel = 3
+
 	if level<= loglevel:
 		logString = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ":\t" + what
 
@@ -190,6 +204,14 @@ def log(what,level=2):
 	if level == 1:
 		print("\t\t\tReceived level 1 error message, shutting down server...")
 		exit(-1)
+
+def loadConfigElement(config,what):
+	global loglevel, logmethod
+
+	if what in config:
+		return config[what]
+	else:
+		log("Important variable <" + what + "> is not assigned in config.json",1)
 
 if __name__ == "__main__":
 	main()

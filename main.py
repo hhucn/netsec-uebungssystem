@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 
 import imaplib
 import smtplib
-from time import sleep
+import time
 import datetime
-from json import load as jsonLoad
+import json
 import hashlib
-from sys import exit
+import sys
 import logging
 
 
@@ -25,7 +25,7 @@ def main():
 	global smtpmail_server,imapmail_server,mail_address,mail_password,loglevel,logmethod,delay
 	
 	
-	configFile = jsonLoad(open("config.json"))
+	configFile = json.load(open("config.json"))
 	settings = configFile["settings"]
 
 	#logging.basicConfig(format="%(asctime)s %(message)s")
@@ -49,7 +49,7 @@ def main():
 	while(True):
 		for rule in rules:
 			processRule(imapmail,rule)
-		sleep(delay)
+		time.sleep(delay)
 
 def login():
 	imapmail = imaplib.IMAP4_SSL(imapmail_server)

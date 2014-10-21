@@ -20,6 +20,7 @@ import logging
 def main():
 	# patching imaplib
 	imaplib.Commands["MOVE"]=("SELECTED",)
+	imaplib.Commands["IDLE"]=("SELECTED",)
 
 	# Parsing config.json, making the settings global
 	global smtpmail_server,imapmail_server,mail_address,mail_password,loglevel,logmethod,delay
@@ -28,7 +29,6 @@ def main():
 	configFile = json.load(open("config.json"))
 	settings = configFile["settings"]
 
-	#logging.basicConfig(format="%(asctime)s %(message)s")
 	loglevel = settings.get("loglevel","ERROR")
 	if loglevel == "ALL":
 		logging.basicConfig(format="%(asctime)s %(message)s",level=logging.DEBUG)
@@ -46,10 +46,24 @@ def main():
 	delay = settings.get("delay")
 
 	imapmail = login()
-	while(True):
-		for rule in rules:
-			processRule(imapmail,rule)
-		time.sleep(delay)
+	imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
+	
+	if "idling" in imapmail.readline():
+		logging.debug("Server supports IDLE.")
+		while(True):
+			if "EXISTS" in imapmail.readline():
+				imapmail.send("DONE\r\n")
+				imapmail.readline()
+
+				for rule in rules:
+					processRule(imapmail,rule)
+				imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
+	else:
+		logging.debug("Server lacks support for IDLE... Falling back to delay.")
+		while(True):
+			for rule in rules:
+				processRule(imapmail,rule)
+			time.sleep(delay)
 
 def login():
 	imapmail = imaplib.IMAP4_SSL(imapmail_server)
@@ -129,7 +143,7 @@ def filterMailbox(imapmail,filterVariable,filterValue,mailbox="Inbox"):
 	if data != ['']:
 		for uid in data:
 			if uid:
-				result,data = imapmail.uid("fetch",uid,"(BODY[HEADER])")
+				result, data = imapmail.uid("fetch",uid,"(BODY[HEADER])")
 				headerList = []
 				header = {}
 				for line in data[0][1].split("\r\n"):
@@ -177,7 +191,7 @@ def moveMails(imapmail,id_list,destination):
 	imapmail.create(destination)
 	for uid in id_list:
 		# https://tools.ietf.org/html/rfc6851
-		result,data = imapmail.uid("MOVE",uid,destination)
+		result, data = imapmail.uid("MOVE",uid,destination)
 		if result != "OK":
 			logging.error("Error moving uid%s to %s"%(uid,destination))
 
@@ -190,6 +204,9 @@ def flagMails(imapmail,id_list,flag):
 #
 # helper functions
 #
+
+def errorCheck(status):
+	print status
 
 def smtpMail(to,what):
 	smtpmail = smtplib.SMTP(smtpmail_server)

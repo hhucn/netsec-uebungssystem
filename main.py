@@ -80,61 +80,7 @@ def login():
 def processRule(imapmail,rule):
 	id_list = []
 	for step in rule:
-		#print "imapmail,",id_list,step[1:]
 		id_list = globals()["rule_" + step[0]](imapmail,id_list,*step[1:])
-	# for step in rule["steps"]:
-	# 	action = step[0]
-	# 	steplen = len(step)
-	# 	if action == "filter":
-	# 		if steplen==3:
-	# 			id_list = filterMailbox(imapmail,step[1],step[2])
-	# 		elif steplen==4:
-	# 			id_list = filterMailbox(imapmail,step[1],step[2],step[3])
-	# 		else:
-	# 			logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
-	# 			sys.exit(2)
-	# 	elif action == "answer":
-	# 		if steplen==4:
-	# 			id_list = answerMails(imapmail,id_list,step[1],step[2],step[3])
-	# 		elif steplen==3:
-	# 			id_list = answerMails(imapmail,id_list,step[1],step[2],"")
-	# 		else:
-	# 			logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
-	# 			sys.exit(2)
-	# 	elif action == "move":
-	# 		if steplen==2:
-	# 			id_list = moveMails(imapmail,id_list,step[1])
-	# 		else:
-	# 			logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
-	# 			sys.exit(2)
-	# 	elif action == "log":
-	# 		if steplen==3:
-	# 			if step[1] == "ERROR":
-	# 				logging.error(step[2])
-	# 			elif step[1] == "CRITICAL":
-	# 				logging.critical(step[2])
-	# 			else:
-	# 				logging.info(step[2])
-	# 		else:
-	# 			logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
-	# 			sys.exit(2)
-	# 	elif action == "flag":
-	# 		if steplen==2:
-	# 			id_list = rule_flag(imapmail,id_list,step[1])
-	# 		else:
-	# 			logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
-	# 			sys.exit(2)
-	# 	elif action == "delete":
-	# 		if steplen==1:
-	# 			rule_flag(imapmail,id_list,"\\Deleted")
-	# 			imapmail.expunge()
-	# 		else:
-	# 			logging.critical("Rule <%s>, Step <%s>: wrong argument count."%(rule["title"],action))
-	# 			sys.exit(2)
-	# 	else:
-	# 		logging.critical("Rule <%s>, Step <%s>: step is unknown."%(rule["title"],action))
-	# 		sys.exit(2)
-
 
 
 #

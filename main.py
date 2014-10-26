@@ -154,6 +154,17 @@ def rule_flag(imapmail,id_list,flag):
 		imapmail.uid("STORE",uid,"+FLAGS",flag)
 	return id_list
 
+def rule_log(imapmail,id_list,lvl,msg):
+	if lvl == "LOG":
+		logging.debug(msg)
+	else:
+		logging.error(msg)
+	return id_list
+
+def rule_delete(imapmail,id_list):
+	rule_flag(imapmail,id_list,"\DELETE")
+	imapmail.expunge()
+	return id_list
 
 #
 # helper functions

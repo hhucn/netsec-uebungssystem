@@ -22,7 +22,7 @@ def main():
 	imaplib.Commands["MOVE"]=("SELECTED",)
 
 	# Parsing config.json, making the settings global
-	global smtpmail_server,imapmail_server,mail_address,mail_password,loglevel,logmethod,delay
+	global settings
 	
 	
 	configFile = json.load(open("config.json"))
@@ -38,17 +38,8 @@ def main():
 
 	rules = configFile["rules"]
 
-	mail_address = settings.get("mail_address")
-	mail_password = settings.get("mail_password")
-	smtpmail_server = settings.get("smtpmail_server")
-	imapmail_server = settings.get("imapmail_server")
-	delay = settings.get("delay")
-
 	imapmail = login()
 	imapmail.select("INBOX")
-
-	for rule in rules:
-		processRule(imapmail,rule["steps"])
 
 	imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
 
@@ -67,15 +58,23 @@ def main():
 		while(True):
 			for rule in rules:
 				processRule(imapmail,rule["steps"])
-			time.sleep(delay)
+			time.sleep(settings.get("delay"))
 
 def login():
-	imapmail = imaplib.IMAP4_SSL(imapmail_server)
-	imapmail.login(mail_address, mail_password)
+	imapmail = imaplib.IMAP4_SSL(settings.get("imapmail_server"))
+	imapmail.login(settings.get("mail_address"), settings.get("mail_password"))
 	imapmail.select()
-	logging.info("IMAP login (%s on %s)" % (mail_address,imapmail_server))
+	logging.info("IMAP login (%s on %s)" % (settings.get("mail_address"),settings.get("imapmail_server")))
 
 	return imapmail
+
+def smtpMail(to,what):
+	smtpmail = smtplib.SMTP(settings.get("smtpmail_server"))
+	smtpmail.ehlo()
+	smtpmail.starttls()
+	smtpmail.login(settings.get("mail_address"), settings.get("mail_password"))
+	smtpmail.sendmail(settings.get("mail_address"), to, what)
+	smtpmail.quit()
 
 def processRule(imapmail,rule):
 	id_list = []
@@ -135,8 +134,8 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
 			else:
 				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
-				###rule_flag(imapmail,uid,"NETSEC-Answered-" + subject_hash)
-				#imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
+				rule_flag(imapmail,uid,"NETSEC-Answered-" + subject_hash)
+				imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
 	return id_list
 
 def rule_move(imapmail,id_list,destination):
@@ -172,14 +171,6 @@ def rule_delete(imapmail,id_list):
 
 def errorCheck(status):
 	print status
-
-def smtpMail(to,what):
-	smtpmail = smtplib.SMTP(smtpmail_server)
-	smtpmail.ehlo()
-	smtpmail.starttls()
-	smtpmail.login(mail_address, mail_password)
-	smtpmail.sendmail(mail_address, to, what)
-	smtpmail.quit()
 
 if __name__ == "__main__":
 	main()

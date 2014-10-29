@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import imaplib
+import __imaplib as imaplib
 import smtplib
 import time
 import datetime
@@ -45,6 +45,16 @@ def main():
 
 	if "idling" in imapmail.readline():
 		logging.debug("Server supports IDLE.")
+
+		# to process mails which already resists in the Inbox
+		imapmail.send("DONE\r\n")
+		imapmail.readline()
+
+		for rule in rules:
+			processRule(imapmail,rule["steps"])
+
+		imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
+
 		while(True):
 			if "EXISTS" in imapmail.readline():
 				imapmail.send("DONE\r\n")
@@ -79,7 +89,12 @@ def smtpMail(to,what):
 def processRule(imapmail,rule):
 	id_list = []
 	for step in rule:
+		print "\tstep %s type %s"%(step,type(id_list).__name__)
 		id_list = globals()["rule_" + step[0]](imapmail,id_list,*step[1:])
+		# if type(id_list).__name__ == "String":
+		# 	print "woop"
+		# 	print id_list
+		# 	id_list = [id_list]
 
 
 #
@@ -91,12 +106,13 @@ def rule_filter(imapmail,id_list,filterVariable,filterValue,mailbox="INBOX"):
 	# see http://tools.ietf.org/html/rfc3501#section-6.4.4 (for search)
 	# and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
 	imapmail.select(mailbox)
-	result, data = imapmail.uid("search","ALL","*")
+
+	data = imapCommand(imapmail,"search","ALL","*")
 	uidlist = []
 	if data != ['']:
 		for uid in data:
 			if uid:
-				result, data = imapmail.uid("fetch",uid,"(BODY[HEADER])")
+				data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")
 				headerList = []
 				header = {}
 				for line in data[0][1].split("\r\n"):
@@ -118,24 +134,24 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 		hashobj.update(subject)
 		subject_hash = hashobj.hexdigest()
 
-		result, data = imapmail.uid("fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
+		data = imapCommand(imapmail,"fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
 		rawMail = data[0][1]
 		if address == "(back)":
 			client_mail_addr = rawMail[rawMail.find("<")+1:rawMail.find(">")]
 		else:
 			client_mail_addr = address
 		
-		if "NETSEC-Answered-" + subject_hash in imapmail.uid("fetch",uid,"FLAGS")[1][0]:
+		if "NETSEC-Answered-" + subject_hash in imapCommand(imapmail,"fetch",uid,"FLAGS"):
 			logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(uid,client_mail_addr,subject))
 		else:
-			if client_mail_addr == mail_address:
+			if client_mail_addr == settings.get("mail_password"):
 				logging.error("Error: Tried to answer own mail. (uid %i, Subject '%s')"%(uid,subject))
 			elif "noreply" in client_mail_addr:
 				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
 			else:
 				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
 				rule_flag(imapmail,uid,"NETSEC-Answered-" + subject_hash)
-				imapmail.uid("STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
+				imapCommand(imapmail,"STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
 	return id_list
 
 def rule_move(imapmail,id_list,destination):
@@ -144,13 +160,11 @@ def rule_move(imapmail,id_list,destination):
 	imapmail.create(destination)
 	for uid in id_list:
 		# https://tools.ietf.org/html/rfc6851
-		result, data = imapmail.uid("MOVE",uid,destination)
-		if result != "OK":
-			logging.error("Error moving uid%s to %s"%(uid,destination))
+		data = imapCommand(imapmail,"MOVE",uid,destination)
 
 def rule_flag(imapmail,id_list,flag):
 	for uid in id_list:
-		imapmail.uid("STORE",uid,"+FLAGS",flag)
+		imapCommand(imapmail,"STORE",uid,"+FLAGS",flag)
 	return id_list
 
 def rule_log(imapmail,id_list,lvl,msg):
@@ -169,8 +183,19 @@ def rule_delete(imapmail,id_list):
 # helper functions
 #
 
-def errorCheck(status):
-	print status
+def imapCommand(imapmail,command,uid,*args):
+	#print "%s %s %s"%(command,uid,args)
+
+	print "\t\ttype %s"%(type(uid).__name__)
+
+	code, ids = imapmail.uid(command, uid, *args)
+
+	if "OK" in code:
+		return ids
+	else:
+		logging.error("Server responded with Code '%s' for '%s %s %s'."%(code,command,uid,args))
+		raise self.error("Server responded with Code '%s' for '%s %s %s'."%(code,command,uid,args))
+		return []
 
 if __name__ == "__main__":
 	main()

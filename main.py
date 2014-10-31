@@ -2,15 +2,14 @@
 
 from __future__ import unicode_literals
 
-import __imaplib as imaplib
+# DEBUG: insert "print args" in imaplib:1069 to log *every* command sent to the IMAP Server. 
+import imaplib
 import smtplib
 import time
-import datetime
 import json
+import logging
 import hashlib
 import sys
-import logging
-
 
 
 #
@@ -89,8 +88,8 @@ def smtpMail(to,what):
 def processRule(imapmail,rule):
 	id_list = []
 	for step in rule:
-		print "\tstep %s type %s"%(step,type(id_list).__name__)
-		id_list = globals()["rule_" + step[0]](imapmail,id_list,*step[1:])
+		id_list = getattr(sys.modules[__name__],"rule_" + step[0])(imapmail,id_list,*step[1:])
+		#globals()["rules." + step[0]](imapmail,id_list,*step[1:])
 		# if type(id_list).__name__ == "String":
 		# 	print "woop"
 		# 	print id_list
@@ -98,7 +97,7 @@ def processRule(imapmail,rule):
 
 
 #
-# procession functions
+# rule functions
 #
 
 def rule_filter(imapmail,id_list,filterVariable,filterValue,mailbox="INBOX"):
@@ -110,6 +109,9 @@ def rule_filter(imapmail,id_list,filterVariable,filterValue,mailbox="INBOX"):
 	data = imapCommand(imapmail,"search","ALL","*")
 	uidlist = []
 	if data != ['']:
+		if filterVariable == "ALL":
+			return data
+		
 		for uid in data:
 			if uid:
 				data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")
@@ -144,14 +146,11 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 		if "NETSEC-Answered-" + subject_hash in imapCommand(imapmail,"fetch",uid,"FLAGS"):
 			logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(uid,client_mail_addr,subject))
 		else:
-			if client_mail_addr == settings.get("mail_password"):
-				logging.error("Error: Tried to answer own mail. (uid %i, Subject '%s')"%(uid,subject))
-			elif "noreply" in client_mail_addr:
+			if "noreply" in client_mail_addr:
 				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
 			else:
 				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
-				rule_flag(imapmail,uid,"NETSEC-Answered-" + subject_hash)
-				imapCommand(imapmail,"STORE",uid,"+FLAGS","NETSEC-Answered-" + subject_hash)
+				rule_flag(imapmail,[uid],"NETSEC-Answered-" + subject_hash)
 	return id_list
 
 def rule_move(imapmail,id_list,destination):
@@ -175,19 +174,17 @@ def rule_log(imapmail,id_list,lvl,msg):
 	return id_list
 
 def rule_delete(imapmail,id_list):
-	rule_flag(imapmail,id_list,"\DELETE")
+	rule_flag(imapmail,id_list,"\\DELETE")
 	imapmail.expunge()
 	return id_list
+
 
 #
 # helper functions
 #
 
 def imapCommand(imapmail,command,uid,*args):
-	#print "%s %s %s"%(command,uid,args)
-
-	print "\t\ttype %s"%(type(uid).__name__)
-
+	# IMAP Command caller with error handling
 	code, ids = imapmail.uid(command, uid, *args)
 
 	if "OK" in code:

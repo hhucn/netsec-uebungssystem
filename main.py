@@ -10,9 +10,10 @@ import json
 import logging
 import hashlib
 import sys
-import re #regex
 from email.parser import Parser
 import email
+import sqlite3
+import base64
 
 #
 # core functions
@@ -90,6 +91,8 @@ def processRule(imapmail,rule):
 	id_list = []
 	for step in rule:
 		id_list = getattr(sys.modules[__name__],"rule_" + step[0])(imapmail,id_list,*step[1:])
+		if not id_list:
+			break
 
 
 #
@@ -166,16 +169,29 @@ def rule_delete(imapmail,id_list):
 	imapmail.expunge()
 	return id_list
 
-def rule_attachment(imapmail,id_list):
+def rule_save(imapmail,id_list,withAttachment="True"):
+	sqldatabase = sqlite3.connect(settings.get("database"))
+	cursor = sqldatabase.cursor()
+
 	for uid in id_list:
+		# (addr text,date text,subject text,body text,attachment blob,korrektor text)
+		data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")
+		header = Parser().parsestr(data[0][1])
+		insertValues = [header["From"],header["Date"],header["Subject"],imapCommand(imapmail,"fetch",uid,"(BODY[TEXT])")[0][1],""]
+
+
 		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"(RFC822)")[0][1])
 		for mail_part in mail.walk():
 			if mail_part.get_content_maintype().upper() == "MULTIPART":
 				continue
 			if not mail_part.get("Content-Disposition"):
 				continue
-			print mail_part.get_payload() # base64 encoded attachment
-			print mail_part.get_filename()# submitted filename of attachment. (useful?)
+			insertValues.append(base64.b64encode(mail_part.get_payload(decode=True)))
+			break
+
+		cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?,?)",insertValues)
+		sqldatabase.commit()
+		sqldatabase.close()
 	return id_list
 
 #

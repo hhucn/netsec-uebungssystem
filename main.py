@@ -10,7 +10,9 @@ import json
 import logging
 import hashlib
 import sys
-
+import re #regex
+from email.parser import Parser
+import email
 
 #
 # core functions
@@ -58,7 +60,6 @@ def main():
 			if "EXISTS" in imapmail.readline():
 				imapmail.send("DONE\r\n")
 				imapmail.readline()
-
 				for rule in rules:
 					processRule(imapmail,rule["steps"])
 				imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
@@ -89,11 +90,6 @@ def processRule(imapmail,rule):
 	id_list = []
 	for step in rule:
 		id_list = getattr(sys.modules[__name__],"rule_" + step[0])(imapmail,id_list,*step[1:])
-		#globals()["rules." + step[0]](imapmail,id_list,*step[1:])
-		# if type(id_list).__name__ == "String":
-		# 	print "woop"
-		# 	print id_list
-		# 	id_list = [id_list]
 
 
 #
@@ -102,6 +98,7 @@ def processRule(imapmail,rule):
 
 def rule_filter(imapmail,id_list,filterVariable,filterValue,mailbox="INBOX"):
 	# returns all mails where filterVariable == filterValue
+
 	# see http://tools.ietf.org/html/rfc3501#section-6.4.4 (for search)
 	# and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
 	imapmail.select(mailbox)
@@ -115,16 +112,7 @@ def rule_filter(imapmail,id_list,filterVariable,filterValue,mailbox="INBOX"):
 		for uid in data:
 			if uid:
 				data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")
-				headerList = []
-				header = {}
-				for line in data[0][1].split("\r\n"):
-					if ": " in line:
-						headerList.append(line)
-					else:
-						headerList[-1] += line
-				for line in headerList:
-					split = line.split(": ",1)
-					header[split[0]] = split[1]
+				header = Parser().parsestr(data[0][1])
 				if filterValue.upper() in header[filterVariable].upper():
 					uidlist.append(uid)
 	return uidlist

@@ -166,6 +166,17 @@ def rule_delete(imapmail,id_list):
 	imapmail.expunge()
 	return id_list
 
+def rule_attachment(imapmail,id_list):
+	for uid in id_list:
+		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"(RFC822)")[0][1])
+		for mail_part in mail.walk():
+			if mail_part.get_content_maintype().upper() == "MULTIPART":
+				continue
+			if not mail_part.get("Content-Disposition"):
+				continue
+			print mail_part.get_payload() # base64 encoded attachment
+			print mail_part.get_filename()# submitted filename of attachment. (useful?)
+	return id_list
 
 #
 # helper functions

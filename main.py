@@ -14,6 +14,7 @@ from email.parser import Parser
 import email
 import sqlite3
 import base64
+import thread
 
 #
 # core functions
@@ -62,13 +63,13 @@ def main():
 				imapmail.send("DONE\r\n")
 				imapmail.readline()
 				for rule in rules:
-					processRule(imapmail,rule["steps"])
+					thread.start_new_thread(processRule,(imapmail,rule["steps"],))
 				imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
 	else:
 		logging.debug("Server lacks support for IDLE... Falling back to delay.")
 		while(True):
 			for rule in rules:
-				processRule(imapmail,rule["steps"])
+				thread.start_new_thread(processRule,(imapmail,rule["steps"],))
 			time.sleep(settings.get("delay"))
 
 def login():
@@ -172,24 +173,26 @@ def rule_delete(imapmail,id_list):
 def rule_save(imapmail,id_list,withAttachment="True"):
 	sqldatabase = sqlite3.connect(settings.get("database"))
 	cursor = sqldatabase.cursor()
+	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,attachment blob,korrektor text)")
 
 	for uid in id_list:
-		# (addr text,date text,subject text,body text,attachment blob,korrektor text)
 		data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")
 		header = Parser().parsestr(data[0][1])
-		insertValues = [header["From"],header["Date"],header["Subject"],imapCommand(imapmail,"fetch",uid,"(BODY[TEXT])")[0][1],""]
+		insertValues = [header["From"],header["Date"],header["Subject"],"(-)"]
 
 
 		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"(RFC822)")[0][1])
+		attachments = []
 		for mail_part in mail.walk():
 			if mail_part.get_content_maintype().upper() == "MULTIPART":
 				continue
 			if not mail_part.get("Content-Disposition"):
 				continue
-			insertValues.append(base64.b64encode(mail_part.get_payload(decode=True)))
-			break
+			attachments.append(base64.b64encode(mail_part.get_payload()))
 
-		cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?,?)",insertValues)
+		insertValues.append(",".join(attachments))
+
+		cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?)",insertValues)
 		sqldatabase.commit()
 		sqldatabase.close()
 	return id_list

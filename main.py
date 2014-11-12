@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 # DEBUG: insert "print args" in imaplib:1069 to log *every* command sent to the IMAP Server. 
-import imaplib
+import imaplib#_imaplib as imaplib
 import smtplib
 import time
 import json
@@ -44,7 +44,7 @@ def main():
 	imapmail = login()
 	imapmail.select("INBOX")
 
-	imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
+	imapmail.send(". IDLE\r\n")
 
 	if "idling" in imapmail.readline():
 		logging.debug("Server supports IDLE.")
@@ -56,7 +56,7 @@ def main():
 		for rule in rules:
 			processRule(imapmail,rule["steps"])
 
-		imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
+		imapmail.send(". IDLE\r\n")
 
 		while(True):
 			if "EXISTS" in imapmail.readline():
@@ -64,7 +64,7 @@ def main():
 				imapmail.readline()
 				for rule in rules:
 					thread.start_new_thread(processRule,(imapmail,rule["steps"],))
-				imapmail.send("%s IDLE\r\n"%imapmail._new_tag())
+				imapmail.send(". IDLE\r\n")
 	else:
 		logging.debug("Server lacks support for IDLE... Falling back to delay.")
 		while(True):
@@ -155,7 +155,7 @@ def rule_move(imapmail,id_list,destination):
 
 def rule_flag(imapmail,id_list,flag):
 	for uid in id_list:
-		imapCommand(imapmail,"STORE",uid,"+FLAGS",flag)
+		imapCommand(imapmail,"STORE",uid,"+FLAGS","_" + flag) # could interpret \NETSEC as <newline>ETSEC
 	return id_list
 
 def rule_log(imapmail,id_list,lvl,msg):
@@ -181,14 +181,18 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 		insertValues = [header["From"],header["Date"],header["Subject"],"(-)"]
 
 
-		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"(RFC822)")[0][1])
+		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"BODY[text]")[0][1])
 		attachments = []
 		for mail_part in mail.walk():
 			if mail_part.get_content_maintype().upper() == "MULTIPART":
 				continue
 			if not mail_part.get("Content-Disposition"):
 				continue
-			attachments.append(base64.b64encode(mail_part.get_payload()))
+
+			if "base64" in mail_part.get("Content-Transfer-Encoding"):
+				attachments.append(mail_part.get_payload())
+			else:
+				attachments.append(base64.b64encode(mail_part.get_payload()))
 
 		insertValues.append(",".join(attachments))
 

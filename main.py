@@ -2,8 +2,8 @@
 
 from __future__ import unicode_literals
 
-# DEBUG: insert "print args" in imaplib:1069 to log *every* command sent to the IMAP Server. 
-import imaplib#_imaplib as imaplib
+
+import _imaplib as imaplib
 import smtplib
 import time
 import json
@@ -26,8 +26,6 @@ def main():
 
 	# Parsing config.json, making the settings global
 	global settings
-	
-	
 	configFile = json.load(open("config.json"))
 	settings = configFile["settings"]
 
@@ -42,9 +40,8 @@ def main():
 	rules = configFile["rules"]
 
 	imapmail = login()
-	imapmail.select("INBOX")
-
 	imapmail.send(". IDLE\r\n")
+	
 
 	if "idling" in imapmail.readline():
 		logging.debug("Server supports IDLE.")
@@ -65,6 +62,7 @@ def main():
 				for rule in rules:
 					thread.start_new_thread(processRule,(imapmail,rule["steps"],))
 				imapmail.send(". IDLE\r\n")
+				print "."
 	else:
 		logging.debug("Server lacks support for IDLE... Falling back to delay.")
 		while(True):
@@ -91,6 +89,7 @@ def smtpMail(to,what):
 def processRule(imapmail,rule):
 	id_list = []
 	for step in rule:
+		print "exec: " + step[0]
 		id_list = getattr(sys.modules[__name__],"rule_" + step[0])(imapmail,id_list,*step[1:])
 		if not id_list:
 			break
@@ -155,7 +154,7 @@ def rule_move(imapmail,id_list,destination):
 
 def rule_flag(imapmail,id_list,flag):
 	for uid in id_list:
-		imapCommand(imapmail,"STORE",uid,"+FLAGS","_" + flag) # could interpret \NETSEC as <newline>ETSEC
+		imapCommand(imapmail,"STORE",uid,"+FLAGS",flag.replace("\\","\\\\")) # could interpret \NETSEC as <newline>ETSEC
 	return id_list
 
 def rule_log(imapmail,id_list,lvl,msg):
@@ -166,7 +165,7 @@ def rule_log(imapmail,id_list,lvl,msg):
 	return id_list
 
 def rule_delete(imapmail,id_list):
-	rule_flag(imapmail,id_list,"\\DELETE")
+	rule_flag(imapmail,id_list,"DELETE")
 	imapmail.expunge()
 	return id_list
 
@@ -206,8 +205,15 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 #
 
 def imapCommand(imapmail,command,uid,*args):
+	# uncomment to print *every* command sent to the server
+	# print command + " " + uid + " " + " ".join(args)
+	# this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
+
 	# IMAP Command caller with error handling
-	code, ids = imapmail.uid(command, uid, *args)
+	if uid:
+		code, ids = imapmail.uid(command, uid, *args)
+	else:
+		code, ids = imapmail.uid(command, *args)
 
 	if "OK" in code:
 		return ids

@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 
-import _imaplib as imaplib
+import imaplib
 import smtplib
 import time
 import json
@@ -16,6 +16,9 @@ import sqlite3
 import base64
 import thread
 
+debug = False
+# this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
+
 #
 # core functions
 #
@@ -23,6 +26,8 @@ import thread
 def main():
 	# patching imaplib
 	imaplib.Commands["MOVE"]=("SELECTED",)
+	imaplib.Commands["IDLE"]=("AUTH","SELECTED",)
+	imaplib.Commands["DONE"]=("AUTH","SELECTED",)
 
 	# Parsing config.json, making the settings global
 	global settings
@@ -40,34 +45,31 @@ def main():
 	rules = configFile["rules"]
 
 	imapmail = login()
-	imapmail.send(". IDLE\r\n")
+	imapmail._command("IDLE")
 	
 
 	if "idling" in imapmail.readline():
 		logging.debug("Server supports IDLE.")
 
 		# to process mails which already resists in the Inbox
-		imapmail.send("DONE\r\n")
+		imapmail._command("DONE")
 		imapmail.readline()
 
 		for rule in rules:
 			processRule(imapmail,rule["steps"])
 
-		imapmail.send(". IDLE\r\n")
+		imapmail._command("IDLE")
 
 		while(True):
 			if "EXISTS" in imapmail.readline():
-				imapmail.send("DONE\r\n")
+				imapmail._command("DONE")
 				imapmail.readline()
-				for rule in rules:
-					thread.start_new_thread(processRule,(imapmail,rule["steps"],))
-				imapmail.send(". IDLE\r\n")
-				print "."
+				processRule(imapmail,rule["steps"])
+				imapmail._command("IDLE")
 	else:
 		logging.debug("Server lacks support for IDLE... Falling back to delay.")
 		while(True):
-			for rule in rules:
-				thread.start_new_thread(processRule,(imapmail,rule["steps"],))
+			processRule(imapmail,rule["steps"])
 			time.sleep(settings.get("delay"))
 
 def login():
@@ -87,12 +89,20 @@ def smtpMail(to,what):
 	smtpmail.quit()
 
 def processRule(imapmail,rule):
+	if debug:
+		print "**** rule"
 	id_list = []
 	for step in rule:
-		print "exec: " + step[0]
+		if debug:
+			print "exec: " + step[0]
 		id_list = getattr(sys.modules[__name__],"rule_" + step[0])(imapmail,id_list,*step[1:])
 		if not id_list:
 			break
+		if debug:
+			print " ret: " + ",".join(id_list)
+	if debug:
+		print "**** done\n"
+
 
 
 #
@@ -124,7 +134,7 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 	# see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
 	for uid in id_list:
 		hashobj = hashlib.md5()
-		hashobj.update(subject)
+		hashobj.update(subject + text)
 		subject_hash = hashobj.hexdigest()
 
 		data = imapCommand(imapmail,"fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
@@ -205,9 +215,8 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 #
 
 def imapCommand(imapmail,command,uid,*args):
-	# uncomment to print *every* command sent to the server
-	# print command + " " + uid + " " + " ".join(args)
-	# this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
+	if debug:
+		print "\t" + command + " " + uid + " " + " ".join(args)
 
 	# IMAP Command caller with error handling
 	if uid:

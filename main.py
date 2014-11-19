@@ -14,7 +14,6 @@ from email.parser import Parser
 import email
 import sqlite3
 import base64
-import thread
 
 debug = False
 # this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
@@ -182,7 +181,7 @@ def rule_delete(imapmail,id_list):
 def rule_save(imapmail,id_list,withAttachment="True"):
 	sqldatabase = sqlite3.connect(settings.get("database"))
 	cursor = sqldatabase.cursor()
-	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,attachment blob,korrektor text)")
+	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
 	for uid in id_list:
 		data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")

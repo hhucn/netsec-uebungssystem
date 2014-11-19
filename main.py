@@ -192,15 +192,11 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"BODY[text]")[0][1])
 		attachments = []
 		for mail_part in mail.walk():
-			if mail_part.get_content_maintype().upper() == "MULTIPART":
-				continue
-			if not mail_part.get("Content-Disposition"):
-				continue
-
-			if "base64" in mail_part.get("Content-Transfer-Encoding"):
-				attachments.append(mail_part.get_payload())
-			else:
-				attachments.append(base64.b64encode(mail_part.get_payload()))
+			if mail_part.get("Content-Transfer-Encoding"):
+				if "base64" in mail_part.get("Content-Transfer-Encoding"):
+					attachments.append(mail_part.get_payload())
+				else:
+					attachments.append(base64.b64encode(mail_part.get_payload()))
 
 		insertValues.append(",".join(attachments))
 

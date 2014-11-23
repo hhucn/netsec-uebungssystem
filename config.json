@@ -13,11 +13,15 @@
 			"title":"Aufgaben",
 			"steps":[
 				["filter","Subject","Testmail"],
-				["answer","Testmail empfangen!","Yippieh."],
-				["answer","Testmail","Uns wurde eine Testmail uebermittelt.","martin.dessauer@uni-duesseldorf.de"],
+				["answer","Testmail empfangen!","$RECEIVEDMAILEXTERN"],
+				["answer","Testmail","$RECEIVEDMAILINTERN","martin.dessauer@uni-duesseldorf.de"],
 				["save"],
 				["move","Testmails"]
 			]
 		}
-	]
+	],
+	"templates": {
+		"RECEIVEDMAILINTERN":"Es ist eine neue Mail im Postfach eingetroffen.",
+		"RECEIVEDMAILEXTERN":"Guten Tag, Ihre Mail wurde &uuml;bermittelt."
+	}
 }

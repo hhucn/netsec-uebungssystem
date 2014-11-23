@@ -29,9 +29,10 @@ def main():
 	imaplib.Commands["DONE"]=("AUTH","SELECTED",)
 
 	# Parsing config.json, making the settings global
-	global settings
+	global settings,templates
 	configFile = json.load(open("config.json"))
 	settings = configFile["settings"]
+	templates = configFile["templates"]
 
 	loglevel = settings.get("loglevel","ERROR")
 	if loglevel == "ALL":
@@ -149,7 +150,7 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 			if "noreply" in client_mail_addr:
 				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
 			else:
-				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(subject,text))
+				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(checkForTemplate(subject),checkForTemplate(text)))
 				rule_flag(imapmail,[uid],"NETSEC-Answered-" + subject_hash)
 	return id_list
 
@@ -208,6 +209,11 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 #
 # helper functions
 #
+
+def checkForTemplate(raw):
+	if raw[0] == "$":
+		return checkForTemplate(templates.get(raw[1:]))
+	return raw
 
 def imapCommand(imapmail,command,uid,*args):
 	if debug:

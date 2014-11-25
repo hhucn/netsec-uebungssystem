@@ -3,7 +3,7 @@
 		"smtpmail_server":  "smtp.gmail.com",
 		"imapmail_server":  "imap.gmail.com",
 		"mail_address": "netsec.imap.test@gmail.com",
-		"mail_password":"",
+		"mail_password":"tuxgit1337",
 		"loglevel":"ALL",
 		"database":"db.sqlite3",
 		"delay":3
@@ -22,8 +22,8 @@
 	],
 	"templates": {
 		"GREETING":"Guten Tag $VORNAME $NACHNAME",
-		"SIGN":"Das NetSec-&uuml;bungssystem.",
-		"GENERATEDNOTE":"<hr><small><i>Diese E-Mail wurde automatisch generiert.</i></small>",
+		"SIGN":"Das <i>NetSec</i>-&Uuml;bungssystem",
+		"GENERATEDNOTE":"<br><br><hr><small><i>Diese E-Mail wurde automatisch generiert.</i></small>",
 		"RECEIVEDMAILINTERN":"Es ist eine neue Mail im Postfach eingetroffen.",
 		"RECEIVEDMAILEXTERN":"$GREETING,<br><br>Ihre Abgabe wurde verzeichnet.<br><br>$SIGN<br>$GENERATEDNOTE"
 	}

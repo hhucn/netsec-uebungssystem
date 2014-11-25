@@ -3,7 +3,7 @@
 		"smtpmail_server":  "smtp.gmail.com",
 		"imapmail_server":  "imap.gmail.com",
 		"mail_address": "netsec.imap.test@gmail.com",
-		"mail_password":"tuxgit1337",
+		"mail_password":"",
 		"loglevel":"ALL",
 		"database":"db.sqlite3",
 		"delay":3

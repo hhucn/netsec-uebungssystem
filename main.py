@@ -14,6 +14,7 @@ from email.parser import Parser
 import email
 import sqlite3
 import base64
+import re
 
 debug = False
 # this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
@@ -211,8 +212,11 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 #
 
 def checkForTemplate(raw):
-	if raw[0] == "$":
-		return checkForTemplate(templates.get(raw[1:]))
+	varInRaw = re.findall("\$([A-Z]*)",raw)
+	if varInRaw:
+		for var in varInRaw:
+			if var in templates:
+				raw = raw.replace("$" + var,checkForTemplate(templates.get(var)))
 	return raw
 
 def imapCommand(imapmail,command,uid,*args):

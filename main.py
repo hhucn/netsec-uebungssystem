@@ -141,7 +141,7 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 		data = imapCommand(imapmail,"fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
 		rawMail = data[0][1]
 		if address == "(back)":
-			client_mail_addr = rawMail[rawMail.find("<")+1:rawMail.find(">")]
+			client_mail_addr = re.findall("\<[^ ]*\>",rawMail)[0]
 		else:
 			client_mail_addr = address
 		

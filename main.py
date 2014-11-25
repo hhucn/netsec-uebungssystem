@@ -150,7 +150,7 @@ def rule_answer(imapmail,id_list,subject,text,address="(back)"):
 			if "noreply" in client_mail_addr:
 				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
 			else:
-				smtpMail(client_mail_addr,"Subject: %s\n\n%s"%(checkForTemplate(subject),checkForTemplate(text)))
+				smtpMail(client_mail_addr,"Content-Type:text/html\nSubject: %s\n\n%s"%(checkForTemplate(subject),checkForTemplate(text)))
 				rule_flag(imapmail,[uid],"NETSEC-Answered-" + subject_hash)
 	return id_list
 

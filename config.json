@@ -21,7 +21,7 @@
 		}
 	],
 	"templates": {
-		"GREETING":"Guten Tag $VORNAME $NACHNAME",
+		"GREETING":"Guten Tag, <$MAILADDRESS>",
 		"SIGN":"Das <i>NetSec</i>-&Uuml;bungssystem",
 		"GENERATEDNOTE":"<br><br><hr><small><i>Diese E-Mail wurde automatisch generiert.</i></small>",
 		"RECEIVEDMAILINTERN":"Es ist eine neue Mail im Postfach eingetroffen.",

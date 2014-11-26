@@ -19,6 +19,7 @@ import re
 debug = False
 # this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
 
+
 #
 # core functions
 #
@@ -186,21 +187,18 @@ def rule_save(imapmail,id_list,withAttachment="True"):
 	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
 	for uid in id_list:
-		data = imapCommand(imapmail,"fetch",uid,"(BODY[HEADER])")
-		header = Parser().parsestr(data[0][1])
-		insertValues = [header["From"],header["Date"],header["Subject"],"(-)"]
-
-
-		mail = email.message_from_string(imapCommand(imapmail,"FETCH",uid,"BODY[text]")[0][1])
+		data = imapCommand(imapmail,"fetch",uid,"(RFC822)")
+		mail = Parser().parsestr(data[0][1])
+		insertValues = [mail["From"],mail["Date"],mail["Subject"],"(-)"]
 		attachments = []
-		for mail_part in mail.walk():
-			if mail_part.get("Content-Transfer-Encoding"):
-				if "base64" in mail_part.get("Content-Transfer-Encoding"):
-					attachments.append(mail_part.get_payload())
-				else:
-					attachments.append(base64.b64encode(mail_part.get_payload()))
 
-		insertValues.append(",".join(attachments))
+		for payloadPart in mail.walk():
+			if payloadPart.get("Content-Transfer-Encoding"):
+				if "base64" in payloadPart.get("Content-Transfer-Encoding"):
+					attachments.append(payloadPart.get_payload())
+				else:
+					attachments.append(base64.b64encode(payloadPart.get_payload()))
+		insertValues.append("$".join(attachments))
 
 		cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?)",insertValues)
 		sqldatabase.commit()

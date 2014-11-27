@@ -90,7 +90,7 @@ def main():
 	else:
 		logging.debug("Server lacks support for IDLE... Falling back to delay.")
 		while(True):
-			processRule(imapmail,rule["steps"])
+			processRule(mailContainer(imapmail,[],templates),rule["steps"])
 			time.sleep(settings.get("delay"))
 
 def login():

@@ -16,7 +16,7 @@ import sqlite3
 import base64
 import re
 
-debug = True
+debug = False
 # this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
 
 

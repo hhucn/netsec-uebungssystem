@@ -16,7 +16,8 @@ import sqlite3
 import base64
 import re
 
-debug = False
+
+debug = True
 # this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
 
 
@@ -32,12 +33,16 @@ class mailContainer():
 class mailElement():
 	uid = -1
 	templates = []
-	rfc822 = ""
+	email = ""
 
-	def __init__(self,uid,templates,rfc822):
+	def __init__(self,uid,templates,email):
 		self.uid = uid
 		self.templates = templates
-		self.rfc822 = rfc822
+		self.email = email
+		self.templates["MAILFROM"] = re.findall("\<[^ ]*\>",email["From"])[0]
+		self.templates["MAILDATE"] = email["Date"]
+		self.templates["MAILRECEIVED"] = email["Received"]
+
 
 #
 # core functions
@@ -71,26 +76,21 @@ def main():
 
 	if "idling" in imapmail.readline():
 		logging.debug("Server supports IDLE.")
-
-		# to process mails which already resists in the Inbox
-		imapmail._command("DONE")
-		imapmail.readline()
-
-		for rule in rules:
-			processRule(mailContainer(imapmail,[],templates),rule["steps"])
-
-		imapmail._command("IDLE")
-
+		firstRun = True
 		while(True):
-			if "EXISTS" in imapmail.readline():
+			if "EXISTS" in imapmail.readline() or firstRun:
 				imapmail._command("DONE")
 				imapmail.readline()
-				processRule(mailContainer(imapmail,[],templates),rule["steps"])
+				for rule in rules:
+					processRule(mailContainer(imapmail,[],templates),rule["steps"])
 				imapmail._command("IDLE")
+			firstRun = False
 	else:
 		logging.debug("Server lacks support for IDLE... Falling back to delay.")
 		while(True):
-			processRule(mailContainer(imapmail,[],templates),rule["steps"])
+			processRule(mailContainer(imapmail,[],templates),rules)
+			for rule in rules:
+				processRule(mailContainer(imapmail,[],templates),rule["steps"])
 			time.sleep(settings.get("delay"))
 
 def login():
@@ -102,6 +102,7 @@ def login():
 	return imapmail
 
 def smtpMail(to,what):
+	print to
 	smtpmail = smtplib.SMTP(settings.get("smtpmail_server"))
 	smtpmail.ehlo()
 	smtpmail.starttls()
@@ -114,22 +115,21 @@ def processRule(mailcontainer,rule):
 		print "**** rule"
 	for step in rule:
 		if debug:
-			print "exec: " + step[0]
+			print "* exec: " + step[0]
 		mailcontainer = getattr(sys.modules[__name__],"rule_" + step[0])(mailcontainer,*step[1:])
-		if not mailcontainer.uidlist:
+		if not mailcontainer.mails:
 			break
 		if debug:
-			print " ret: " + ",".join(mailcontainer.uidlist)
+			print "*  ret."
 	if debug:
 		print "**** done\n"
-
 
 
 #
 # rule functions
 #
 
-def rule_filter(mailcontainer,filterVariable,filterValue,mailbox="INBOX"):
+def rule_filter(mailcontainer,filterVariable,filterValue,mailbox="inbox"):
 	# returns all mails where filterVariable == filterValue
 
 	# see http://tools.ietf.org/html/rfc3501#section-6.4.4 (for search)
@@ -143,50 +143,45 @@ def rule_filter(mailcontainer,filterVariable,filterValue,mailbox="INBOX"):
 		
 		for uid in data:
 			if uid:
-				data = imapCommand(mailcontainer.imapmail,"fetch",uid,"(BODY[HEADER])")
-				header = Parser().parsestr(data[0][1])
-				if filterValue.upper() in header[filterVariable].upper():
-					mailcontainer.uidlist.append(uid)
-					print mailcontainer.uidlist
+				data = Parser().parsestr(imapCommand(mailcontainer.imapmail,"fetch",uid,"(rfc822)")[0][1])
+				if filterValue.upper() in data[filterVariable].upper():
+					mailcontainer.mails.append(mailElement(uid,templates,data))
 	return mailcontainer
 
 def rule_answer(mailcontainer,subject,text,address="(back)"):
 	# see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
-	for uid in mailcontainer.uidlist:
+	for mail in mailcontainer.mails:
 		hashobj = hashlib.md5()
 		hashobj.update(subject + text)
 		subject_hash = hashobj.hexdigest()
 
-		data = imapCommand(mailcontainer.imapmail,"fetch", uid, "(BODY[HEADER.FIELDS (FROM)])")
-		rawMail = data[0][1]
 		if address == "(back)":
-			client_mail_addr = re.findall("\<[^ ]*\>",rawMail)[0]
+			client_mail_addr = mail.email["From"]
 		else:
 			client_mail_addr = address
 		
-		if "NETSEC-Answered-" + subject_hash in imapCommand(mailcontainer.imapmail,"fetch",uid,"FLAGS"):
-			logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(uid,client_mail_addr,subject))
+		if "NETSEC-Answered-" + subject_hash in imapCommand(mailcontainer.imapmail,"fetch",mail.uid,"FLAGS"):
+			logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(mail.uid,client_mail_addr,subject))
 		else:
 			if "noreply" in client_mail_addr:
-				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(uid,client_mail_addr,subject))
+				logging.error("Error: Tried to answer automated mail. (uid %i, addr '%s' Subject '%s')"%(mail.uid,client_mail_addr,subject))
 			else:
-				smtpMail(client_mail_addr,"Content-Type:text/html\nSubject: %s\n\n%s"%(checkForTemplate(subject),checkForTemplate(text)))
-				rule_flag(mailContainer(mailcontainer.imapmail,[uid],[]),"NETSEC-Answered-" + subject_hash)
+				smtpMail(client_mail_addr,"Content-Type:text/html\nSubject: %s\n\n%s"%(checkForTemplate(mail,subject),checkForTemplate(mail,text)))
+				rule_flag(mailContainer(mailcontainer.imapmail,mail,[]),"NETSEC-Answered-" + subject_hash)
 	return mailcontainer
 
 def rule_move(mailcontainer,destination):
 	# moves the mails from id_list to mailbox destination
 	# warning: this alters the UID of the mails!
-	mailcontainer.imapmail.create(destination)
-	for uid in mailcontainer.uidlist:
+	imapCommand(mailcontainer.imapmail,"CREATE",[],destination)
+	for mail in mailcontainer.mails:
 		# https://tools.ietf.org/html/rfc6851
-		data = imapCommand(mailcontainer.imapmail,"MOVE",uid,destination)
-	mailcontainer.uidlist = []
-	return mailcontainer
+		imapCommand(mailcontainer.imapmail,"MOVE",mail.uid,destination)
+	# no "return mailcontainer" here, because the UIDs are invalid after movement.
 
 def rule_flag(mailcontainer,flag):
-	for uid in mailcontainer.uidlist:
-		imapCommand(mailcontainer.imapmail,"STORE",uid,"+FLAGS",flag.replace("\\","\\\\")) # could interpret \NETSEC as <newline>ETSEC
+	for mail in mailcontainer.mails:
+		imapCommand(mailcontainer.imapmail,"STORE",mail.uid,"+FLAGS",flag.replace("\\","\\\\")) # could interpret \NETSEC as <newline>ETSEC
 	return mailcontainer
 
 def rule_log(mailcontainer,lvl,msg):
@@ -197,7 +192,7 @@ def rule_log(mailcontainer,lvl,msg):
 	return mailcontainer
 
 def rule_delete(mailcontainer):
-	rule_flag(mailcontainer.imapmail,"DELETE")
+	rule_flag(mailcontainer,"DELETE")
 	mailcontainer.imapmail.expunge()
 	return mailcontainer
 
@@ -206,9 +201,8 @@ def rule_save(mailcontainer,withAttachment="True"):
 	cursor = sqldatabase.cursor()
 	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
-	for uid in mailcontainer.uidlist:
-		data = imapCommand(mailcontainer.imapmail,"fetch",uid,"(RFC822)")
-		mail = Parser().parsestr(data[0][1])
+	for mail in mailcontainer:
+		mail = mail.email
 		insertValues = [mail["From"],mail["Date"],mail["Subject"],"(-)"]
 		attachments = []
 
@@ -225,16 +219,17 @@ def rule_save(mailcontainer,withAttachment="True"):
 		sqldatabase.close()
 	return mailcontainer
 
+
 #
 # helper functions
 #
 
-def checkForTemplate(raw):
+def checkForTemplate(mail,raw):
 	varInRaw = re.findall("\$([A-Z]*)",raw)
 	if varInRaw:
 		for var in varInRaw:
-			if var in templates:
-				raw = raw.replace("$" + var,checkForTemplate(templates.get(var)))
+			if var in mail.templates:
+				raw = raw.replace("$" + var,checkForTemplate(mail,mail.templates[var]))
 	return raw
 
 def imapCommand(imapmail,command,uid,*args):

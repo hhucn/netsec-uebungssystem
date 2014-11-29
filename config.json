@@ -21,10 +21,10 @@
 		}
 	],
 	"templates": {
-		"GREETING":"Guten Tag, <$MAILADDRESS>",
+		"GREETING":"Guten Tag '$MAILFROM',",
 		"SIGN":"Das <i>NetSec</i>-&Uuml;bungssystem",
 		"GENERATEDNOTE":"<br><br><hr><small><i>Diese E-Mail wurde automatisch generiert.</i></small>",
-		"RECEIVEDMAILINTERN":"Es ist eine neue Mail im Postfach eingetroffen.",
-		"RECEIVEDMAILEXTERN":"$GREETING,<br><br>Ihre Abgabe wurde verzeichnet.<br><br>$SIGN<br>$GENERATEDNOTE"
+		"RECEIVEDMAILINTERN":"Es ist eine neue Mail im Postfach eingetroffen.<br>$MAILDATE",
+		"RECEIVEDMAILEXTERN":"$GREETING<br><br>Ihre Abgabe wurde verzeichnet.<br><br>$SIGN<br>$GENERATEDNOTE<hr>$MAILRECEIVED"
 	}
 }

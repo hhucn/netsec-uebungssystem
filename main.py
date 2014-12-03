@@ -117,10 +117,12 @@ def processRule(mailcontainer,rule):
 		if debug:
 			print "* exec: " + step[0]
 		mailcontainer = getattr(sys.modules[__name__],"rule_" + step[0])(mailcontainer,*step[1:])
+		if not mailcontainer:
+			break
 		if not mailcontainer.mails:
 			break
 		if debug:
-			print "*  ret."
+			print "*  ret " + str(len(mailcontainer.mails)) + " mails"
 	if debug:
 		print "**** done\n"
 
@@ -173,7 +175,7 @@ def rule_answer(mailcontainer,subject,text,address="(back)"):
 def rule_move(mailcontainer,destination):
 	# moves the mails from id_list to mailbox destination
 	# warning: this alters the UID of the mails!
-	imapCommand(mailcontainer.imapmail,"CREATE",[],destination)
+	mailcontainer.imapmail.create(destination)
 	for mail in mailcontainer.mails:
 		# https://tools.ietf.org/html/rfc6851
 		imapCommand(mailcontainer.imapmail,"MOVE",mail.uid,destination)
@@ -201,7 +203,7 @@ def rule_save(mailcontainer,withAttachment="True"):
 	cursor = sqldatabase.cursor()
 	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
-	for mail in mailcontainer:
+	for mail in mailcontainer.mails:
 		mail = mail.email
 		insertValues = [mail["From"],mail["Date"],mail["Subject"],"(-)"]
 		attachments = []
@@ -234,7 +236,7 @@ def checkForTemplate(mail,raw):
 
 def imapCommand(imapmail,command,uid,*args):
 	if debug:
-		print "\t" + command + " " + uid + " " + " ".join(args)
+		print "\t" + command + " " + str(uid) + " " + " ".join(args)
 
 	# IMAP Command caller with error handling
 	if uid:

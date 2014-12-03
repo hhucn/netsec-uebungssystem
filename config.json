@@ -6,7 +6,8 @@
 		"mail_password":"",
 		"loglevel":"ALL",
 		"database":"db.sqlite3",
-		"delay":3
+		"delay":3,
+		"debug":1
 	},
 	"rules": [
 		{
@@ -21,10 +22,11 @@
 		}
 	],
 	"templates": {
-		"GREETING":"Guten Tag '$MAILFROM',",
+		"GREETING":"Guten Tag <i>$MAILFROM</i>,",
 		"SIGN":"Das <i>NetSec</i>-&Uuml;bungssystem",
 		"GENERATEDNOTE":"<br><br><hr><small><i>Diese E-Mail wurde automatisch generiert.</i></small>",
+
 		"RECEIVEDMAILINTERN":"Es ist eine neue Mail im Postfach eingetroffen.<br>$MAILDATE",
-		"RECEIVEDMAILEXTERN":"$GREETING<br><br>Ihre Abgabe wurde verzeichnet.<br><br>$SIGN<br>$GENERATEDNOTE<hr>$MAILRECEIVED"
+		"RECEIVEDMAILEXTERN":"$GREETING<br><br>Ihre Abgabe wurde verzeichnet.<br><br>$SIGN<br>$GENERATEDNOTE<hr><small><i>$MAILRECEIVED</i></small>"
 	}
 }

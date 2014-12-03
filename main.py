@@ -17,8 +17,7 @@ import base64
 import re
 
 
-debug = True
-# this may be used along with $ openssl s_client -crlf -connect imap.gmail.com:993
+# useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 
 
 class mailContainer():
@@ -39,7 +38,7 @@ class mailElement():
 		self.uid = uid
 		self.templates = templates
 		self.email = email
-		self.templates["MAILFROM"] = re.findall("\<[^ ]*\>",email["From"])[0]
+		self.templates["MAILFROM"] = email["From"]
 		self.templates["MAILDATE"] = email["Date"]
 		self.templates["MAILRECEIVED"] = email["Received"]
 
@@ -102,7 +101,6 @@ def login():
 	return imapmail
 
 def smtpMail(to,what):
-	print to
 	smtpmail = smtplib.SMTP(settings.get("smtpmail_server"))
 	smtpmail.ehlo()
 	smtpmail.starttls()
@@ -111,19 +109,19 @@ def smtpMail(to,what):
 	smtpmail.quit()
 
 def processRule(mailcontainer,rule):
-	if debug:
+	if settings.get("debug") == 1:
 		print "**** rule"
 	for step in rule:
-		if debug:
+		if settings.get("debug") == 1:
 			print "* exec: " + step[0]
 		mailcontainer = getattr(sys.modules[__name__],"rule_" + step[0])(mailcontainer,*step[1:])
 		if not mailcontainer:
 			break
 		if not mailcontainer.mails:
 			break
-		if debug:
+		if settings.get("debug") == 1:
 			print "*  ret " + str(len(mailcontainer.mails)) + " mails"
-	if debug:
+	if settings.get("debug") == 1:
 		print "**** done\n"
 
 
@@ -235,7 +233,7 @@ def checkForTemplate(mail,raw):
 	return raw
 
 def imapCommand(imapmail,command,uid,*args):
-	if debug:
+	if settings.get("debug") == 1:
 		print "\t" + command + " " + str(uid) + " " + " ".join(args)
 
 	# IMAP Command caller with error handling

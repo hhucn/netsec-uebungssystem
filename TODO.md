@@ -28,3 +28,7 @@ manually configured aliases
 ~~local database (sqlite?) for ratings~~ local sqlite database to store attachments :heavy_check_mark:
 
 ~~(web/cli) interface to actually rate homework~~
+
+**move from sqlite to actual directories/files due to sqlites size limit (0.9MB)?**
+
+**tokens as authentication? Would make mail aliases obsolete and prevents mail spoofing.**

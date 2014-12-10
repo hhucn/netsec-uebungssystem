@@ -15,7 +15,7 @@ import email
 import sqlite3
 import base64
 import re
-
+import os
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 
@@ -194,29 +194,59 @@ def rule_log(mailcontainer,lvl,msg):
 def rule_delete(mailcontainer):
 	rule_flag(mailcontainer,"DELETE")
 	mailcontainer.imapmail.expunge()
-	return mailcontainer
 
-def rule_save(mailcontainer,withAttachment="True"):
-	sqldatabase = sqlite3.connect(settings.get("database"))
-	cursor = sqldatabase.cursor()
-	cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
+def rule_save(mailcontainer):
+	if settings.get("savemode") == "db":
+		sqldatabase = sqlite3.connect(settings.get("database"))
+		cursor = sqldatabase.cursor()
+		cursor.execute("CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
-	for mail in mailcontainer.mails:
-		mail = mail.email
-		insertValues = [mail["From"],mail["Date"],mail["Subject"],"(-)"]
-		attachments = []
+		for mail in mailcontainer.mails:
+			mail = mail.email
+			insertValues = [mail["From"],mail["Date"],mail["Subject"],"(-)"]
+			attachments = []
 
-		for payloadPart in mail.walk():
-			if payloadPart.get("Content-Transfer-Encoding"):
-				if "base64" in payloadPart.get("Content-Transfer-Encoding"):
-					attachments.append(payloadPart.get_payload())
+			for payloadPart in mail.walk():
+				if payloadPart.get("Content-Transfer-Encoding"):
+					if "base64" in payloadPart.get("Content-Transfer-Encoding"):
+						attachments.append(payloadPart.get_payload())
+					else:
+						attachments.append(base64.b64encode(payloadPart.get_payload()))
+			insertValues.append("$".join(attachments))
+
+			cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?)",insertValues)
+			sqldatabase.commit()
+			sqldatabase.close()
+	elif settings.get("savemode") == "file":
+		retdir = os.getcwd()
+
+		for mail in mailcontainer.mails:
+			print "ping"
+			mail = mail.email
+
+			if not os.path.exists("attachments"):
+				os.mkdir("attachments")
+			os.chdir("attachments")
+
+			if not os.path.exists(mail["From"]):
+				os.mkdir(mail["From"])
+			os.chdir(mail["From"])
+
+			if not os.path.exists(mail["Date"]):
+				os.mkdir(mail["Date"])
+			os.chdir(mail["Date"])
+
+			for payloadPart in mail.walk():
+				if payloadPart.get_filename():
+					attachFile = open(payloadPart.get_filename(),"w")
+				elif payloadPart.get_payload():
+					attachFile = open("mailtext.txt","a")
 				else:
-					attachments.append(base64.b64encode(payloadPart.get_payload()))
-		insertValues.append("$".join(attachments))
-
-		cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?)",insertValues)
-		sqldatabase.commit()
-		sqldatabase.close()
+					pass
+				attachFile.write(str(payloadPart.get_payload(decode="True")))
+				attachFile.close()
+			os.chdir(retdir)
+			print "plop"
 	return mailcontainer
 
 

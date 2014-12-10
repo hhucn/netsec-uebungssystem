@@ -5,19 +5,26 @@
 		"mail_address": "netsec.imap.test@gmail.com",
 		"mail_password":"",
 		"loglevel":"ALL",
+		"savemode":"file",
 		"database":"db.sqlite3",
 		"delay":3,
-		"debug":1
+		"debug":0
 	},
 	"rules": [
 		{
 			"title":"Aufgaben",
 			"steps":[
 				["filter","Subject","Testmail"],
-				["answer","Testmail empfangen!","$RECEIVEDMAILEXTERN"],
-				["answer","Testmail","$RECEIVEDMAILINTERN","martin.dessauer@uni-duesseldorf.de"],
 				["save"],
-				["move","Testmails"]
+				["delete"]
+			]
+		},
+		{
+			"title":"echo",
+			"steps":[
+				["filter","Subject","Echo"],
+				["answer","Echo.","$SIGN"],
+				["delete"]
 			]
 		}
 	],

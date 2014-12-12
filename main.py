@@ -20,7 +20,7 @@ import os
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 
 
-class mailContainer():
+class mailContainer(object):
 	imapmail = 0
 	mails = []
 
@@ -29,7 +29,7 @@ class mailContainer():
 		self.uidlist = uid
 		self.templates = temp
 
-class mailElement():
+class mailElement(object):
 	uid = -1
 	templates = []
 	email = ""

@@ -108,21 +108,22 @@ def smtpMail(to,what):
 	smtpmail.sendmail(settings.get("mail_address"), to, what)
 	smtpmail.quit()
 
+
+def debug_print(msg):
+	if settings.get('debug') == 1:
+		print(msg)
+
 def processRule(mailcontainer,rule):
-	if settings.get("debug") == 1:
-		print "**** rule"
+	debug_print("**** rule")
 	for step in rule:
-		if settings.get("debug") == 1:
-			print "* exec: " + step[0]
+		debug_print("* exec: %s" % step[0])
 		mailcontainer = getattr(sys.modules[__name__],"rule_" + step[0])(mailcontainer,*step[1:])
 		if not mailcontainer:
 			break
 		if not mailcontainer.mails:
 			break
-		if settings.get("debug") == 1:
-			print "*  ret " + str(len(mailcontainer.mails)) + " mails"
-	if settings.get("debug") == 1:
-		print "**** done\n"
+		debug_print("*  ret %d mails" % len(mailcontainer.mails))
+	debug_print("**** done\n")
 
 
 #
@@ -221,7 +222,6 @@ def rule_save(mailcontainer):
 		retdir = os.getcwd()
 
 		for mail in mailcontainer.mails:
-			print "ping"
 			mail = mail.email
 
 			if not os.path.exists("attachments"):
@@ -246,7 +246,6 @@ def rule_save(mailcontainer):
 				attachFile.write(str(payloadPart.get_payload(decode="True")))
 				attachFile.close()
 			os.chdir(retdir)
-			print "plop"
 	return mailcontainer
 
 
@@ -263,8 +262,7 @@ def checkForTemplate(mail,raw):
 	return raw
 
 def imapCommand(imapmail,command,uid,*args):
-	if settings.get("debug") == 1:
-		print "\t" + command + " " + str(uid) + " " + " ".join(args)
+	debug_print("\t%s %s %s" % (command, uid, " ".join(args)))
 
 	# IMAP Command caller with error handling
 	if uid:

@@ -58,16 +58,12 @@ def main():
     configFile = json.load(open("config.json"))
     settings = configFile["settings"]
     templates = configFile["templates"]
-
-    loglevel = settings.get("loglevel","ERROR")
-    if loglevel == "ALL":
-        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.DEBUG)
-    elif loglevel == "ERROR":
-        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.ERROR)
-    elif loglevel == "CRITICAL":
-        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.CRITICAL)
-
     rules = configFile["rules"]
+
+    if settings.get("loglevel","ERROR") == "ERROR":
+        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.ERROR)
+    else:
+        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.DEBUG)
 
     imapmail = login()
     imapmail._command("IDLE")
@@ -108,22 +104,17 @@ def smtpMail(to,what):
     smtpmail.sendmail(settings.get("mail_address"), to, what)
     smtpmail.quit()
 
-
-def debug_print(msg):
-    if settings.get('debug') == 1:
-        print(msg)
-
 def processRule(mailcontainer,rule):
-    debug_print("**** rule")
+    logging.debug("**** rule")
     for step in rule:
-        debug_print("* exec: %s" % step[0])
+        logging.debug("* exec: %s" % step[0])
         mailcontainer = getattr(sys.modules[__name__],"rule_" + step[0])(mailcontainer,*step[1:])
         if not mailcontainer:
             break
         if not mailcontainer.mails:
             break
-        debug_print("*  ret %d mails" % len(mailcontainer.mails))
-    debug_print("**** done\n")
+        logging.debug("*  ret %d mails" % len(mailcontainer.mails))
+    logging.debug("**** done\n")
 
 
 #
@@ -262,7 +253,7 @@ def checkForTemplate(mail,raw):
     return raw
 
 def imapCommand(imapmail,command,uid,*args):
-    debug_print("\t%s %s %s" % (command, uid, " ".join(args)))
+    logging.debug("\t%s %s %s" % (command, uid, " ".join(args)))
 
     # IMAP Command caller with error handling
     if uid:

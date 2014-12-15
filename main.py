@@ -148,7 +148,7 @@ def rule_answer(mailcontainer,subject,text,address="(back)"):
         else:
             client_mail_addr = address
 
-        if "NETSEC-Answered-" + subject_hash in imapCommand(mailcontainer.imapmail,"fetch",mail.uid,"FLAGS"):
+        if "NETSEC-Answered-" + subject_hash in imapCommand(mailcontainer.imapmail,"fetch",mail.uid,"FLAGS")[0]:
             logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(mail.uid,client_mail_addr,subject))
         else:
             if "noreply" in client_mail_addr:

@@ -60,10 +60,7 @@ def main():
     templates = configFile["templates"]
     rules = configFile["rules"]
 
-    if settings.get("loglevel","ERROR") == "ERROR":
-        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.ERROR)
-    else:
-        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.DEBUG)
+    logging.basicConfig(format="%(asctime)s %(message)s",level=(logging.ERROR if settings.get("loglevel","ERROR") == "ERROR" else logging.DEBUG))
 
     imapmail = login()
     imapmail._command("IDLE")
@@ -113,7 +110,7 @@ def processRule(mailcontainer,rule):
             break
         if not mailcontainer.mails:
             break
-        logging.debug("*  ret %d mails" % len(mailcontainer.mails))
+        logging.debug("*  ret %d mail(s)" % len(mailcontainer.mails))
     logging.debug("**** done\n")
 
 

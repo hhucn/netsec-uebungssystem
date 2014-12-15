@@ -10,7 +10,6 @@ import json
 import logging
 import hashlib
 import sys
-from email.parser import Parser
 import email
 import sqlite3
 import base64
@@ -132,7 +131,7 @@ def rule_filter(mailcontainer,filterVariable,filterValue,mailbox="inbox"):
         
         for uid in data:
             if uid:
-                data = Parser().parsestr(imapCommand(mailcontainer.imapmail,"fetch",uid,"(rfc822)")[0][1])
+                data = email.message_from_string(imapCommand(mailcontainer.imapmail,"fetch",uid,"(rfc822)")[0][1])
                 if filterValue.upper() in data[filterVariable].upper():
                     mailcontainer.mails.append(mailElement(uid,templates,data))
     return mailcontainer

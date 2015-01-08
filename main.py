@@ -21,13 +21,10 @@ import rules
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 
 class mailContainer(object):
-    imapmail = 0
-    mails = []
-
-    def __init__(self,imap,uid,temp):
+    def __init__(self,imap,uid,var):
         self.imapmail = imap
         self.uidlist = uid
-        self.templates = temp
+        self.variables = var
 
 
 #
@@ -41,10 +38,10 @@ def main():
     imaplib.Commands["DONE"] = ("AUTH","SELECTED",)
 
     # Parsing config.json, making the settings global
-    global settings,templates,login
+    global settings,login
     configFile = json.load(open("config.json"))
     settings = configFile["settings"]
-    templates = configFile["templates"]
+    variables = configFile["variables"]
     rules = configFile["rules"]
     login = json.load(open("login.json"))
 
@@ -62,15 +59,15 @@ def main():
                 imapmail._command("DONE")
                 imapmail.readline()
                 for rule in rules:
-                    processRule(mailContainer(imapmail,[],templates),rule["steps"])
+                    processRule(mailContainer(imapmail,[],variables),rule["steps"])
                 imapmail._command("IDLE")
             firstRun = False
     else:
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while(True):
-            processRule(mailContainer(imapmail,[],templates),rules)
+            processRule(mailContainer(imapmail,[],variables),rules)
             for rule in rules:
-                processRule(mailContainer(imapmail,[],templates),rule["steps"])
+                processRule(mailContainer(imapmail,[],variables),rule["steps"])
             time.sleep(settings.get("delay"))
 
 def loginIMAP(server,address,password):

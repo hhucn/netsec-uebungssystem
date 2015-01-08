@@ -4,8 +4,8 @@ def checkForTemplate(mail,raw):
     varInRaw = re.findall("\$([A-Z]*)",raw)
     if varInRaw:
         for var in varInRaw:
-            if var in mail.templates:
-                raw = raw.replace("$" + var,checkForTemplate(mail,mail.templates[var]))
+            if var in mail.variables:
+                raw = raw.replace("$" + var,checkForTemplate(mail,mail.variables[var]))
     return raw
 
 def imapCommand(imapmail,command,uid,*args):

@@ -1,9 +1,5 @@
 {
 	"settings": {
-		"smtpmail_server":  "smtp.gmail.com",
-		"imapmail_server":  "imap.gmail.com",
-		"mail_address": "netsec.imap.test@gmail.com",
-		"mail_password":"",
 		"loglevel":"ALL",
 		"savemode":"file",
 		"database":"db.sqlite3",
@@ -27,7 +23,7 @@
 			]
 		}
 	],
-	"templates": {
+	"variables": {
 		"GREETING":"Guten Tag <i>$MAILFROM</i>,",
 		"SIGN":"Das <i>NetSec</i>-&Uuml;bungssystem",
 		"GENERATEDNOTE":"<br><br><hr><small><i>Diese E-Mail wurde automatisch generiert.</i></small>",

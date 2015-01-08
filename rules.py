@@ -3,26 +3,19 @@ import email
 import helper
 
 class mailContainer(object):
-    imapmail = 0
-    mails = []
-
-    def __init__(self,imap,uid,temp):
+    def __init__(self,imap,uid,var):
         self.imapmail = imap
         self.uidlist = uid
-        self.templates = temp
+        self.variables = var
 
 class mailElement(object):
-    uid = -1
-    templates = []
-    email = ""
-
-    def __init__(self,uid,templates,email):
+    def __init__(self,uid,var,email):
         self.uid = uid
-        self.templates = templates
+        self.variables = var
         self.email = email
-        self.templates["MAILFROM"] = email["From"]
-        self.templates["MAILDATE"] = email["Date"]
-        self.templates["MAILRECEIVED"] = email["Received"]
+        self.variables["MAILFROM"] = email["From"]
+        self.variables["MAILDATE"] = email["Date"]
+        self.variables["MAILRECEIVED"] = email["Received"]
 
 def filter(mailcontainer,filterVariable,filterValue,mailbox="inbox"):
     # returns all mails where filterVariable == filterValue
@@ -40,7 +33,7 @@ def filter(mailcontainer,filterVariable,filterValue,mailbox="inbox"):
             if uid:
                 data = email.message_from_string(helper.imapCommand(mailcontainer.imapmail,"fetch",uid,"(rfc822)")[0][1])
                 if filterValue.upper() in data[filterVariable].upper():
-                    mailcontainer.mails.append(mailElement(uid,templates,data))
+                    mailcontainer.mails.append(mailElement(uid,variables,data))
     return mailcontainer
 
 def answer(mailcontainer,subject,text,address="(back)"):

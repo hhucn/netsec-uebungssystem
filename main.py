@@ -28,6 +28,8 @@ class mailContainer(object):
         self.imapmail = imap
         self.uidlist = uid
         self.templates = temp
+
+
 #
 # core functions
 #
@@ -48,7 +50,7 @@ def main():
 
     logging.basicConfig(format="%(asctime)s %(message)s",level=(logging.ERROR if settings.get("loglevel","ERROR") == "ERROR" else logging.DEBUG))
 
-    imapmail = loginIMAP()
+    imapmail = loginIMAP(login.get("imapmail_server"),login.get("mail_address"),login.get("mail_password"))
     imapmail._command("IDLE")
     
 
@@ -71,11 +73,11 @@ def main():
                 processRule(mailContainer(imapmail,[],templates),rule["steps"])
             time.sleep(settings.get("delay"))
 
-def loginIMAP():
-    imapmail = imaplib.IMAP4_SSL(login.get("imapmail_server"))
-    imapmail.login(login.get("mail_address"),login.get("mail_password"))
+def loginIMAP(server,address,password):
+    imapmail = imaplib.IMAP4_SSL(server)
+    imapmail.login(address,password)
     imapmail.select()
-    logging.info("IMAP login (%s on %s)" % (login.get("mail_address"),login.get("imapmail_server")))
+    logging.info("IMAP login (%s on %s)"%(address,server))
     return imapmail
 
 def smtpMail(to,what):

@@ -1,6 +1,11 @@
 import logging
 import email
+import sqlite3
+import base64
+import hashlib
+
 import helper
+
 
 class mailContainer(object):
     def __init__(self,imap,uid,var):

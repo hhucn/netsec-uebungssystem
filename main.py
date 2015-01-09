@@ -8,11 +8,7 @@ import smtplib
 import time
 import json
 import logging
-import hashlib
 import sys
-import sqlite3
-import base64
-import re
 import os
 
 import helper

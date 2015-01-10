@@ -1,11 +1,11 @@
 import logging
 
-def checkForTemplate(mail,raw):
+def checkForVariable(mail,raw):
     varInRaw = re.findall("\$([A-Z]*)",raw)
     if varInRaw:
         for var in varInRaw:
             if var in mail.variables:
-                raw = raw.replace("$" + var,checkForTemplate(mail,mail.variables[var]))
+                raw = raw.replace("$" + var,checkForVariable(mail,mail.variables[var]))
     return raw
 
 def imapCommand(imapmail,command,uid,*args):

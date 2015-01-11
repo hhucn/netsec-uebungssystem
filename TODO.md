@@ -29,6 +29,6 @@ manually configured aliases
 
 ~~(web/cli) interface to actually rate homework~~
 
-**move from sqlite to actual directories/files due to sqlites size limit (0.9MB)?**
+~~move from sqlite to actual directories/files due to sqlites size limit (0.9MB)?~~ is an option now. :heavy_check_mark:
 
-**tokens as authentication? Would make mail aliases obsolete and prevents mail spoofing.**
+~~tokens as authentication? Would make mail aliases obsolete and prevents mail spoofing.~~

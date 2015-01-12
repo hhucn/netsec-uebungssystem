@@ -6,13 +6,6 @@ import hashlib
 
 import helper
 
-
-class mailContainer(object):
-    def __init__(self,imap,uid,var):
-        self.imapmail = imap
-        self.uidlist = uid
-        self.variables = var
-
 class mailElement(object):
     def __init__(self,uid,var,email):
         self.uid = uid

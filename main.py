@@ -16,13 +16,6 @@ import rules
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 
-class mailContainer(object):
-    def __init__(self,imap,uid,var):
-        self.imapmail = imap
-        self.uidlist = uid
-        self.variables = var
-
-
 #
 # core functions
 #

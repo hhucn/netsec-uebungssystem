@@ -16,23 +16,20 @@ class mailElement(object):
         self.variables["MAILDATE"] = text["Date"]
         self.variables["MAILRECEIVED"] = text["Received"]
 
-def filter(imapmail,mails,filterVariable,filterValue,mailbox="inbox"):
-    # returns all mails where filterVariable == filterValue
-
+def filter(imapmail,mails,filterCriteria,mailbox="inbox"):
     # see http://tools.ietf.org/html/rfc3501#section-6.4.4 (for search)
     # and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
     imapmail.select(mailbox)
 
-    data = helper.imapCommand(imapmail,"search","ALL","*")
-    if data != ['']:
-        if filterVariable == "ALL":
-            return data
-        
-        for uid in data:
-            if uid:
-                data = email.message_from_string(helper.imapCommand(imapmail,"fetch",uid,"(rfc822)")[0][1])
-                if filterValue.upper() in data[filterVariable].upper():
-                    mails.append(mailElement(uid,helper.getConfigValue("variables"),data))
+    data = helper.imapCommand(imapmail,"search",filterCriteria)[0]
+
+    print(data)
+
+    mails = []
+
+    for uid in data.split():
+        data = email.message_from_string(helper.imapCommand(imapmail,"fetch",uid,"(rfc822)")[0][1])
+        mails.append(mailElement(uid,helper.getConfigValue("variables"),data))
     return mails
 
 def answer(imapmail,mails,subject,text,address="(back)"):

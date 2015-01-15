@@ -1,6 +1,6 @@
 {
 	"settings": {
-		"loglevel":"ALL",
+		"loglevel":"DEBUG",
 		"savemode":"file",
 		"database":"db.sqlite3",
 		"delay":3
@@ -9,7 +9,7 @@
 		{
 			"title":"Aufgaben",
 			"steps":[
-				["filter","Subject","Testmail"],
+				["filter","SUBJECT Testmail"],
 				["save"],
 				["delete"]
 			]
@@ -17,7 +17,7 @@
 		{
 			"title":"echo",
 			"steps":[
-				["filter","Subject","Echo"],
+				["filter","SUBJECT Echo"],
 				["answer","Echo.","$SIGN"],
 				["delete"]
 			]

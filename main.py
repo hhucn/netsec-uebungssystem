@@ -58,6 +58,7 @@ def main():
             for rule in rules:
                 processRule(mailContainer(imapmail,[],variables),rule["steps"])
             time.sleep(settings.get("delay"))
+            firstRun = False
 
 def loginIMAP(server,address,password):
     imapmail = imaplib.IMAP4_SSL(server)

@@ -34,7 +34,7 @@ def main():
     rules = configFile["rules"]
     login = json.load(open("login.json"))
 
-    logging.basicConfig(format="%(asctime)s %(message)s",level=(logging.ERROR if settings.get("loglevel","ERROR") == "ERROR" else logging.DEBUG))
+    logging.basicConfig(format="%(asctime)s %(message)s",level=(logging.ERROR if settings.get("loglevel","ERROR") is "ERROR" else logging.DEBUG))
 
     imapmail = loginIMAP(login.get("imapmail_server"),login.get("mail_address"),login.get("mail_password"))
     imapmail._command("IDLE")
@@ -43,7 +43,7 @@ def main():
     if "idling" in imapmail.readline():
         logging.debug("Server supports IDLE.")
         firstRun = True
-        while(True):
+        while(True or firstRun):
             if "EXISTS" in imapmail.readline() or firstRun:
                 imapmail._command("DONE")
                 imapmail.readline()
@@ -53,7 +53,7 @@ def main():
             firstRun = False
     else:
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
-        while(True):
+        while(True or firstRun):
             processRule(mailContainer(imapmail,[],variables),rules)
             for rule in rules:
                 processRule(mailContainer(imapmail,[],variables),rule["steps"])

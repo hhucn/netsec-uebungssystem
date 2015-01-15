@@ -1,4 +1,8 @@
 import logging
+import json
+import re
+import smtplib
+
 
 def checkForVariable(mail,raw):
     varInRaw = re.findall("\$([A-Z]*)",raw)
@@ -23,3 +27,16 @@ def imapCommand(imapmail,command,uid,*args):
         logging.error("Server responded with Code '%s' for '%s %s %s'."%(code,command,uid,args))
         raise self.error("Server responded with Code '%s' for '%s %s %s'."%(code,command,uid,args))
         return []
+
+def getConfigValue(what):
+    if "login" in what:
+        return json.load(open("login.json"))
+    return json.load(open("config.json"))[what]
+
+def smtpMail(to,what):
+    smtpmail = smtplib.SMTP(getConfigValue("login")["smtpmail_server"])
+    smtpmail.ehlo()
+    smtpmail.starttls()
+    smtpmail.login(getConfigValue("login")["mail_address"],getConfigValue("login")["mail_password"])
+    smtpmail.sendmail(getConfigValue("login")["mail_address"], to, what)
+    smtpmail.quit()

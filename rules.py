@@ -23,8 +23,6 @@ def filter(imapmail,mails,filterCriteria,mailbox="inbox"):
 
     data = helper.imapCommand(imapmail,"search",filterCriteria)[0]
 
-    print(data)
-
     mails = []
 
     for uid in data.split():
@@ -41,8 +39,6 @@ def answer(imapmail,mails,subject,text,address="(back)"):
         hashobj = hashlib.md5()
         hashobj.update("%s: %s"%(subject,text))
         subjectHash = hashobj.hexdigest()
-
-        logging.debug(subjectHash)
 
         if address == "(back)":
             clientMailAddress = mail.variables["MAILFROM"]

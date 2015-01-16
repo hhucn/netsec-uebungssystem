@@ -58,9 +58,10 @@ def processRule(imapmail,rule):
     for step in rule["steps"]:
         logging.debug("* exec: %s" % step[0])
         mails = getattr(sys.modules["rules"],step[0])(imapmail,mails,*step[1:])
-        logging.debug("*  ret %d mail(s)" % len(mails))
         if not mails:
+            logging.debug("*  ret no mails")
             break
+        logging.debug("*  ret %d mail(s)" % len(mails))
     logging.debug("**** done: '%s'"%rule["title"])
 
 def loginIMAP(server,address,password):

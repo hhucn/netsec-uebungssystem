@@ -38,6 +38,7 @@ def main():
                 imapmail.readline()
                 ruleLoop(imapmail)
                 imapmail._command("IDLE")
+                logging.debug("Entering IDLE state.")
             firstRun = False
     else:
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
@@ -47,20 +48,20 @@ def main():
 
 def ruleLoop(imapmail):
     for rule in helper.getConfigValue("rules"):
-        processRule(imapmail,rule["steps"])
+        processRule(imapmail,rule)
 
 def processRule(imapmail,rule):
-    logging.debug("**** rule")
+    logging.debug("**** rule: '%s'"%rule["title"])
 
     mails = []
 
-    for step in rule:
+    for step in rule["steps"]:
         logging.debug("* exec: %s" % step[0])
         mails = getattr(sys.modules["rules"],step[0])(imapmail,mails,*step[1:])
+        logging.debug("*  ret %d mail(s)" % len(mails))
         if not mails:
             break
-        logging.debug("*  ret %d mail(s)" % len(mails))
-    logging.debug("**** done\n")
+    logging.debug("**** done: '%s'"%rule["title"])
 
 def loginIMAP(server,address,password):
     imapmail = imaplib.IMAP4_SSL(server)

@@ -69,7 +69,7 @@ def flag(imapmail,mails,flag):
         mails = [mails]
 
     for mail in mails:
-        helper.imapCommand(imapmail,"STORE",mail.uid,"+FLAGS",flag.replace("\\","\\\\")) # could interpret \NETSEC as <newline>ETSEC
+        helper.imapCommand(imapmail,"STORE",mail.uid,"+FLAGS",flag)
     return mails
 
 def log(imapmail,mails,lvl,msg):
@@ -80,10 +80,13 @@ def log(imapmail,mails,lvl,msg):
     return mails
 
 def delete(imapmail,mails):
-    flag(imapmail,mails,"DELETE")
+    flag(imapmail,mails,"\\DELETED")
     imapmail.expunge()
 
 def save(imapmail,mails):
+    if isinstance(mails,mailElement):
+        mails = [mails]
+
     if helper.getConfigValue("settings")["savemode"] == "db":
         sqldatabase = sqlite3.connect(helper.getConfigValue("settings")["database"])
         cursor = sqldatabase.cursor()

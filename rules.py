@@ -62,7 +62,7 @@ def move(imapmail,mails,destination):
     for mail in mails:
         # https://tools.ietf.org/html/rfc6851
         helper.imapCommand(imapmail,"MOVE",mail.uid,destination)
-    # no "return mails" here, because the UIDs are invalid after movement.
+    return mails
 
 def flag(imapmail,mails,flag):
     if isinstance(mails,mailElement):

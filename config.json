@@ -10,15 +10,21 @@
 			"title":"Aufgaben",
 			"steps":[
 				["filter","SUBJECT Testmail"],
+				["answer","NetSec-Uebungssystem: Abgabe","$RECEIVEDMAILEXTERN"],
 				["save"],
 				["delete"]
 			]
 		},
 		{
-			"title":"echo",
+			"title":"Benchmark",
 			"steps":[
-				["filter","SUBJECT Echo"],
-				["answer","Echo.","$SIGN"],
+				["filter","SUBJECT Benchmark"],
+				["answer","NetSec-Uebungssystem: Abgabe","$RECEIVEDMAILEXTERN"],
+				["answer","NetSec-Uebungssystem: Abgabe eingegangen","$RECEIVEDMAILINTERN","martin.dessauer@hhu.de"],
+				["flag","SAVED"],
+				["log","Benchmark mail received."],
+				["move","Benchmark"],
+				["save"],
 				["delete"]
 			]
 		}

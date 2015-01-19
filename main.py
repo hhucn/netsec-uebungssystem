@@ -29,11 +29,11 @@ def main():
     imapmail._command("IDLE")
     
 
-    if "idling" in imapmail.readline():
+    if "idling" in imapmail.readline().decode("utf-8"):
         logging.debug("Server supports IDLE.")
         firstRun = True
         while(True):
-            if firstRun or "EXISTS" in imapmail.readline():
+            if firstRun or "EXISTS" in imapmail.readline().decode("utf-8"):
                 imapmail._command("DONE")
                 imapmail.readline()
                 ruleLoop(imapmail)

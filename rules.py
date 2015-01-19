@@ -26,7 +26,7 @@ def filter(imapmail,mails,filterCriteria,mailbox="inbox"):
     mails = []
 
     for uid in data.split():
-        data = email.message_from_string(helper.imapCommand(imapmail,"fetch",uid,"(rfc822)")[0][1])
+        data = email.message_from_string(helper.imapCommand(imapmail,"fetch",uid,"(rfc822)")[0][1].decode("utf-8"))
         mails.append(mailElement(uid,helper.getConfigValue("variables"),data))
     return mails
 
@@ -37,7 +37,7 @@ def answer(imapmail,mails,subject,text,address="(back)"):
 
     for mail in mails:
         hashobj = hashlib.md5()
-        hashobj.update("%s: %s"%(subject,text))
+        hashobj.update(("%s: %s"%(subject,text)).encode("utf-8"))
         subjectHash = hashobj.hexdigest()
 
         if address == "(back)":
@@ -45,7 +45,7 @@ def answer(imapmail,mails,subject,text,address="(back)"):
         else:
             clientMailAddress = address
 
-        if "NETSEC-Answered-" + subjectHash in helper.imapCommand(imapmail,"fetch",mail.uid,"FLAGS")[0]:
+        if "NETSEC-Answered-" + subjectHash in helper.imapCommand(imapmail,"fetch",mail.uid,"FLAGS")[0].decode("utf-8"):
             logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered."%(mail.uid,clientMailAddress,subject))
         else:
             helper.smtpMail(clientMailAddress,"Content-Type:text/html\nSubject: %s\n\n%s"%(helper.checkForVariable(mail,subject),helper.checkForVariable(mail,text)))
@@ -72,7 +72,7 @@ def flag(imapmail,mails,flag):
         helper.imapCommand(imapmail,"STORE",mail.uid,"+FLAGS",flag)
     return mails
 
-def log(imapmail,mails,lvl,msg):
+def log(imapmail,mails,msg,lvl="ERROR"):
     if lvl == "DEBUG":
         logging.debug(msg)
     else:

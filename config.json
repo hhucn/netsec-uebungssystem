@@ -9,7 +9,7 @@
 		{
 			"title":"Aufgaben",
 			"steps":[
-				["filter","SUBJECT Testmail"],
+				["filter","SUBJECT Testmail OR FROM '@hhu.de' FROM '@uni-duesseldorf.de'"],
 				["answer","NetSec-Uebungssystem: Abgabe","$RECEIVEDMAILEXTERN"],
 				["save"],
 				["delete"]

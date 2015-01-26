@@ -22,7 +22,7 @@ def imapCommand(imapmail,command,uid,*args):
         code, ids = imapmail.uid(command, *args)
 
     if "OK" in code:
-        return [singleID.decode("utf-u") if isinstance(singleID,str) else singleID for singleID in ids]
+        return [singleID.decode("utf-8") if isinstance(singleID,str) else singleID for singleID in ids]
     else:
         logging.error("Server responded with Code '%s' for '%s %s %s'."%(code,command,uid,args))
         raise self.error("Server responded with Code '%s' for '%s %s %s'."%(code,command,uid,args))

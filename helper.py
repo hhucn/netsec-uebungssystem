@@ -30,8 +30,14 @@ def imapCommand(imapmail,command,uid,*args):
 
 def getConfigValue(what):
     if "login" in what:
-        return json.load(open("login.json"))
-    return json.load(open("config.json"))[what]
+        jsonFile = json.load(open("login.json"))
+    elif "korrektoren" in what:
+        jsonFile = json.load(open("korrektoren.json"))
+    jsonFile = json.load(open("config.json"))[what]
+
+    if jsonFile is None:
+        return []
+    return jsonFile
 
 def smtpMail(to,what):
     smtpmail = smtplib.SMTP(getConfigValue("login")["smtpmail_server"])

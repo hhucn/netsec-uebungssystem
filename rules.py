@@ -2,7 +2,6 @@ import logging
 import email
 import sqlite3
 import base64
-import hashlib
 import os
 
 import helper
@@ -36,9 +35,7 @@ def answer(imapmail,mails,subject,text,address="(back)"):
         mails = [mails]
 
     for mail in mails:
-        hashobj = hashlib.md5()
-        hashobj.update(("%s: %s"%(subject,text)).encode("utf-8"))
-        subjectHash = hashobj.hexdigest()
+        subjectHash = helper.md5sum("%s: %s"%(subject,text))
 
         if address == "(back)":
             clientMailAddress = mail.variables["MAILFROM"]

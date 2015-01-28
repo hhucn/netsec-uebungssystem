@@ -2,7 +2,7 @@ import logging
 import json
 import re
 import smtplib
-
+import hashlib
 
 def checkForVariable(mail,raw):
     varInRaw = re.findall("\$([A-Z]*)",raw)
@@ -40,3 +40,8 @@ def smtpMail(to,what):
     smtpmail.login(getConfigValue("login")["mail_address"],getConfigValue("login")["mail_password"])
     smtpmail.sendmail(getConfigValue("login")["mail_address"], to, what)
     smtpmail.quit()
+
+def md5sum(what):
+    hashobj = hashlib.md5()
+    hashobj.update(what.encode("utf-8"))
+    return hashobj.hexdigest()

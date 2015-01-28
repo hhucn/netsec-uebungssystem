@@ -33,7 +33,8 @@ def getConfigValue(what):
         jsonFile = json.load(open("login.json"))
     elif "korrektoren" in what:
         jsonFile = json.load(open("korrektoren.json"))
-    jsonFile = json.load(open("config.json"))[what]
+    else:
+        jsonFile = json.load(open("config.json"))[what]
 
     if jsonFile is None:
         return []

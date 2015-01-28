@@ -11,7 +11,7 @@ Dynamic template/variable configuration in `config.json` file (allowing dynamic 
 
 Catch attachments :heavy_check_mark:
 
-move into module (name? "mailyourhomework"?)
+~~move into module (name? "mailyourhomework"?)~~ split into modules :heavy_check_mark:
 
 real-time IMAP notifications :heavy_check_mark: using IMAP `IDLE`
 
@@ -21,13 +21,13 @@ Use MOVE extension to actually move emails :heavy_check_mark: (see `main.py:move
 
 automatic replies (make sure that we don't actually answer our own or other automated emails!) :heavy_check_mark: `main.py:answerMails(...)`
 
-alias domains (hhu.de / uni-duesseldorf.de)
+~~alias domains (hhu.de / uni-duesseldorf.de)~~ `search` rule with IMAP `OR`. :heavy_check_mark:
 
-manually configured aliases
+~~manually configured aliases~~ see above.
 
 ~~local database (sqlite?) for ratings~~ local sqlite database to store attachments :heavy_check_mark:
 
-~~(web/cli) interface to actually rate homework~~
+(web/cli) interface to actually rate homework
 
 ~~move from sqlite to actual directories/files due to sqlites size limit (0.9MB)?~~ is an option now. :heavy_check_mark:
 

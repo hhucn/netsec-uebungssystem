@@ -23,7 +23,7 @@ def main():
     imaplib.Commands["IDLE"] = ("AUTH","SELECTED",)
     imaplib.Commands["DONE"] = ("AUTH","SELECTED",)
 
-    logging.basicConfig(format="%(asctime)s %(message)s",level=(logging.ERROR if helper.getConfigValue("settings")["loglevel"] == "ERROR" else logging.DEBUG))
+    helper.setupLogging()
 
     imapmail = loginIMAP(helper.getConfigValue("login")["imapmail_server"],helper.getConfigValue("login")["mail_address"],helper.getConfigValue("login")["mail_password"])
     imapmail._command("IDLE")

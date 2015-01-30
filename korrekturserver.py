@@ -39,6 +39,9 @@ def httpBasicAuth(self,*kwargs):
         username, password = decodedAuth.split(":", 2)
         password = helper.md5sum(password)
         korrektoren = helper.getConfigValue("korrektoren")
+        if username not in korrektoren:
+            logging.debug("Received nonexistent user %s"%username)
+            return False
         if korrektoren[username] == password:
             logging.debug("Received login from %s. Hi!"%username)
             return True

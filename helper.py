@@ -5,7 +5,10 @@ import smtplib
 import hashlib
 
 def setupLogging():
-    logging.basicConfig(format="%(asctime)s %(message)s",level=(logging.ERROR if getConfigValue("settings")["loglevel"] == "ERROR" else logging.DEBUG))
+    if getConfigValue("settings")["loglevel"] == "ERROR":
+        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.ERROR)
+    else:
+        logging.basicConfig(format="%(asctime)s %(message)s",level=logging.DEBUG)
 
 def checkForVariable(mail,raw):
     varInRaw = re.findall("\$([A-Z]*)",raw)

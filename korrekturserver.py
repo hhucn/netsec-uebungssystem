@@ -2,6 +2,7 @@ import tornado.ioloop
 import tornado.web
 import base64
 import logging
+import os
 
 import helper
 
@@ -15,8 +16,18 @@ class requestHandlerWithAuth(tornado.web.RequestHandler):
 
 class tableHandler(requestHandlerWithAuth):
     def get(self):
-        self.write("Logged in.")
+        if helper.getConfigValue("settings")["savemode"] == "file":
+            studenten = []
+            if os.path.exists("attachments"):
+                for entry in os.listdir("attachments/"):
+                   studenten.append(entry)
 
+            self.write("<ul>")
+            for student in studenten:
+                self.write("<li>")
+                self.write(student)
+                self.write("</li>")
+            self.write("</ul>")
 
 def main():
     helper.setupLogging()
@@ -40,12 +51,12 @@ def httpBasicAuth(self,*kwargs):
         password = helper.md5sum(password)
         korrektoren = helper.getConfigValue("korrektoren")
         if username not in korrektoren:
-            logging.debug("Received nonexistent user %s"%username)
+            logging.debug("Received nonexistent user '%s'."%username)
             return False
         if korrektoren[username] == password:
             logging.debug("Received login from %s. Hi!"%username)
             return True
-        logging.error("Failed login from %s with password %s."%(username,password))
+        logging.error("Failed login from '%s' with password '%s'."%(username,password))
 
     self.set_status(401)
     self.set_header("WWW-Authenticate", "Basic realm='netsec-Uebungssystem Korrektoranmeldung'")

@@ -4,6 +4,6 @@ __pycache__
 *.sqlite
 *.db
 logfile.log
-attachments/
+attachments
 login.json
 korrektoren.json

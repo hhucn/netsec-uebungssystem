@@ -2,5 +2,6 @@
 	"smtpmail_server":  "smtp.gmail.com",
 	"imapmail_server":  "imap.gmail.com",
 	"mail_address": "netsec.imap.test@gmail.com",
-	"mail_password":"tuxgit1337"
+	"mail_password":"",
+	"korrektur_server_port": 8080
 }

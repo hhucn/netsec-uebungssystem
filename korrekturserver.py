@@ -25,10 +25,10 @@ def main():
         (r"/",tableHandler),
     ])
 
-    application.listen(8080)
-    tornado.ioloop.IOLoop.instance().start()
+    logging.debug("Server started on port %i.",helper.getConfigValue("login")["korrektur_server_port"])
 
-    logging.debug("Server started.")
+    application.listen(helper.getConfigValue("login")["korrektur_server_port"])
+    tornado.ioloop.IOLoop.instance().start()
 
 def httpBasicAuth(self,*kwargs):
     # http://de.wikipedia.org/wiki/HTTP-Statuscode

@@ -54,7 +54,6 @@ def httpBasicAuth(self,*kwargs):
             logging.debug("Received nonexistent user '%s'."%username)
             return False
         if korrektoren[username] == password:
-            logging.debug("Received login from %s. Hi!"%username)
             return True
         logging.error("Failed login from '%s' with password '%s'."%(username,password))
 

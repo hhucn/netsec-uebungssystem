@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>netsec-Übungssystem - Korrekturserver</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+</head>
+<body>
+	<table class="table">
+		<tr>
+			<th>Mailadresse</th>
+			<th>Status</th>
+			<th>Download (zip)</th>
+		</tr>
+		{% for abgabe in abgaben %}
+			<tr>
+				<td>{{ escape(abgabe.mailAddress.lower()) }}</td>
+				<td><span class="label label-{% if abgabe.status == "Offen" %}danger{% elif abgabe.status == "In Bearbeitung" %}warning{% else %}success{% end %}">{{ escape(abgabe.status) }}</span></td>
+				<td>{{ escape(abgabe.downloadLink) }}</td>
+			</tr>
+		{% end %}
+	</table>
+</body>
+</html>

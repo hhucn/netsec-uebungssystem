@@ -7,6 +7,12 @@ import os
 import helper
 
 
+class abgabe(object):
+    def __init__(self,mailAddress,status,downloadLink):
+        self.mailAddress = mailAddress
+        self.status = status
+        self.downloadLink = downloadLink
+
 class requestHandlerWithAuth(tornado.web.RequestHandler):
     def _execute(self, transforms, *args, **kwargs):
         # executed before everything else.
@@ -17,17 +23,12 @@ class requestHandlerWithAuth(tornado.web.RequestHandler):
 class tableHandler(requestHandlerWithAuth):
     def get(self):
         if helper.getConfigValue("settings")["savemode"] == "file":
-            studenten = []
+            abgaben = []
             if os.path.exists("attachments"):
                 for entry in os.listdir("attachments/"):
-                   studenten.append(entry)
+                   abgaben.append(abgabe(entry,"Bearbeitet","*"))
 
-            self.write("<ul>")
-            for student in studenten:
-                self.write("<li>")
-                self.write(student)
-                self.write("</li>")
-            self.write("</ul>")
+            self.render("table.html",abgaben=abgaben)
 
 def main():
     helper.setupLogging()

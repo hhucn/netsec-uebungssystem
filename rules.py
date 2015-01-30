@@ -3,6 +3,7 @@ import email
 import sqlite3
 import base64
 import os
+import re
 
 import helper
 
@@ -11,7 +12,7 @@ class mailElement(object):
         self.uid = uid
         self.variables = var
         self.text = text
-        self.variables["MAILFROM"] = text["From"]
+        self.variables["MAILFROM"] = re.findall("\<.*\>",text["From"])[0][1:-1]
         self.variables["MAILDATE"] = text["Date"]
         self.variables["MAILRECEIVED"] = text["Received"]
 

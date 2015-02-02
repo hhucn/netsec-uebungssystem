@@ -1,6 +1,5 @@
 test:
-	pyflakes *.py
-	pep8 --max-line-length=120 *.py
+	flake8 .
 	python -m unittest discover test/
 
 .PHONY: test

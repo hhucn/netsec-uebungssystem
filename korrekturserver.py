@@ -6,13 +6,6 @@ import os
 
 import helper
 
-
-class abgabe(object):
-    def __init__(self,mailAddress,status,downloadLink):
-        self.mailAddress = mailAddress
-        self.status = status
-        self.downloadLink = downloadLink
-
 class requestHandlerWithAuth(tornado.web.RequestHandler):
     def _execute(self, transforms, *args, **kwargs):
         # executed before everything else.
@@ -21,20 +14,47 @@ class requestHandlerWithAuth(tornado.web.RequestHandler):
         return False
 
 class tableHandler(requestHandlerWithAuth):
-    def get(self):
+    def get(self, *args, **kwargs):
         if helper.getConfigValue("settings")["savemode"] == "file":
             abgaben = []
             if os.path.exists("attachments"):
                 for entry in os.listdir("attachments/"):
-                   abgaben.append(abgabe(entry,"Bearbeitet","*"))
+                   abgaben.append(entry.lower())
 
             self.render("table.html",abgaben=abgaben)
+
+class zipHandler(requestHandlerWithAuth):
+    def get(self, *args, **kwargs):
+        requestedFile = self.request.uri.replace("/zips/","/zips").replace("/zips","")
+
+        if len(requestedFile) is 0:
+            self.set_status(404)
+            self.write("Zur&uuml;ck zur <a href=\"/\">&Uuml;bersicht</a>")
+            self.finish()
+            return
+
+        self.write(requestedFile)
+
+class statusHandler(requestHandlerWithAuth):
+    def get(self, *args, **kwargs):
+        uri = self.request.uri.replace("/status/","")
+        if uri.count("/") == 1:
+            student,status = uri.split("/")
+        else:
+            student = uri
+            status = ""
+        if not status:
+            self.write(readStatus(student))
+        else:
+            writeStatus(student,status)
 
 def main():
     helper.setupLogging()
 
     application = tornado.web.Application([
         (r"/",tableHandler),
+        (r"/zips/.*",zipHandler),
+        (r"/status/.*",statusHandler),
     ])
 
     logging.debug("Server started on port %i.",helper.getConfigValue("login")["korrektur_server_port"])
@@ -64,6 +84,44 @@ def httpBasicAuth(self,*kwargs):
     self.write("401: Authentifizierung erforderlich.")
     self.finish()
     return False
+
+def readStatus(student):
+    student = student.lower()
+
+    retdir = os.getcwd()
+
+    if not os.path.exists("attachments"):
+        return
+    os.chdir("attachments")
+
+    if not os.path.exists(student):
+        return "Student ohne Abgabe"
+    os.chdir(student)
+
+    if not os.path.exists("korrekturstatus.txt"):
+        return "Unbearbeitet"
+    statusfile = open("korrekturstatus.txt","r")
+    status = statusfile.read()
+    statusfile.close()
+    os.chdir(retdir)
+    return status
+
+def writeStatus(student,status):
+    student = student.lower()
+    status = status.lower()
+    retdir = os.getcwd()
+
+    if not os.path.exists("attachments"):
+        return
+    os.chdir("attachments")
+
+    if not os.path.exists(student):
+        return
+    os.chdir(student)
+    statusfile = open("korrekturstatus.txt","w")
+    statusfile.write(status)
+    statusfile.close()
+    os.chdir(retdir)
 
 if __name__ == "__main__":
     main()

@@ -2,20 +2,44 @@
 <html>
 <head>
 	<title>netsec-Übungssystem - Korrekturserver</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style type="text/css">
+		body {
+			font-family:sans-serif;
+			line-height:1.5;
+			font-size:14px;
+			color:#333333;
+		}
+
+		th {
+			color:#222222;
+			text-align:left;
+			border-bottom:1px #999999 solid;
+		}
+
+		th,td {
+			padding:5px;
+		}
+
+		table {
+			width:100%;
+			height:100%;
+			padding:5px;
+			border-spacing:0;
+		}
+	</style>
 </head>
 <body>
-	<table class="table">
+	<table>
 		<tr>
-			<th>Mailadresse</th>
+			<th>Student</th>
 			<th>Status</th>
 			<th>Download (zip)</th>
 		</tr>
 		{% for abgabe in abgaben %}
 			<tr>
-				<td>{{ escape(abgabe.mailAddress.lower()) }}</td>
-				<td><span class="label label-{% if abgabe.status == "Offen" %}danger{% elif abgabe.status == "In Bearbeitung" %}warning{% else %}success{% end %}">{{ escape(abgabe.status) }}</span></td>
-				<td>{{ escape(abgabe.downloadLink) }}</td>
+				<td>{{ escape(abgabe) }}</td>
+				<td>{{ escape(readStatus(abgabe)) }}</td>
+				<td><a href="/zips/{{ escape(abgabe) }}">Abgabe downloaden</a></td>
 			</tr>
 		{% end %}
 	</table>

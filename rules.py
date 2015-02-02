@@ -116,7 +116,7 @@ def save(imapmail,mails):
                 os.mkdir("attachments")
             os.chdir("attachments")
 
-            clientMailAddress = re.findall("(.*)\@.*",mail.variables["MAILFROM"])[0] 
+            clientMailAddress = re.findall("(.*)\@.*",mail.variables["MAILFROM"])[0].lower()
 
             if not os.path.exists(clientMailAddress):
                 os.mkdir(clientMailAddress)

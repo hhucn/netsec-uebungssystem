@@ -27,7 +27,9 @@ def filter(imapmail,mails,filterCriteria,mailbox="inbox"):
     mails = []
 
     for uid in data.split():
-        data = email.message_from_string(helper.imapCommand(imapmail,"fetch",uid,"(rfc822)")[0][1].decode("utf-8"))
+        a = helper.imapCommand(imapmail,"fetch",uid,"(rfc822)")[0][1].decode("utf-8")
+        a = a.encode("ascii","ignore")
+        data = email.message_from_string(a)
         mails.append(mailElement(uid,helper.getConfigValue("variables"),data))
     return mails
 

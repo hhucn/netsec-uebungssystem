@@ -50,9 +50,11 @@ def answer(imapmail, mails, subject, text, address="(back)"):
         else:
             clientMailAddress = address
 
-        if "NETSEC-Answered-" + subjectHash in helper.imapCommand(imapmail, "fetch", mail.uid, "FLAGS")[0].decode("utf-8"):
-            logging.error("Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered." % (
-                mail.uid, clientMailAddress, subject))
+        mail_flags = helper.imapCommand(imapmail, "fetch", mail.uid, "FLAGS")[0]
+        if "NETSEC-Answered-" + subjectHash in mail_flags.decode("utf-8"):
+            logging.error(
+                "Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered." % (
+                    mail.uid, clientMailAddress, subject))
         else:
             helper.smtpMail(clientMailAddress, "Content-Type:text/html\nSubject: %s\n\n%s" %
                             (helper.checkForVariable(mail, subject), helper.checkForVariable(mail, text)))

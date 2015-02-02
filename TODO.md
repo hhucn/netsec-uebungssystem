@@ -38,3 +38,5 @@ move attachments into *one* folder instead of date-sorted attachments.
 create a logfile per user to monitor changes on their contribution
 
 send mail back with checksums of attachments
+
+`def filter`: `email.message_from_string` accepts ASCII only. Rewrite.

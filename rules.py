@@ -4,6 +4,7 @@ import sqlite3
 import base64
 import os
 import re
+import time
 
 import helper
 
@@ -12,7 +13,7 @@ class mailElement(object):
         self.uid = uid
         self.variables = var
         self.text = text
-        self.variables["MAILFROM"] = re.findall("\<.*\>",text["From"])[0][1:-1]
+        self.variables["MAILFROM"] = re.findall("\<(.*)\>",text["From"])[0]
         self.variables["MAILDATE"] = text["Date"]
         self.variables["MAILRECEIVED"] = text["Received"]
 
@@ -113,17 +114,15 @@ def save(imapmail,mails):
                 os.mkdir("attachments")
             os.chdir("attachments")
 
-            if not os.path.exists(mail.variables["MAILFROM"]):
-                os.mkdir(mail.variables["MAILFROM"])
-            os.chdir(mail.variables["MAILFROM"])
+            clientMailAddress = re.findall("(.*)\@.*",mail.variables["MAILFROM"])[0] 
 
-            if not os.path.exists(mail.variables["MAILDATE"]):
-                os.mkdir(mail.variables["MAILDATE"])
-            os.chdir(mail.variables["MAILDATE"])
+            if not os.path.exists(clientMailAddress):
+                os.mkdir(clientMailAddress)
+            os.chdir(clientMailAddress)
 
             for payloadPart in mail.text.walk():
                 if payloadPart.get_filename():
-                    attachFile = open(payloadPart.get_filename(),"w")
+                    attachFile = open(str(int(time.time())) + " " + payloadPart.get_filename(),"w")
                 elif payloadPart.get_payload():
                     attachFile = open("mailtext.txt","a")
                 else:

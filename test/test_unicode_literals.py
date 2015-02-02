@@ -13,6 +13,7 @@ rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class TestUnicodeLiterals(unittest.TestCase):
+
     def test_all_files(self):
         for dirpath, _, filenames in os.walk(rootDir):
             for basename in filenames:

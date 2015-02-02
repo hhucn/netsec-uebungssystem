@@ -17,17 +17,18 @@ import rules
 # core functions
 #
 
+
 def main():
     # patching imaplib
     imaplib.Commands["MOVE"] = ("SELECTED",)
-    imaplib.Commands["IDLE"] = ("AUTH","SELECTED",)
-    imaplib.Commands["DONE"] = ("AUTH","SELECTED",)
+    imaplib.Commands["IDLE"] = ("AUTH", "SELECTED",)
+    imaplib.Commands["DONE"] = ("AUTH", "SELECTED",)
 
     helper.setupLogging()
 
-    imapmail = loginIMAP(helper.getConfigValue("login")["imapmail_server"],helper.getConfigValue("login")["mail_address"],helper.getConfigValue("login")["mail_password"])
+    imapmail = loginIMAP(helper.getConfigValue("login")["imapmail_server"], helper.getConfigValue(
+        "login")["mail_address"], helper.getConfigValue("login")["mail_password"])
     imapmail._command("IDLE")
-    
 
     if "idling" in imapmail.readline().decode("utf-8"):
         logging.debug("Server supports IDLE.")
@@ -46,29 +47,32 @@ def main():
             ruleLoop(imapmail)
             time.sleep(helper.getConfigValue("settings")["delay"])
 
+
 def ruleLoop(imapmail):
     for rule in helper.getConfigValue("rules"):
-        processRule(imapmail,rule)
+        processRule(imapmail, rule)
 
-def processRule(imapmail,rule):
-    logging.debug("**** rule: '%s'"%rule["title"])
+
+def processRule(imapmail, rule):
+    logging.debug("**** rule: '%s'" % rule["title"])
 
     mails = []
 
     for step in rule["steps"]:
         logging.debug("* exec: %s" % step[0])
-        mails = getattr(sys.modules["rules"],step[0])(imapmail,mails,*step[1:])
+        mails = getattr(sys.modules["rules"], step[0])(imapmail, mails, *step[1:])
         if not mails:
             logging.debug("*  ret no mails")
             break
         logging.debug("*  ret %d mail(s)" % len(mails))
-    logging.debug("**** done: '%s'"%rule["title"])
+    logging.debug("**** done: '%s'" % rule["title"])
 
-def loginIMAP(server,address,password):
+
+def loginIMAP(server, address, password):
     imapmail = imaplib.IMAP4_SSL(server)
-    imapmail.login(address,password)
+    imapmail.login(address, password)
     imapmail.select()
-    logging.info("IMAP login (%s on %s)"%(address,server))
+    logging.info("IMAP login (%s on %s)" % (address, server))
     return imapmail
 
 if __name__ == "__main__":

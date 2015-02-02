@@ -6,26 +6,32 @@ import os
 
 import helper
 
+
 class requestHandlerWithAuth(tornado.web.RequestHandler):
+
     def _execute(self, transforms, *args, **kwargs):
         # executed before everything else.
-        if httpBasicAuth(self,kwargs):
+        if httpBasicAuth(self, kwargs):
             return tornado.web.RequestHandler._execute(self, transforms, *args, **kwargs)
         return False
 
+
 class tableHandler(requestHandlerWithAuth):
+
     def get(self, *args, **kwargs):
         if helper.getConfigValue("settings")["savemode"] == "file":
             abgaben = []
             if os.path.exists("attachments"):
                 for entry in os.listdir("attachments/"):
-                   abgaben.append(entry.lower())
+                    abgaben.append(entry.lower())
 
-            self.render("table.html",abgaben=abgaben)
+            self.render("table.html", abgaben=abgaben)
+
 
 class zipHandler(requestHandlerWithAuth):
+
     def get(self, *args, **kwargs):
-        requestedFile = self.request.uri.replace("/zips/","/zips").replace("/zips","")
+        requestedFile = self.request.uri.replace("/zips/", "/zips").replace("/zips", "")
 
         if len(requestedFile) is 0:
             self.set_status(404)
@@ -35,34 +41,38 @@ class zipHandler(requestHandlerWithAuth):
 
         self.write(requestedFile)
 
+
 class statusHandler(requestHandlerWithAuth):
+
     def get(self, *args, **kwargs):
-        uri = self.request.uri.replace("/status/","")
+        uri = self.request.uri.replace("/status/", "")
         if uri.count("/") == 1:
-            student,status = uri.split("/")
+            student, status = uri.split("/")
         else:
             student = uri
             status = ""
         if not status:
             self.write(readStatus(student))
         else:
-            writeStatus(student,status)
+            writeStatus(student, status)
+
 
 def main():
     helper.setupLogging()
 
     application = tornado.web.Application([
-        (r"/",tableHandler),
-        (r"/zips/.*",zipHandler),
-        (r"/status/.*",statusHandler),
+        (r"/", tableHandler),
+        (r"/zips/.*", zipHandler),
+        (r"/status/.*", statusHandler),
     ])
 
-    logging.debug("Server started on port %i.",helper.getConfigValue("login")["korrektur_server_port"])
+    logging.debug("Server started on port %i.", helper.getConfigValue("login")["korrektur_server_port"])
 
     application.listen(helper.getConfigValue("login")["korrektur_server_port"])
     tornado.ioloop.IOLoop.instance().start()
 
-def httpBasicAuth(self,*kwargs):
+
+def httpBasicAuth(self, *kwargs):
     # http://de.wikipedia.org/wiki/HTTP-Statuscode
     receivedAuth = self.request.headers.get("Authorization")
 
@@ -72,11 +82,11 @@ def httpBasicAuth(self,*kwargs):
         password = helper.md5sum(password)
         korrektoren = helper.getConfigValue("korrektoren")
         if username not in korrektoren:
-            logging.debug("Received nonexistent user '%s'."%username)
+            logging.debug("Received nonexistent user '%s'." % username)
             return False
         if korrektoren[username] == password:
             return True
-        logging.error("Failed login from '%s' with password '%s'."%(username,password))
+        logging.error("Failed login from '%s' with password '%s'." % (username, password))
 
     self.set_status(401)
     self.set_header("WWW-Authenticate", "Basic realm='netsec-Uebungssystem Korrektoranmeldung'")
@@ -84,6 +94,7 @@ def httpBasicAuth(self,*kwargs):
     self.write("401: Authentifizierung erforderlich.")
     self.finish()
     return False
+
 
 def readStatus(student):
     student = student.lower()
@@ -100,13 +111,14 @@ def readStatus(student):
 
     if not os.path.exists("korrekturstatus.txt"):
         return "Unbearbeitet"
-    statusfile = open("korrekturstatus.txt","r")
+    statusfile = open("korrekturstatus.txt", "r")
     status = statusfile.read()
     statusfile.close()
     os.chdir(retdir)
     return status
 
-def writeStatus(student,status):
+
+def writeStatus(student, status):
     student = student.lower()
     status = status.lower()
     retdir = os.getcwd()
@@ -118,7 +130,7 @@ def writeStatus(student,status):
     if not os.path.exists(student):
         return
     os.chdir(student)
-    statusfile = open("korrekturstatus.txt","w")
+    statusfile = open("korrekturstatus.txt", "w")
     statusfile.write(status)
     statusfile.close()
     os.chdir(retdir)

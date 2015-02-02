@@ -19,7 +19,7 @@ local test server with tests
 
 ~~Use MOVE extension to actually move emails~~ :heavy_check_mark: (see `main.py:moveMails(...)`).
 
-~~automatic replies (make sure that we don't actually answer our own or other automated emails!) ~~ :heavy_check_mark: `main.py:answerMails(...)`
+~~automatic replies (make sure that we don't actually answer our own or other automated emails!)~~ :heavy_check_mark: `main.py:answerMails(...)`
 
 ~~alias domains (hhu.de / uni-duesseldorf.de)~~ `search` rule with IMAP `OR`. :heavy_check_mark:
 

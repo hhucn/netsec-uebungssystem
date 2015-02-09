@@ -3,6 +3,7 @@ import tornado.web
 import base64
 import logging
 import os
+from passlib.hash import pbkdf2_sha256
 
 import helper
 
@@ -79,12 +80,11 @@ def httpBasicAuth(self, *kwargs):
     if receivedAuth is not None:
         decodedAuth = base64.decodestring(receivedAuth[6:])
         username, password = decodedAuth.split(":", 2)
-        password = helper.md5sum(password)
         korrektoren = helper.getConfigValue("korrektoren")
         if username not in korrektoren:
             logging.debug("Received nonexistent user '%s'." % username)
             return False
-        if korrektoren[username] == password:
+        if pbkdf2_sha256.verify(password,korrektoren[username]):
             return True
         logging.error("Failed login from '%s' with password '%s'." % (username, password))
 

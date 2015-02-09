@@ -34,7 +34,7 @@ def imapCommand(imapmail, command, uid, *args):
         return [singleID.decode("utf-8") if isinstance(singleID, str) else singleID for singleID in ids]
     else:
         logging.error("Server responded with Code '%s' for '%s %s %s'." % (code, command, uid, args))
-        raise self.error("Server responded with Code '%s' for '%s %s %s'." % (code, command, uid, args))
+        raise OSError.ConnectionError("Server responded with Code '%s' for '%s %s %s'." % (code, command, uid, args))
         return []
 
 

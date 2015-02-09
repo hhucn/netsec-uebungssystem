@@ -84,7 +84,7 @@ def httpBasicAuth(self, *kwargs):
         if username not in korrektoren:
             logging.debug("Received nonexistent user '%s'." % username)
             return False
-        if pbkdf2_sha256.verify(password,korrektoren[username]):
+        if pbkdf2_sha256.verify(password, korrektoren[username]):
             return True
         logging.error("Failed login from '%s' with password '%s'." % (username, password))
 

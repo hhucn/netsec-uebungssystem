@@ -9,7 +9,6 @@ import logging
 import sys
 
 import helper
-import rules
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 

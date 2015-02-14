@@ -101,6 +101,8 @@ def save(imapmail, mails):
     if isinstance(mails, mailElement):
         mails = [mails]
 
+    clientMailAddress = re.findall("(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
+
     if helper.getConfigValue("settings")["savemode"] == "db":
         sqldatabase = sqlite3.connect(helper.getConfigValue("settings")["database"])
         cursor = sqldatabase.cursor()
@@ -108,7 +110,7 @@ def save(imapmail, mails):
             "CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
         for mail in mails:
-            insertValues = [mail["From"], mail["Date"], mail["Subject"], "(-)"]
+            insertValues = [clientMailAddress, mail["Date"], mail["Subject"], "(-)"]
             attachments = []
 
             for payloadPart in mail.walk():
@@ -123,24 +125,18 @@ def save(imapmail, mails):
             sqldatabase.commit()
             sqldatabase.close()
     elif helper.getConfigValue("settings")["savemode"] == "file":
-        retdir = os.getcwd()
-
         for mail in mails:
             if not os.path.exists("attachments"):
                 os.mkdir("attachments")
-            os.chdir("attachments")
-
-            clientMailAddress = re.findall("(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
 
             if not os.path.exists(clientMailAddress):
                 os.mkdir(clientMailAddress)
-            os.chdir(clientMailAddress)
 
             for payloadPart in mail.text.walk():
                 if payloadPart.get_filename():
-                    attachFile = open(str(int(time.time())) + " " + payloadPart.get_filename(), "w")
+                    attachFile = open("attachments/%s/"%clientMailAddress + str(int(time.time())) + " " + payloadPart.get_filename(), "w")
                 elif payloadPart.get_payload():
-                    attachFile = open("mailtext.txt", "a")
+                    attachFile = open("attachments/%s/"%clientMailAddress + "mailtext.txt", "a")
                 else:
                     pass
 
@@ -149,5 +145,4 @@ def save(imapmail, mails):
                 if dataToWrite:
                     attachFile.write(dataToWrite)
                 attachFile.close()
-            os.chdir(retdir)
     return mails

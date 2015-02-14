@@ -7,7 +7,7 @@ import imaplib
 import time
 import logging
 import sys
-import rules # not unused!
+import rules  # not unused!
 
 import helper
 

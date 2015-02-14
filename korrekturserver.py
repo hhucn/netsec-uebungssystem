@@ -7,6 +7,8 @@ from passlib.hash import pbkdf2_sha256
 
 import helper
 
+import korrekturtools
+
 
 class requestHandlerWithAuth(tornado.web.RequestHandler):
 
@@ -24,7 +26,8 @@ class tableHandler(requestHandlerWithAuth):
             abgaben = []
             if os.path.exists("attachments"):
                 for entry in os.listdir("attachments/"):
-                    abgaben.append(entry.lower())
+                    if entry[0] != ".":
+                        abgaben.append(entry.lower())
 
             self.render("table.html", abgaben=abgaben)
 
@@ -53,9 +56,9 @@ class statusHandler(requestHandlerWithAuth):
             student = uri
             status = ""
         if not status:
-            self.write(readStatus(student))
+            self.write(korrekturtools.readStatus(student))
         else:
-            writeStatus(student, status)
+            korrekturtools.writeStatus(student, status)
 
 
 def main():
@@ -94,46 +97,6 @@ def httpBasicAuth(self, *kwargs):
     self.write("401: Authentifizierung erforderlich.")
     self.finish()
     return False
-
-
-def readStatus(student):
-    student = student.lower()
-
-    retdir = os.getcwd()
-
-    if not os.path.exists("attachments"):
-        return
-    os.chdir("attachments")
-
-    if not os.path.exists(student):
-        return "Student ohne Abgabe"
-    os.chdir(student)
-
-    if not os.path.exists("korrekturstatus.txt"):
-        return "Unbearbeitet"
-    statusfile = open("korrekturstatus.txt", "r")
-    status = statusfile.read()
-    statusfile.close()
-    os.chdir(retdir)
-    return status
-
-
-def writeStatus(student, status):
-    student = student.lower()
-    status = status.lower()
-    retdir = os.getcwd()
-
-    if not os.path.exists("attachments"):
-        return
-    os.chdir("attachments")
-
-    if not os.path.exists(student):
-        return
-    os.chdir(student)
-    statusfile = open("korrekturstatus.txt", "w")
-    statusfile.write(status)
-    statusfile.close()
-    os.chdir(retdir)
 
 if __name__ == "__main__":
     main()

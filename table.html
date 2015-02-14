@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>netsec-Übungssystem - Korrekturserver</title>
+	{% import korrekturtools %}
 	<style type="text/css">
 		body {
 			font-family:sans-serif;
@@ -38,7 +39,7 @@
 		{% for abgabe in abgaben %}
 			<tr>
 				<td>{{ escape(abgabe) }}</td>
-				<td>{{ escape(readStatus(abgabe)) }}</td>
+				<td>{{ escape(korrekturtools.readStatus(abgabe)) }}</td>
 				<td><a href="/zips/{{ escape(abgabe) }}">Abgabe downloaden</a></td>
 			</tr>
 		{% end %}

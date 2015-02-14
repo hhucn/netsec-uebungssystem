@@ -101,8 +101,6 @@ def save(imapmail, mails):
     if isinstance(mails, mailElement):
         mails = [mails]
 
-    clientMailAddress = re.findall("(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
-
     if helper.getConfigValue("settings")["savemode"] == "db":
         sqldatabase = sqlite3.connect(helper.getConfigValue("settings")["database"])
         cursor = sqldatabase.cursor()
@@ -110,7 +108,7 @@ def save(imapmail, mails):
             "CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
 
         for mail in mails:
-            insertValues = [clientMailAddress, mail["Date"], mail["Subject"], "(-)"]
+            insertValues = [mail["From"], mail["Date"], mail["Subject"], "(-)"]
             attachments = []
 
             for payloadPart in mail.walk():
@@ -126,6 +124,8 @@ def save(imapmail, mails):
             sqldatabase.close()
     elif helper.getConfigValue("settings")["savemode"] == "file":
         for mail in mails:
+            clientMailAddress = re.findall("(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
+
             if not os.path.exists("attachments"):
                 os.mkdir("attachments")
 
@@ -134,9 +134,10 @@ def save(imapmail, mails):
 
             for payloadPart in mail.text.walk():
                 if payloadPart.get_filename():
-                    attachFile = open("attachments/%s/"%clientMailAddress + str(int(time.time())) + " " + payloadPart.get_filename(), "w")
+                    attachFile = open("attachments/%s/" % clientMailAddress + str(int(time.time())) + " "
+                        + payloadPart.get_filename(), "w")
                 elif payloadPart.get_payload():
-                    attachFile = open("attachments/%s/"%clientMailAddress + "mailtext.txt", "a")
+                    attachFile = open("attachments/%s/" % clientMailAddress + "mailtext.txt", "a")
                 else:
                     pass
 

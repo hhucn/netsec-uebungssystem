@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import logging
 import json
 import re
@@ -13,7 +15,7 @@ def setupLogging():
 
 
 def checkForVariable(mail, raw):
-    varInRaw = re.findall("\$([A-Z]*)", raw)
+    varInRaw = re.findall(r"\$([A-Z]*)", raw)
     if varInRaw:
         for var in varInRaw:
             if var in mail.variables:

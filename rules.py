@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import logging
 import email
 import sqlite3
@@ -15,7 +17,7 @@ class mailElement(object):
         self.uid = uid
         self.variables = var
         self.text = text
-        self.variables["MAILFROM"] = re.findall("\<(.*)\>", text["From"])[0]
+        self.variables["MAILFROM"] = re.findall(r"\<(.*)\>", text["From"])[0]
         self.variables["MAILDATE"] = text["Date"]
         self.variables["MAILRECEIVED"] = text["Received"]
 
@@ -124,7 +126,7 @@ def save(imapmail, mails):
             sqldatabase.close()
     elif helper.getConfigValue("settings")["savemode"] == "file":
         for mail in mails:
-            clientMailAddress = re.findall("(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
+            clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
 
             if not os.path.exists("attachments"):
                 os.mkdir("attachments")

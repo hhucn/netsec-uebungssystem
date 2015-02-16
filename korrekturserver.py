@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import tornado.ioloop
 import tornado.web
 import base64

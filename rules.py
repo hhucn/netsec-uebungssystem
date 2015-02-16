@@ -134,8 +134,8 @@ def save(imapmail, mails):
 
             for payloadPart in mail.text.walk():
                 if payloadPart.get_filename():
-                    attachFile = open("attachments/%s/" % clientMailAddress + str(int(time.time())) + " "
-                        + payloadPart.get_filename(), "w")
+                    attachFile = open("attachments/%s/" % clientMailAddress + str(int(time.time())) + " " +
+                                      payloadPart.get_filename(), "w")
                 elif payloadPart.get_payload():
                     attachFile = open("attachments/%s/" % clientMailAddress + "mailtext.txt", "a")
                 else:

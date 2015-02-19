@@ -4,12 +4,11 @@ from __future__ import unicode_literals
 
 
 import imaplib
-import time
 import logging
-import sys
+import time
 
-import rules
 import helper
+import rules
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 

@@ -7,9 +7,8 @@ import logging
 import os
 from passlib.hash import pbkdf2_sha256
 
-import helper
-
-import korrekturtools
+from . import helper
+from . import korrekturtools
 
 
 class requestHandlerWithAuth(tornado.web.RequestHandler):

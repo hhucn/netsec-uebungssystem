@@ -7,8 +7,8 @@ import imaplib
 import logging
 import time
 
-import helper
-import rules
+from . import helper
+from . import rules
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 

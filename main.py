@@ -7,8 +7,8 @@ import imaplib
 import time
 import logging
 import sys
-import rules  # not unused!
 
+import rules
 import helper
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
@@ -60,7 +60,7 @@ def processRule(imapmail, rule):
 
     for step in rule["steps"]:
         logging.debug("* exec: %s" % step[0])
-        mails = getattr(sys.modules["rules"], step[0])(imapmail, mails, *step[1:])
+        mails = getattr(rules, step[0])(imapmail, mails, *step[1:])
         if not mails:
             logging.debug("*  ret no mails")
             break

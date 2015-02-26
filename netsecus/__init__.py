@@ -7,8 +7,8 @@ import imaplib
 import logging
 import time
 
-from . import helper
-from . import rules
+import helper
+import rules
 
 # useful for debugging: $ openssl s_client -crlf -connect imap.gmail.com:993
 
@@ -25,14 +25,14 @@ def main():
 
     helper.setupLogging()
 
-    imapmail = loginIMAP(helper.getConfigValue("login")["imapmail_server"], helper.getConfigValue(
-        "login")["mail_address"], helper.getConfigValue("login")["mail_password"])
+    imapmail = loginIMAP(helper.getConfigValue("login", "imapmail_server"), helper.getConfigValue(
+        "login", "mail_address"), helper.getConfigValue("login", "mail_password"))
     imapmail._command("IDLE")
 
     if "idling" in imapmail.readline().decode("utf-8"):
         logging.debug("Server supports IDLE.")
         firstRun = True
-        while(True):
+        while True:
             if firstRun or "EXISTS" in imapmail.readline().decode("utf-8"):
                 imapmail._command("DONE")
                 imapmail.readline()
@@ -42,9 +42,9 @@ def main():
             firstRun = False
     else:
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
-        while(True):
+        while True:
             ruleLoop(imapmail)
-            time.sleep(helper.getConfigValue("settings")["delay"])
+            time.sleep(helper.getConfigValue("settings", "delay"))
 
 
 def ruleLoop(imapmail):

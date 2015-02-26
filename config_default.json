@@ -1,0 +1,29 @@
+{
+	"settings": {
+		"loglevel":"Error",
+		"savemode":"file",
+		"database":"db.sqlite3",
+		"delay":3
+	},
+	"login": {
+		"smtpmail_server":  "smtp.gmail.com",
+		"imapmail_server":  "imap.gmail.com",
+		"korrektur_server_port": 8080
+	},
+	"rules": [
+		{
+			"title":"Benchmark",
+			"steps":[
+				["filter","SUBJECT Benchmark"],
+				["answer","netsecus Benchmark","Testing <answer> rule"],
+				["answer","netsecus Benchmark","Testing <answer> rule with specified mail address","martin.dessauer@hhu.de"],
+				["flag","SAVED"],
+				["log","Benchmark mail received."],
+				["move","Benchmark"],
+				["save"],
+				["delete"]
+			]
+		}
+	],
+	"variables": {}
+}

@@ -5,10 +5,11 @@ import json
 import re
 import smtplib
 import hashlib
+import os
 
 
 def setupLogging():
-    if getConfigValue("settings")["loglevel"] == "ERROR":
+    if getConfigValue("settings", "loglevel") == "ERROR":
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)
     else:
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
@@ -40,25 +41,35 @@ def imapCommand(imapmail, command, uid, *args):
         return []
 
 
-def getConfigValue(what):
-    if "login" in what:
-        jsonFile = json.load(open("login.json"))
-    elif "korrektoren" in what:
-        jsonFile = json.load(open("korrektoren.json"))
-    else:
-        jsonFile = json.load(open("config.json"))[what]
+def getConfigValue(*args):
+    defaultsValue = json.load(open("config_default.json"))
 
-    if jsonFile is None:
-        return []
-    return jsonFile
+    for path in args:
+        if path not in defaultsValue:
+            logging.error("Tried to access config_default.json element '%s' which doesn't exist." % ("/".join(args)))
+            return
+        else:
+            defaultsValue = defaultsValue[path]
+
+    if os.path.isfile("config.json"):
+        userValue = json.load(open("config.json"))
+        for path in args:
+            if path not in userValue:
+                return defaultsValue
+            else:
+                userValue = userValue[path]
+
+        return userValue
+    else:
+        return defaultsValue
 
 
 def smtpMail(to, what):
-    smtpmail = smtplib.SMTP(getConfigValue("login")["smtpmail_server"])
+    smtpmail = smtplib.SMTP(getConfigValue("login", "smtpmail_server"))
     smtpmail.ehlo()
     smtpmail.starttls()
-    smtpmail.login(getConfigValue("login")["mail_address"], getConfigValue("login")["mail_password"])
-    smtpmail.sendmail(getConfigValue("login")["mail_address"], to, what)
+    smtpmail.login(getConfigValue("login", "mail_address"), getConfigValue("login", "mail_password"))
+    smtpmail.sendmail(getConfigValue("login", "mail_address"), to, what)
     smtpmail.quit()
 
 

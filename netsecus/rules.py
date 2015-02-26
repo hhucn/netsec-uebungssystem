@@ -103,8 +103,8 @@ def save(imapmail, mails):
     if isinstance(mails, mailElement):
         mails = [mails]
 
-    if helper.getConfigValue("settings")["savemode"] == "db":
-        sqldatabase = sqlite3.connect(helper.getConfigValue("settings")["database"])
+    if helper.getConfigValue("settings", "savemode") == "db":
+        sqldatabase = sqlite3.connect(helper.getConfigValue("settings", "database"))
         cursor = sqldatabase.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
@@ -124,7 +124,7 @@ def save(imapmail, mails):
             cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?)", insertValues)
             sqldatabase.commit()
             sqldatabase.close()
-    elif helper.getConfigValue("settings")["savemode"] == "file":
+    elif helper.getConfigValue("settings", "savemode") == "file":
         for mail in mails:
             clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
 

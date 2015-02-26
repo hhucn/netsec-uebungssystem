@@ -5,5 +5,4 @@ __pycache__
 *.db
 logfile.log
 attachments
-login.json
-korrektoren.json
+config.json

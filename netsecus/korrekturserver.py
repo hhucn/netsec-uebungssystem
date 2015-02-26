@@ -23,7 +23,7 @@ class requestHandlerWithAuth(tornado.web.RequestHandler):
 class tableHandler(requestHandlerWithAuth):
 
     def get(self, *args, **kwargs):
-        if helper.getConfigValue("settings")["savemode"] == "file":
+        if helper.getConfigValue("settings", "savemode") == "file":
             abgaben = []
             if os.path.exists("attachments"):
                 for entry in os.listdir("attachments/"):
@@ -38,7 +38,7 @@ class zipHandler(requestHandlerWithAuth):
     def get(self, *args, **kwargs):
         requestedFile = self.request.uri.replace("/zips/", "/zips").replace("/zips", "")
 
-        if len(requestedFile) is 0:
+        if len(requestedFile) == 0:
             self.set_status(404)
             self.write("Zur&uuml;ck zur <a href=\"/\">&Uuml;bersicht</a>")
             self.finish()
@@ -71,9 +71,9 @@ def main():
         (r"/status/.*", statusHandler),
     ])
 
-    logging.debug("Server started on port %i.", helper.getConfigValue("login")["korrektur_server_port"])
+    logging.debug("Server started on port %i.", helper.getConfigValue("login", "korrektur_server_port"))
 
-    application.listen(helper.getConfigValue("login")["korrektur_server_port"])
+    application.listen(helper.getConfigValue("login", "korrektur_server_port"))
     tornado.ioloop.IOLoop.instance().start()
 
 

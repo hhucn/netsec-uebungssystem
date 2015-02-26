@@ -72,6 +72,19 @@ class TestSourceQuality(unittest.TestCase):
                 'How about  %s %s:  ?' % (
                     m.group(0), fn, m.group(1), m.group(2)))
 
+    def _test_weird_constants(self, fn, code):
+        ''' Constants for string indexing should be calculated with len so it
+        is obvious what happens. If possible, try to use proper parsing. '''
+        m = re.search(
+            r'\[([3-9]|[1-9][0-9]{1,})[:\]]', code)
+        if m:
+            self.assertFalse(
+                m,
+                'Strange constant %s in file %s, around "%s". '
+                'Can we use len instead?' % (
+                    m.group(1), fn, code[m.start() - 40:m.end() + 1]
+                ))
+
     def test_all_files(self):
         for dirpath, _, filenames in os.walk(rootDir):
             for basename in filenames:
@@ -86,6 +99,7 @@ class TestSourceQuality(unittest.TestCase):
                 self._test_regexp_rawstrings(fn, code)
                 self._test_strange_is(fn, code)
                 self._test_unnecessary_parens(fn, code)
+                self._test_weird_constants(fn, code)
 
 if __name__ == '__main__':
     unittest.main()

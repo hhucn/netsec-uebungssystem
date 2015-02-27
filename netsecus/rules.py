@@ -41,9 +41,6 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
 
 def answer(imapmail, mails, subject, text, address="(back)"):
     # see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
-    if isinstance(mails, mailElement):
-        mails = [mails]
-
     for mail in mails:
         subjectHash = helper.md5sum("%s: %s" % (subject, text))
 
@@ -67,9 +64,6 @@ def answer(imapmail, mails, subject, text, address="(back)"):
 def move(imapmail, mails, destination):
     # moves the mails from id_list to mailbox destination
     # warning: this alters the UID of the mails!
-    if isinstance(mails, mailElement):
-        mails = [mails]
-
     imapmail.create(destination)
     for mail in mails:
         # https://tools.ietf.org/html/rfc6851
@@ -78,9 +72,6 @@ def move(imapmail, mails, destination):
 
 
 def flag(imapmail, mails, flag):
-    if isinstance(mails, mailElement):
-        mails = [mails]
-
     for mail in mails:
         helper.imapCommand(imapmail, "STORE", mail.uid, "+FLAGS", flag)
     return mails
@@ -100,9 +91,6 @@ def delete(imapmail, mails):
 
 
 def save(imapmail, mails):
-    if isinstance(mails, mailElement):
-        mails = [mails]
-
     if helper.getConfigValue("settings", "savemode") == "db":
         sqldatabase = sqlite3.connect(helper.getConfigValue("settings", "database"))
         cursor = sqldatabase.cursor()

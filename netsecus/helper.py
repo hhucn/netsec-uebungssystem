@@ -44,24 +44,22 @@ def imapCommand(imapmail, command, uid, *args):
 def getConfigValue(*args):
     defaultsValue = json.load(open("config_default.json"))
 
-    for path in args:
-        if path not in defaultsValue:
-            logging.error("Tried to access config_default.json element '%s' which doesn't exist." % ("/".join(args)))
-            return
-        else:
-            defaultsValue = defaultsValue[path]
-
     if os.path.isfile("config.json"):
         userValue = json.load(open("config.json"))
-        for path in args:
-            if path not in userValue:
-                return defaultsValue
-            else:
+        try:
+            for path in args:
                 userValue = userValue[path]
-
-        return userValue
-    else:
+            return userValue
+        except KeyError:
+            pass
+    try:
+        for path in args:
+            defaultsValue = defaultsValue[path]
         return defaultsValue
+    except KeyError:
+        pass
+
+    logging.error("Tried to access config value at path %s, which doesn't exist." % "/".join(args))
 
 
 def smtpMail(to, what):

@@ -57,7 +57,7 @@ def answer(imapmail, mails, subject, text, address="(back)"):
         else:
             helper.smtpMail(clientMailAddress, "Content-Type:text/html\nSubject: %s\n\n%s" %
                             (helper.checkForVariable(mail, subject), helper.checkForVariable(mail, text)))
-            flag(imapmail, mail, "NETSEC-Answered-" + subjectHash)
+            flag(imapmail, [mail], "NETSEC-Answered-" + subjectHash)
     return mails
 
 
@@ -119,8 +119,8 @@ def save(imapmail, mails):
             if not os.path.exists("attachments"):
                 os.mkdir("attachments")
 
-            if not os.path.exists(clientMailAddress):
-                os.mkdir(clientMailAddress)
+            if not os.path.exists("attachments/" + clientMailAddress):
+                os.mkdir("attachments/" + clientMailAddress)
 
             for payloadPart in mail.text.walk():
                 if payloadPart.get_filename():

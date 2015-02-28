@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import imaplib
 import logging
 import json
 import re
@@ -75,3 +76,11 @@ def md5sum(what):
     hashobj = hashlib.md5()
     hashobj.update(what.encode("utf-8"))
     return hashobj.hexdigest()
+
+
+def patch_imaplib():
+    # imaplib is missing some essential commands.
+    # Since we just need these passed through to the server, patch them in
+    imaplib.Commands["MOVE"] = ("SELECTED",)
+    imaplib.Commands["IDLE"] = ("AUTH", "SELECTED",)
+    imaplib.Commands["DONE"] = ("AUTH", "SELECTED",)

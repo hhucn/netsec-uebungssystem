@@ -9,11 +9,7 @@ import rules
 
 
 def main():
-    # patching imaplib
-    imaplib.Commands["MOVE"] = ("SELECTED",)
-    imaplib.Commands["IDLE"] = ("AUTH", "SELECTED",)
-    imaplib.Commands["DONE"] = ("AUTH", "SELECTED",)
-
+    helper.patch_imaplib()
     helper.setupLogging()
 
     imapmail = loginIMAP(

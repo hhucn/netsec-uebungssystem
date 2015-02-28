@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-
 from __future__ import unicode_literals
-
 
 import imaplib
 import logging
@@ -70,6 +67,3 @@ def loginIMAP(server, address, password):
     imapmail.select()
     logging.info("IMAP login (%s on %s)" % (address, server))
     return imapmail
-
-if __name__ == "__main__":
-    main()

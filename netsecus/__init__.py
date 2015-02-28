@@ -62,8 +62,7 @@ def processRule(imapmail, rule):
     for step in rule["steps"]:
         logging.debug("* exec: %s" % step[0])
         mails = getattr(rules, step[0])(imapmail, mails, *step[1:])
-        if not isinstance(mails, list):
-            mails = [mails]
+
         if not mails:
             logging.debug("*  ret no mails")
             break

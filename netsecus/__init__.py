@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import argparse
 import imaplib
 import logging
 import time
@@ -9,6 +10,9 @@ import rules
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.parse_args()  # later args = parser.parse_args
+
     helper.patch_imaplib()
     helper.setupLogging()
 

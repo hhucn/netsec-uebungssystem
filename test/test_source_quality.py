@@ -1,16 +1,13 @@
 from __future__ import unicode_literals
 
-# Allow direct execution
+import io
 import os
+import re
 import sys
 import unittest
 
-import io
-import re
-
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class TestSourceQuality(unittest.TestCase):
@@ -86,7 +83,7 @@ class TestSourceQuality(unittest.TestCase):
                 ))
 
     def test_all_files(self):
-        for dirpath, _, filenames in os.walk(rootDir):
+        for dirpath, _, filenames in os.walk(root_dir):
             for basename in filenames:
                 if not basename.endswith('.py'):
                     continue

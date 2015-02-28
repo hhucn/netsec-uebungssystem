@@ -25,8 +25,10 @@ def main():
 
     helper.setupLogging()
 
-    imapmail = loginIMAP(helper.getConfigValue("login", "imapmail_server"), helper.getConfigValue(
-        "login", "mail_address"), helper.getConfigValue("login", "mail_password"))
+    imapmail = loginIMAP(
+        helper.getConfigValue("login", "imapmail_server"),
+        helper.getConfigValue("login", "mail_address"),
+        helper.getConfigValue("login", "mail_password"))
     imapmail._command("IDLE")
 
     if "idling" in imapmail.readline().decode("utf-8"):

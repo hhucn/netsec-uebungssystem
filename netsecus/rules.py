@@ -27,15 +27,15 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
     # and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
     imapmail.select(mailbox)
 
-    data = helper.imapCommand(imapmail, "search", filterCriteria)[0]
-
+    response = helper.imapCommand(imapmail, "search", filterCriteria)
     mails = []
 
-    for uid in data.split():
-        a = helper.imapCommand(imapmail, "fetch", uid, "(rfc822)")[0][1].decode("utf-8")
-        a = a.encode("ascii", "ignore")
-        data = email.message_from_string(a)
-        mails.append(mailElement(uid, helper.getConfigValue("variables"), data))
+    if response:
+        response = response.decode("utf-8").split(" ")
+        for uid in response:
+            mailInfo, mailText = helper.imapCommand(imapmail, "fetch", uid, "(rfc822)")
+            data = email.message_from_string(mailText.decode("utf-8"))
+            mails.append(mailElement(uid, helper.getConfigValue("variables"), data))
     return mails
 
 

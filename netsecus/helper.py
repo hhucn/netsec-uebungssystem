@@ -30,16 +30,19 @@ def imapCommand(imapmail, command, uid, *args):
 
     # IMAP Command caller with error handling
     if uid:
-        code, ids = imapmail.uid(command, uid, *args)
+        code, response = imapmail.uid(command, uid, *args)
     else:
-        code, ids = imapmail.uid(command, *args)
+        code, response = imapmail.uid(command, *args)
 
     if "OK" in code:
-        return [singleID.decode("utf-8") if isinstance(singleID, str) else singleID for singleID in ids]
+        response = response[0]
+        if response:
+            return response
+        return
     else:
         logging.error("Server responded with Code '%s' for '%s %s %s'." % (code, command, uid, args))
         raise OSError.ConnectionError("Server responded with Code '%s' for '%s %s %s'." % (code, command, uid, args))
-        return []
+        return
 
 
 def getConfigValue(*args):

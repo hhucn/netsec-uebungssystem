@@ -5,8 +5,8 @@ import imaplib
 import logging
 import time
 
-import helper
-import rules
+from . import helper
+from . import rules
 
 
 def main():

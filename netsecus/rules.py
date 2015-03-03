@@ -8,7 +8,7 @@ import os
 import re
 import time
 
-import helper
+from . import helper
 
 
 class mailElement(object):

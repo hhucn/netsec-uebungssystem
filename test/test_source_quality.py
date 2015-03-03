@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import ast
 import io
 import os
 import re
@@ -11,6 +12,18 @@ root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class TestSourceQuality(unittest.TestCase):
+    def setUp(self):
+        self._internal_modules = set()
+        mod_dir = os.path.join(root_dir, 'netsecus')
+        for _, dirs, files in os.walk(mod_dir, topdown=True):
+            # Do not look into hidden directories
+            dirs[:] = [d for d in dirs if not d.startswith('.')]
+
+            self._internal_modules.update(dirs)
+            for f in files:
+                basename, ext = os.path.splitext(f)
+                if ext == '.py':
+                    self._internal_modules.add(basename)
 
     def _test_unicode_literals(self, fn, code):
         if "'" not in code and '"' not in code:
@@ -82,6 +95,20 @@ class TestSourceQuality(unittest.TestCase):
                     m.group(1), fn, code[m.start() - 40:m.end() + 1]
                 ))
 
+    def _test_internal_imports(self, fn, code):
+        ''' Internal imports should be package-relative so we don't have any
+        problems with identically-named modules somewhere else in the Python
+        path and speed up the import. '''
+
+        a = ast.parse(code, os.path.basename(fn))
+        for n in ast.walk(a):
+            if isinstance(n, ast.Import):
+                for alias in n.names:
+                    self.assertFalse(
+                        alias.name in self._internal_modules,
+                        'import %s in %s:%d should be package-relative.' % (
+                            alias.name, fn, n.lineno))
+
     def test_all_files(self):
         for dirpath, _, filenames in os.walk(root_dir):
             for basename in filenames:
@@ -97,6 +124,7 @@ class TestSourceQuality(unittest.TestCase):
                 self._test_strange_is(fn, code)
                 self._test_unnecessary_parens(fn, code)
                 self._test_weird_constants(fn, code)
+                self._test_internal_imports(fn, code)
 
 if __name__ == '__main__':
     unittest.main()

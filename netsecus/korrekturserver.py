@@ -82,8 +82,11 @@ def httpBasicAuth(self, *kwargs):
     receivedAuth = self.request.headers.get("Authorization")
 
     if receivedAuth is not None:
-        decodedAuth = base64.decodestring(receivedAuth[6:])
-        username, password = decodedAuth.split(":", 2)
+        authMode, auth = receivedAuth.split(" ")
+        if authMode is not "Basic":
+            logging.error("Used other HTTP authmode than 'Basic', '%s'." % authMode)
+            return False
+        username, password = base64.decodestring(auth).split(":", 2)
         korrektoren = helper.getConfigValue("korrektoren")
         if username not in korrektoren:
             logging.debug("Received nonexistent user '%s'." % username)

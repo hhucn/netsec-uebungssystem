@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import hashlib
 import logging
 import email
 import sqlite3
@@ -42,7 +43,10 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
 def answer(imapmail, mails, subject, text, address="(back)"):
     # see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
     for mail in mails:
-        subjectHash = helper.md5sum("%s: %s" % (subject, text))
+        stringToHash = "%s: %s" % (subject, text)
+        hashObject = hashlib.sha256()
+        hashObject.update(stringToHash.encode("utf-8"))
+        subjectHash = hashObject.hexdigest()
 
         if address == "(back)":
             clientMailAddress = mail.variables["MAILFROM"]

@@ -12,7 +12,7 @@ import time
 from . import helper
 
 
-class mail(object):
+class Mail(object):
 
     def __init__(self, uid, var, text):
         self.uid = uid
@@ -36,7 +36,7 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
         for uid in response:
             mailInfo, mailText = helper.imapCommand(imapmail, "fetch", uid, "(rfc822)")
             data = email.message_from_string(mailText.decode("utf-8"))
-            mails.append(mail(uid, helper.getConfigValue("variables"), data))
+            mails.append(Mail(uid, helper.getConfigValue("variables"), data))
     return mails
 
 

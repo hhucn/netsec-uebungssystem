@@ -119,19 +119,16 @@ def save(imapmail, mails):
     elif helper.getConfigValue("settings", "savemode") == "file":
         for mail in mails:
             clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
-
-            if not os.path.exists("attachments"):
-                os.mkdir("attachments")
-
-            if not os.path.exists("attachments/" + clientMailAddress):
-                os.mkdir("attachments/" + clientMailAddress)
+            attachPath = os.path.join("attachments", helper.escapePath(clientMailAddress))
+            timestamp = str(int(time.time()))
+            os.mkdirs(attachPath)
 
             for payloadPart in mail.text.walk():
                 if payloadPart.get_filename():
-                    attachFile = open("attachments/%s/" % clientMailAddress + str(int(time.time())) + " " +
-                                      payloadPart.get_filename(), "w")
+                    attachFile = open(os.path.join(attachPath, timestamp + " " +
+                                                   helper.escapePath(payloadPart.get_filename()), "w"))
                 elif payloadPart.get_payload():
-                    attachFile = open("attachments/%s/" % clientMailAddress + "mailtext.txt", "a")
+                    attachFile = open(os.path.join(attachPath, "mailtext.txt"), "a")
                 else:
                     pass
 

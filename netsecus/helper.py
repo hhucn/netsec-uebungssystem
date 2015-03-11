@@ -80,3 +80,14 @@ def patch_imaplib():
     imaplib.Commands["MOVE"] = ("SELECTED",)
     imaplib.Commands["IDLE"] = ("AUTH", "SELECTED",)
     imaplib.Commands["DONE"] = ("AUTH", "SELECTED",)
+
+
+def escapePath(path):
+    if os.sep in path:
+        logging.error("Found '%s' in '%s', possible attack." % (os.sep, path))
+        path.replace(os.sep, "_")
+
+    for pathElement in path.split(os.sep):
+        if pathElement[0] == ".":
+            logging.error("Found dot at beginning of filename, possible attack.")
+            pathElement[0] = "_"

@@ -9,12 +9,12 @@ def readStatus(student):
     if not os.path.exists("attachments"):
         return
 
-    if not os.path.exists("attachments/" + student):
+    if not os.path.exists(os.path.join("attachments", student)):
         return "Student ohne Abgabe"
 
-    if not os.path.exists("attachments/%s/korrekturstatus.txt" % student):
+    if not os.path.exists(os.path.join("attachments", student, "korrekturstatus.txt")):
         return "Unbearbeitet"
-    statusfile = open("attachments/%s/korrekturstatus.txt" % student, "r")
+    statusfile = open(os.path.join("attachments", student, "korrekturstatus.txt"), "r")
     status = statusfile.read()
     statusfile.close()
     return status
@@ -24,11 +24,8 @@ def writeStatus(student, status):
     student = student.lower()
     status = status.lower()
 
-    if not os.path.exists("attachments"):
+    if not os.path.exists(os.path.join("attachments", student)):
         return
-
-    if not os.path.exists("attachments/" + student):
-        return
-    statusfile = open("attachments/%s/korrekturstatus.txt" % student, "w")
+    statusfile = open(os.path.join("attachments", student, "korrekturstatus.txt"), "w")
     statusfile.write(status)
     statusfile.close()

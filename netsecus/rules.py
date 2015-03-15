@@ -60,7 +60,7 @@ def answer(imapmail, mails, subject, text, address="(back)"):
                     mail.uid, clientMailAddress, subject))
         else:
             helper.smtpMail(clientMailAddress, "Content-Type:text/html\nSubject: %s\n\n%s" %
-                            (helper.checkForVariable(mail, subject), helper.checkForVariable(mail, text)))
+                            (helper.processVariable(mail, subject), helper.processVariable(mail, text)))
             flag(imapmail, [mail], "NETSEC-Answered-" + subjectHash)
     return mails
 

@@ -15,13 +15,13 @@ def setupLogging():
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
 
 
-def checkForVariable(mail, raw):
-    varInRaw = re.findall(r"\$([A-Z]*)", raw)
-    if varInRaw:
-        for var in varInRaw:
-            if var in mail.variables:
-                raw = raw.replace("$" + var, checkForVariable(mail, mail.variables[var]))
-    return raw
+def processVariable(mail, text):
+    foundVarInText = re.findall(r"\$([^ .,\$\n\t])+", text)
+
+    for var in foundVarInText:
+        if var in mail.variables:
+            text = text.replace("$" + var, processVariable(mail, mail.variables[var]))
+    return text
 
 
 def imapCommand(imapmail, command, uid, *args):

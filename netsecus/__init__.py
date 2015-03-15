@@ -11,7 +11,8 @@ from . import rules
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "-config", default="config.json", help="Path to the config.json to be used", dest="configPath")
+    parser.add_argument("-c", "-config", default="config.json",
+                        help="Path to the config.json to be used", dest="configPath")
     args = vars(parser.parse_args())
     helper.configPath = args["configPath"]
 

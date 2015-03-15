@@ -11,7 +11,9 @@ from . import rules
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.parse_args()  # later args = parser.parse_args
+    parser.add_argument("-c", "-config", default="config.json", help="Path to the config.json to be used", dest="configPath")
+    args = vars(parser.parse_args())
+    helper.configPath = args["configPath"]
 
     helper.patch_imaplib()
     helper.setupLogging()

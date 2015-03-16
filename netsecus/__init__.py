@@ -39,9 +39,11 @@ def main():
     else:
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:
-            ruleLoop(imapmail)
-            time.sleep(helper.getConfigValue("settings", "delay"))
-
+            try:
+                ruleLoop(imapmail)
+                time.sleep(helper.getConfigValue("settings", "delay"))
+            except KeyboardInterrupt:
+                logoutIMAP(imapmail)
 
 def ruleLoop(imapmail):
     for rule in helper.getConfigValue("rules"):
@@ -68,5 +70,10 @@ def loginIMAP(server, address, password):
     imapmail = imaplib.IMAP4_SSL(server)
     imapmail.login(address, password)
     imapmail.select()
-    logging.info("IMAP login (%s on %s)" % (address, server))
+    logging.debug("IMAP login (%s on %s)" % (address, server))
     return imapmail
+
+def logoutIMAP(imapmail):
+    imapmail.close()
+    imapmail.logout()
+    logging.debug("IMAP logout")

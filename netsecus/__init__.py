@@ -45,6 +45,7 @@ def main():
             except KeyboardInterrupt:
                 logoutIMAP(imapmail)
 
+
 def ruleLoop(imapmail):
     for rule in helper.getConfigValue("rules"):
         processRule(imapmail, rule)
@@ -72,6 +73,7 @@ def loginIMAP(server, address, password):
     imapmail.select()
     logging.debug("IMAP login (%s on %s)" % (address, server))
     return imapmail
+
 
 def logoutIMAP(imapmail):
     imapmail.close()

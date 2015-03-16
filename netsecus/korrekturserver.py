@@ -56,10 +56,10 @@ class statusHandler(requestHandlerWithAuth):
         else:
             student = uri
             status = ""
-        if not status:
-            self.write(korrekturtools.readStatus(student))
-        else:
+        if status:
             korrekturtools.writeStatus(student, status)
+        else:
+            self.write(korrekturtools.readStatus(student))
 
 
 def main():

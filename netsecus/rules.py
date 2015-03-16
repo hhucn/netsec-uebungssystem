@@ -96,7 +96,8 @@ def delete(imapmail, mails):
 def save(imapmail, mails):
     for mail in mails:
         clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
-        attachPath = os.path.join("attachments", helper.escapePath(clientMailAddress))
+        attachPath = os.path.join(helper.getConfigValue("settings", "attachment_path"),
+                                  helper.escapePath(clientMailAddress))
         timestamp = str(int(time.time()))
         os.mkdirs(attachPath)
 

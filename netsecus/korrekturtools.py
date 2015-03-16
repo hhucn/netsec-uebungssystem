@@ -9,15 +9,21 @@ from . import helper
 def readStatus(student):
     student = student.lower()
 
-    if not os.path.exists("attachments"):
+    path = helper.getConfigValue("settings", "attachment_path")
+
+    if not os.path.exists(path):
         return
 
-    if not os.path.exists(os.path.join("attachments", student)):
+    path = os.path.join(path, student)
+
+    if not os.path.exists(path):
         return "Student ohne Abgabe"
 
-    if not os.path.exists(os.path.join("attachments", student, "korrekturstatus.txt")):
+    path = os.path.join(path, "korrekturstatus.txt")
+
+    if not os.path.exists(path):
         return "Unbearbeitet"
-    statusfile = open(os.path.join("attachments", student, "korrekturstatus.txt"), "r")
+    statusfile = open(path, "r")
     status = statusfile.read()
     statusfile.close()
     return status
@@ -27,9 +33,14 @@ def writeStatus(student, status):
     student = student.lower()
     status = status.lower()
 
-    if not os.path.exists(os.path.join("attachments", student)):
+    path = os.path.join(helper.getConfigValue("settings", "attachment_path"), student)
+
+    if not os.path.exists(path):
         logging.error("Requested student '%s' hasn't submitted anything yet.")
         return
-    statusfile = open(os.path.join("attachments", student, "korrekturstatus.txt"), "w")
+
+    path = os.path.join(path, "korrekturstatus.txt")
+    
+    statusfile = open(path, "w")
     statusfile.write(status)
     statusfile.close()

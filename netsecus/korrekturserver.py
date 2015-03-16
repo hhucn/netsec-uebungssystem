@@ -25,8 +25,9 @@ class tableHandler(requestHandlerWithAuth):
     def get(self, *args, **kwargs):
         if helper.getConfigValue("settings", "savemode") == "file":
             abgaben = []
-            if os.path.exists("attachments"):
-                for entry in os.listdir("attachments"):
+            attachmentPath = helper.getConfigValue("settings", "attachment_path")
+            if os.path.exists(attachmentPath):
+                for entry in os.listdir(attachmentPath):
                     if entry[0] != ".":
                         abgaben.append(entry.lower())
 

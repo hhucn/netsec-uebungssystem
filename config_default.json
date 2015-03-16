@@ -1,8 +1,6 @@
 {
 	"settings": {
 		"loglevel":"Error",
-		"savemode":"file",
-		"database":"db.sqlite3",
 		"delay":3
 	},
 	"login": {

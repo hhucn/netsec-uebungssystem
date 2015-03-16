@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import hashlib
 import logging
 import email
-import sqlite3
 import base64
 import os
 import re
@@ -95,46 +94,24 @@ def delete(imapmail, mails):
 
 
 def save(imapmail, mails):
-    if helper.getConfigValue("settings", "savemode") == "db":
-        sqldatabase = sqlite3.connect(helper.getConfigValue("settings", "database"))
-        cursor = sqldatabase.cursor()
-        cursor.execute(
-            "CREATE TABLE IF NOT EXISTS inbox (addr text,date text,subject text,korrektor text,attachment blob)")
+    for mail in mails:
+        clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
+        attachPath = os.path.join("attachments", helper.escapePath(clientMailAddress))
+        timestamp = str(int(time.time()))
+        os.mkdirs(attachPath)
 
-        for mail in mails:
-            insertValues = [mail["From"], mail["Date"], mail["Subject"], "(-)"]
-            attachments = []
+        for payloadPart in mail.text.walk():
+            if payloadPart.get_filename():
+                attachFile = open(os.path.join(attachPath, timestamp + " " +
+                                               helper.escapePath(payloadPart.get_filename()), "w"))
+            elif payloadPart.get_payload():
+                attachFile = open(os.path.join(attachPath, "mailtext.txt"), "a")
+            else:
+                pass
 
-            for payloadPart in mail.walk():
-                if payloadPart.get("Content-Transfer-Encoding"):
-                    if "base64" in payloadPart.get("Content-Transfer-Encoding"):
-                        attachments.append(payloadPart.get_payload())
-                    else:
-                        attachments.append(base64.b64encode(payloadPart.get_payload()))
-            insertValues.append("$".join(attachments))
+            dataToWrite = str(payloadPart.get_payload(decode="True"))
 
-            cursor.execute("INSERT INTO inbox VALUES (?,?,?,?,?)", insertValues)
-            sqldatabase.commit()
-            sqldatabase.close()
-    elif helper.getConfigValue("settings", "savemode") == "file":
-        for mail in mails:
-            clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
-            attachPath = os.path.join("attachments", helper.escapePath(clientMailAddress))
-            timestamp = str(int(time.time()))
-            os.mkdirs(attachPath)
-
-            for payloadPart in mail.text.walk():
-                if payloadPart.get_filename():
-                    attachFile = open(os.path.join(attachPath, timestamp + " " +
-                                                   helper.escapePath(payloadPart.get_filename()), "w"))
-                elif payloadPart.get_payload():
-                    attachFile = open(os.path.join(attachPath, "mailtext.txt"), "a")
-                else:
-                    pass
-
-                dataToWrite = str(payloadPart.get_payload(decode="True"))
-
-                if dataToWrite:
-                    attachFile.write(dataToWrite)
-                attachFile.close()
+            if dataToWrite:
+                attachFile.write(dataToWrite)
+            attachFile.close()
     return mails

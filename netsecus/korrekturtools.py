@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 
 import os
 
+from . import helper
+
+
 
 def readStatus(student):
     student = student.lower()
@@ -25,6 +28,7 @@ def writeStatus(student, status):
     status = status.lower()
 
     if not os.path.exists(os.path.join("attachments", student)):
+        logging.error("Requested student '%s' hasn't submitted anything yet.")
         return
     statusfile = open(os.path.join("attachments", student, "korrekturstatus.txt"), "w")
     statusfile.write(status)

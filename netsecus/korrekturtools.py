@@ -5,7 +5,6 @@ import os
 from . import helper
 
 
-
 def readStatus(student):
     student = student.lower()
 
@@ -23,6 +22,7 @@ def readStatus(student):
 
     if not os.path.exists(path):
         return "Unbearbeitet"
+
     statusfile = open(path, "r")
     status = statusfile.read()
     statusfile.close()
@@ -40,7 +40,6 @@ def writeStatus(student, status):
         return
 
     path = os.path.join(path, "korrekturstatus.txt")
-    
-    statusfile = open(path, "w")
-    statusfile.write(status)
-    statusfile.close()
+
+    with open(path, "w") as statusfile:
+        statusfile.write(status)

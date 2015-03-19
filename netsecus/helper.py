@@ -16,7 +16,7 @@ def setupLogging():
 
 
 def processVariable(mail, text):
-    foundVarInText = re.findall(r"\$([^ .,\$\n\t])+", text)
+    foundVarInText = re.findall(r"\$([^ .,\?\!\$\n\t])+", text)
 
     for var in foundVarInText:
         if var in mail.variables:

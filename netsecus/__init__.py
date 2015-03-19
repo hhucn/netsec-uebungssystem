@@ -68,10 +68,15 @@ def processRule(imapmail, rule):
 
 
 def loginIMAP(server, address, password):
-    imapmail = imaplib.IMAP4_SSL(server)
-    imapmail.login(address, password)
-    imapmail.select()
-    logging.debug("IMAP login (%s on %s)" % (address, server))
+    if not address or not password:
+        err = "IMAP login information incomplete. (Missing address or password)"
+        logging.error(err)
+        raise ValueError(err)
+    else:
+        imapmail = imaplib.IMAP4_SSL(server)
+        imapmail.login(address, password)
+        imapmail.select()
+        logging.debug("IMAP login (%s on %s)" % (address, server))
     return imapmail
 
 

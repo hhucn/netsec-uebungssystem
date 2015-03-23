@@ -15,12 +15,12 @@ def setupLogging():
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
 
 
-def processVariable(mail, text):
+def processVariable(variables, text):
     foundVarInText = re.findall(r"\$([A-Z]|[a-z]|[0-9])+", text)
 
     for var in foundVarInText:
-        if var in mail.variables:
-            text = text.replace("$" + var, processVariable(mail, mail.variables[var]))
+        if var in variables:
+            text = text.replace("$" + var, processVariable(mail, variables[var]))
     return text
 
 

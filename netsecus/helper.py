@@ -16,12 +16,7 @@ def setupLogging():
 
 
 def processVariable(variables, text):
-    foundVarInText = re.findall(r"\$([A-Z]|[a-z]|[0-9])+", text)
-
-    for var in foundVarInText:
-        if var in variables:
-            text = text.replace("$" + var, processVariable(mail, variables[var]))
-    return text
+    return re.sub(r'\$([a-zA-Z0-9_]+)', lambda m: (processVariable(variables,str(variables[m.group(0)]))), text)
 
 
 def imapCommand(imapmail, command, uid, *args):

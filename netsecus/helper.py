@@ -16,7 +16,9 @@ def setupLogging():
 
 
 def processVariable(variables, text):
-    return re.sub(r'\$([a-zA-Z0-9_]+)', lambda m: (processVariable(variables,str(variables[m.group(0)]))), text)
+    return re.sub(r'\$([a-zA-Z0-9_]+)',
+                  lambda m: processVariable(variables, str(variables[m.group(0)])),
+                  text)
 
 
 def imapCommand(imapmail, command, uid, *args):

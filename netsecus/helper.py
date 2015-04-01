@@ -89,3 +89,5 @@ def escapePath(path):
         if pathElement[0] == ".":
             logging.error("Found dot at beginning of filename, possible attack.")
             pathElement[0] = "_"
+
+    return path

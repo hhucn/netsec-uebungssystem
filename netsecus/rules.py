@@ -105,7 +105,7 @@ def save(imapmail, mails):
         for payloadPart in mail.text.walk():
             if payloadPart.get_filename():
                 attachFile = open(os.path.join(attachPath, timestamp + " " +
-                                               helper.escapePath(payloadPart.get_filename()), "w"))
+                                               helper.escapePath(payloadPart.get_filename())), "w")
             elif payloadPart.get_payload():
                 attachFile = open(os.path.join(attachPath, "mailtext.txt"), "a")
             else:

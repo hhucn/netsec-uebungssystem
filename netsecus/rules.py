@@ -83,9 +83,9 @@ def flag(imapmail, mails, flag):
 
 def log(imapmail, mails, msg, lvl="ERROR"):
     if lvl == "DEBUG":
-        logging.debug(msg)
+        logging.debug("Log: " + msg)
     else:
-        logging.error(msg)
+        logging.error("Log: " + msg)
     return mails
 
 

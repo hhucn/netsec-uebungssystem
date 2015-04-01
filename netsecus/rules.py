@@ -100,7 +100,9 @@ def save(imapmail, mails):
         attachPath = os.path.join(helper.getConfigValue("settings", "attachment_path"),
                                   helper.escapePath(clientMailAddress))
         timestamp = str(int(time.time()))
-        os.makedirs(attachPath)
+
+        if not os.path.exists(attachPath):
+            os.makedirs(attachPath)
 
         for payloadPart in mail.text.walk():
             if payloadPart.get_filename():

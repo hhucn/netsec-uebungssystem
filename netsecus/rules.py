@@ -119,3 +119,13 @@ def save(imapmail, mails):
                 attachFile.write(dataToWrite)
             attachFile.close()
     return mails
+
+
+def script(imapmail, mails, name, *args):
+    try:
+        loadedScript = __import__(name)
+    except ImportError:
+        logging.error("ImportError raised for script '%s'.", name)
+        return mails
+
+    return loadedScript.run(imapmail, mails, *args)

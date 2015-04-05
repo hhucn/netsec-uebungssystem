@@ -18,6 +18,7 @@
 				["answer","netsecus Benchmark","Testing <answer> rule with specified mail address","martin.dessauer@hhu.de"],
 				["flag","SAVED"],
 				["log","Benchmark mail received."],
+				["script","testscript","Benchmark Request"],
 				["move","Benchmark"],
 				["save"],
 				["delete"]

@@ -23,6 +23,15 @@ def main():
         helper.getConfigValue("login", "imapmail_server"),
         helper.getConfigValue("login", "mail_address"),
         helper.getConfigValue("login", "mail_password"))
+
+    imapmail._command("CAPABILITY")
+    if "UTF8" in imapmail.readline().decode("utf-8"):
+        imapmail.readline() # "OK" from "CAPABILITY" command
+        imapmail._command("ENABLE", "UTF8")
+        imapmail.readline() # "* ENABLED" from "ENABLE"
+        imapmail.readline() # "OK" from "ENABLE" command
+        logging.debug("Server supports UTF8")
+
     imapmail._command("IDLE")
 
     if "idling" in imapmail.readline().decode("utf-8"):
@@ -75,7 +84,6 @@ def loginIMAP(server, address, password):
     else:
         imapmail = imaplib.IMAP4_SSL(server)
         imapmail.login(address, password)
-        imapmail.select()
         logging.debug("IMAP login (%s on %s)" % (address, server))
     return imapmail
 

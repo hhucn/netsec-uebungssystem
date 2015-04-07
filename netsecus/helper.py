@@ -24,7 +24,6 @@ def processVariable(variables, text):
 def imapCommand(imapmail, command, uid, *args):
     logging.debug("\t%s %s %s" % (command, uid, " ".join(args)))
 
-    # IMAP Command caller with error handling
     if uid:
         code, response = imapmail.uid(command, uid, *args)
     else:
@@ -78,6 +77,8 @@ def patch_imaplib():
     imaplib.Commands["MOVE"] = ("SELECTED",)
     imaplib.Commands["IDLE"] = ("AUTH", "SELECTED",)
     imaplib.Commands["DONE"] = ("AUTH", "SELECTED",)
+    imaplib.Commands["ENABLE"] = ("AUTH",)
+    imaplib.Commands["CABABILITY"] = ("AUTH",)
 
 
 def escapePath(path):

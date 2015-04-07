@@ -63,7 +63,8 @@ class TestSourceQuality(unittest.TestCase):
         more details.
         '''
         m = re.search(
-            r'(?m)^\s*(.*?\s+is\s+[0-9]+.*?)\s*$', code)
+            r'(?m)^\s*(.*?\s+is(?:\s+not)?\s+(?:["\'].*|[0-9]+).*?)\s*$',
+            code)
         if m:
             self.assertFalse(
                 m,

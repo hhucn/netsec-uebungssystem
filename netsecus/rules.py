@@ -17,7 +17,12 @@ class Mail(object):
         self.uid = uid
         self.variables = var
         self.text = text
-        self.variables["MAILFROM"] = re.findall(r"\<(.*)\>", text["From"])[0]
+        mailFrom = re.search(r"\<(.*)\>", text["From"])
+        if mailFrom:
+            self.variables["MAILFROM"] = mailFrom.group(0)
+        else:
+            self.variables["MAILFROM"] = ""
+
         self.variables["MAILDATE"] = text["Date"]
         self.variables["MAILRECEIVED"] = text["Received"]
 
@@ -27,13 +32,13 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
     # and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
     imapmail.select(mailbox)
 
-    response = helper.imapCommand(imapmail, "search", filterCriteria)
+    response = helper.imapCommand(imapmail, "UID", "SEARCH", filterCriteria)
     mails = []
 
     if response:
         response = response.decode("utf-8").split(" ")
         for uid in response:
-            mailInfo, mailText = helper.imapCommand(imapmail, "fetch", uid, "(rfc822)")
+            mailInfo, mailText = helper.imapCommand(imapmail, "UID", "FETCH", uid, "(rfc822)")
             data = email.message_from_string(mailText.decode("utf-8"))
             mails.append(Mail(uid, helper.getConfigValue("variables"), data))
     return mails
@@ -52,7 +57,7 @@ def answer(imapmail, mails, subject, text, address="(back)"):
         else:
             clientMailAddress = address
 
-        mail_flags = helper.imapCommand(imapmail, "fetch", mail.uid, "FLAGS")
+        mail_flags = helper.imapCommand(imapmail, "UID", "FETCH", mail.uid, "FLAGS")
         if "NETSEC-Answered-" + subjectHash in mail_flags.decode("utf-8"):
             logging.error(
                 "Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered." % (
@@ -68,16 +73,17 @@ def answer(imapmail, mails, subject, text, address="(back)"):
 def move(imapmail, mails, destination):
     # moves the mails from id_list to mailbox destination
     # warning: this alters the UID of the mails!
-    imapmail.create(destination)
+    imapmail.create("\"%s\"" % destination)
+    #helper.imapCommand(imapmail, "CREATE", "\"%s\"" % destination)
     for mail in mails:
         # https://tools.ietf.org/html/rfc6851
-        helper.imapCommand(imapmail, "MOVE", mail.uid, destination)
+        helper.imapCommand(imapmail, "UID", "MOVE", mail.uid, "\"%s\"" % destination)
     return mails
 
 
 def flag(imapmail, mails, flag):
     for mail in mails:
-        helper.imapCommand(imapmail, "STORE", mail.uid, "+FLAGS", flag)
+        helper.imapCommand(imapmail, "UID", "STORE", mail.uid, "+FLAGS", flag)
     return mails
 
 

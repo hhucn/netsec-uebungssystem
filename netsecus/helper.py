@@ -9,6 +9,7 @@ import os
 
 configPath = ""
 
+
 def setupLogging():
     if getConfigValue("settings", "loglevel") == "ERROR":
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)

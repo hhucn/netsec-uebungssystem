@@ -13,7 +13,7 @@
 		{
 			"title":"Benchmark",
 			"steps":[
-				["filter","SUBJECT Benchmark"],
+				["filter","SUBJECT \"Benchmark\""],
 				["answer","netsecus Benchmark","Testing <answer> rule"],
 				["answer","netsecus Benchmark","Testing <answer> rule with specified mail address","martin.dessauer@hhu.de"],
 				["flag","SAVED"],
@@ -22,6 +22,15 @@
 				["move","Benchmark"],
 				["save"],
 				["delete"]
+			]
+		},
+		{
+			"title":"Übungsfilter",
+			"steps":[
+				["filter","(SUBJECT \"Übung\")"],
+				["save"],
+				["script","currentMarks","send"],
+				["move","Übungs-Mails"]
 			]
 		}
 	],

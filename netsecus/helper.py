@@ -7,6 +7,7 @@ import re
 import smtplib
 import os
 
+configPath = ""
 
 def setupLogging():
     if getConfigValue("settings", "loglevel") == "ERROR":

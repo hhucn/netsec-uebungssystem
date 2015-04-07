@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import hashlib
 import logging
 import email
-import base64
 import os
 import re
 import time

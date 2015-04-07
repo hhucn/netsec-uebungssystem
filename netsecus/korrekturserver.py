@@ -84,7 +84,7 @@ def httpBasicAuth(self, *kwargs):
 
     if receivedAuth is not None:
         authMode, auth = receivedAuth.split(" ")
-        if authMode is not "Basic":
+        if authMode != "Basic":
             logging.error("Used other HTTP authmode than 'Basic', '%s'." % authMode)
             return False
         username, password = base64.decodestring(auth).split(":", 2)

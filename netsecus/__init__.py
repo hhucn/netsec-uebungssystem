@@ -26,10 +26,10 @@ def main():
 
     imapmail._command("CAPABILITY")
     if "UTF8" in imapmail.readline().decode("utf-8"):
-        imapmail.readline() # "OK" from "CAPABILITY" command
+        imapmail.readline()  # "OK" from "CAPABILITY" command
         imapmail._command("ENABLE", "UTF8")
-        imapmail.readline() # "* ENABLED" from "ENABLE"
-        imapmail.readline() # "OK" from "ENABLE" command
+        imapmail.readline()  # "* ENABLED" from "ENABLE"
+        imapmail.readline()  # "OK" from "ENABLE" command
         logging.debug("Server supports UTF8")
 
     imapmail._command("IDLE")

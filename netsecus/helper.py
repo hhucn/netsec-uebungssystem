@@ -83,7 +83,8 @@ def patch_imaplib():
     imaplib.Commands["CABABILITY"] = ("AUTH",)
     imaplib.IMAP4_SSL.send = imaplibSendPatch
 
-def imaplibSendPatch(self,data):
+
+def imaplibSendPatch(self, data):
     data = data.encode("utf-8")
 
     bytes = len(data)

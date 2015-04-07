@@ -71,10 +71,8 @@ def answer(imapmail, mails, subject, text, address="(back)"):
 
 
 def move(imapmail, mails, destination):
-    # moves the mails from id_list to mailbox destination
-    # warning: this alters the UID of the mails!
     imapmail.create("\"%s\"" % destination)
-    #helper.imapCommand(imapmail, "CREATE", "\"%s\"" % destination)
+
     for mail in mails:
         # https://tools.ietf.org/html/rfc6851
         helper.imapCommand(imapmail, "UID", "MOVE", mail.uid, "\"%s\"" % destination)

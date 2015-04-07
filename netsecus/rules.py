@@ -123,9 +123,9 @@ def save(imapmail, mails):
 
 def script(imapmail, mails, name, *args):
     try:
-        loadedScript = __import__(name)
+        loadedScript = __import__("scripts.%s" % name)
     except ImportError:
-        logging.error("ImportError raised for script '%s'.", name)
+        logging.error("ImportError raised for script '%s'." % name)
         return mails
 
     return loadedScript.run(imapmail, mails, *args)

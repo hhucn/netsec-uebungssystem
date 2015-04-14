@@ -2,6 +2,7 @@
 	"settings": {
 		"loglevel":"Error",
 		"attachment_path":"attachments",
+		"html_path":"htmldocs",
 		"delay":3
 	},
 	"login": {

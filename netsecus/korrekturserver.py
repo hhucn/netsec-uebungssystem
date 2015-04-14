@@ -12,7 +12,6 @@ import tornado.web
 import base64
 import logging
 import os
-import argparse
 from passlib.hash import pbkdf2_sha256
 
 from netsecus import helper
@@ -74,11 +73,7 @@ class statusHandler(requestHandlerWithAuth):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "-config", default="config.json",
-                        help="Path to the config.json to be used", dest="configPath")
-    args = vars(parser.parse_args())
-    helper.configPath = args["configPath"]
+    helper.setupArguments()
     helper.setupLogging()
 
     application = tornado.web.Application([

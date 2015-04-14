@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import argparse
 import imaplib
 import logging
 import json
@@ -15,6 +16,15 @@ def setupLogging():
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)
     else:
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
+
+
+def setupArguments():
+    global configPath
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "-config", default="config.json",
+                        help="Path to the config.json to be used", dest="configPath")
+    args = vars(parser.parse_args())
+    configPath = args["configPath"]
 
 
 def processVariable(variables, text):

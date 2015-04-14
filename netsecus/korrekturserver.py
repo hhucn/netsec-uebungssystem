@@ -1,14 +1,22 @@
 from __future__ import unicode_literals
+import sys
+
+if not __package__:
+    # direct call of korrekturserver.py
+    import os.path
+    path = os.path.realpath(os.path.abspath(__file__))
+    sys.path.append(os.path.dirname(os.path.dirname(path)))
 
 import tornado.ioloop
 import tornado.web
 import base64
 import logging
 import os
+import argparse
 from passlib.hash import pbkdf2_sha256
 
-from . import helper
-from . import korrekturtools
+from netsecus import helper
+from netsecus import korrekturtools
 
 
 class requestHandlerWithAuth(tornado.web.RequestHandler):
@@ -23,15 +31,17 @@ class requestHandlerWithAuth(tornado.web.RequestHandler):
 class tableHandler(requestHandlerWithAuth):
 
     def get(self, *args, **kwargs):
-        if helper.getConfigValue("settings", "savemode") == "file":
-            abgaben = []
-            attachmentPath = helper.getConfigValue("settings", "attachment_path")
-            if os.path.exists(attachmentPath):
-                for entry in os.listdir(attachmentPath):
-                    if entry[0] != ".":
-                        abgaben.append(entry.lower())
+        abgaben = []
+        attachmentPath = helper.getConfigValue("settings", "attachment_path")
+        if os.path.exists(attachmentPath):
+            for entry in os.listdir(attachmentPath):
+                if entry[0] != ".":
+                    abgaben.append(entry.lower())
+        else:
+            logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-            self.render("table.html", abgaben=abgaben)
+        htmlPath = helper.getConfigValue("settings", "html_path")
+        self.render(os.path.join("..", htmlPath, "table.html"), abgaben=abgaben)
 
 
 class zipHandler(requestHandlerWithAuth):
@@ -64,6 +74,11 @@ class statusHandler(requestHandlerWithAuth):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "-config", default="config.json",
+                        help="Path to the config.json to be used", dest="configPath")
+    args = vars(parser.parse_args())
+    helper.configPath = args["configPath"]
     helper.setupLogging()
 
     application = tornado.web.Application([
@@ -86,22 +101,23 @@ def httpBasicAuth(self, *kwargs):
         authMode, auth = receivedAuth.split(" ")
         if authMode != "Basic":
             logging.error("Used other HTTP authmode than 'Basic', '%s'." % authMode)
-            return False
-        username, password = base64.decodestring(auth).split(":", 2)
-        korrektoren = helper.getConfigValue("korrektoren")
-        if username not in korrektoren:
-            logging.debug("Received nonexistent user '%s'." % username)
-            return False
-        if pbkdf2_sha256.verify(password, korrektoren[username]):
-            return True
-        logging.error("Failed login from '%s' with password '%s'." % (username, password))
+        else:
+            username, password = base64.decodestring(auth).split(":", 2)
+            korrektoren = helper.getConfigValue("korrektoren")
+            if username not in korrektoren:
+                logging.debug("Received nonexistent user '%s'." % username)
+            elif not pbkdf2_sha256.verify(password, korrektoren[username]):
+                logging.error("Failed login from '%s' with password '%s'." % (username, password))
+            else:
+                logging.debug("User '%s' logged in." % username)
+                return self
 
     self.set_status(401)
     self.set_header("WWW-Authenticate", "Basic realm='netsec-Uebungssystem Korrektoranmeldung'")
     self._transforms = []
     self.write("401: Authentifizierung erforderlich.")
     self.finish()
-    return False
+    return self
 
 if __name__ == "__main__":
     main()

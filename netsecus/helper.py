@@ -63,7 +63,7 @@ def getConfigValue(*args):
         except KeyError:
             pass
 
-        logging.error("Tried to access config value at path %s, which doesn't exist." % os.sep.join(args))
+        logging.error("Tried to access config value at path '%s', which doesn't exist." % os.sep.join(args))
 
 
 def smtpMail(to, what):

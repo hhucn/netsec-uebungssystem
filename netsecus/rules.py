@@ -35,10 +35,10 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
     mails = []
 
     if response:
-        response = response.decode("utf-8").split(" ")
+        response = response.encode("utf-8").split(" ")
         for uid in response:
             mailInfo, mailText = helper.imapCommand(imapmail, "UID", "FETCH", uid, "(rfc822)")
-            data = email.message_from_string(mailText.decode("utf-8"))
+            data = email.message_from_string(mailText)
             mails.append(Mail(uid, helper.getConfigValue("variables"), data))
     return mails
 
@@ -57,7 +57,7 @@ def answer(imapmail, mails, subject, text, address="(back)"):
             clientMailAddress = address
 
         mail_flags = helper.imapCommand(imapmail, "UID", "FETCH", mail.uid, "FLAGS")
-        if "NETSEC-Answered-" + subjectHash in mail_flags.decode("utf-8"):
+        if "NETSEC-Answered-" + subjectHash in mail_flags.encode("utf-8"):
             logging.error(
                 "Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered." % (
                     mail.uid, clientMailAddress, subject))

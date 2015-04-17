@@ -9,6 +9,7 @@ import smtplib
 import os
 
 configPath = ""
+configDefaultPath = ""
 
 
 def setupLogging():
@@ -19,12 +20,15 @@ def setupLogging():
 
 
 def setupArguments():
-    global configPath
+    global configPath, configDefaultPath
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "-config", default="config.json",
+    parser.add_argument("-c", "-config", default=os.path.join("config.json"),
                         help="Path to the config.json to be used", dest="configPath")
+    parser.add_argument("-d", "-default", default=os.path.join("config_default.json"),
+                        help="Path to the config_default.json to be used", dest="configDefaultPath")
     args = vars(parser.parse_args())
     configPath = args["configPath"]
+    configDefaultPath = args["configDefaultPath"]
 
 
 def processVariable(variables, text):
@@ -55,7 +59,7 @@ def imapCommand(imapmail, command, *args):
 
 
 def getConfigValue(*args):
-    with open("config_default.json") as defaultsFile:
+    with open(configDefaultPath) as defaultsFile:
         defaultsValue = json.load(defaultsFile)
         if os.path.isfile(configPath):
             with open(configPath) as userFile:

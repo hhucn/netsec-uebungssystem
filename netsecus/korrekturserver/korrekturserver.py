@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import sys
+import os.path
 
 if not __package__:
     # direct call of korrekturserver.py
-    import os.path
     path = os.path.realpath(os.path.abspath(__file__))
     sys.path.append(os.path.dirname(os.path.dirname(path)))
 
@@ -14,8 +14,8 @@ import logging
 import os
 from passlib.hash import pbkdf2_sha256
 
-from netsecus import helper
-from netsecus import korrekturtools
+from ..tools import helper
+from . import korrekturtools
 
 
 class requestHandlerWithAuth(tornado.web.RequestHandler):

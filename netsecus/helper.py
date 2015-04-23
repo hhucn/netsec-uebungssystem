@@ -1,10 +1,14 @@
 from __future__ import unicode_literals
 
+import base64
 import imaplib
 import logging
 import os
 import re
 import smtplib
+
+import tornado.web
+from passlib.hash import pbkdf2_sha256
 
 
 def processVariable(variables, text):
@@ -77,3 +81,34 @@ def escapePath(path):
             pathElement[0] = "_"
 
     return path
+
+
+class RequestHandlerWithAuth(tornado.web.RequestHandler):
+    def _execute(self, transforms, *args, **kwargs):
+        # executed before everything else.
+        receivedAuth = self.request.headers.get("Authorization")
+
+        if receivedAuth is not None:
+            authMode, auth_b64 = receivedAuth.split(" ")
+            if authMode != "Basic":
+                logging.error("Used other HTTP authmode than 'Basic', '%s'." % authMode)
+            else:
+                auth = base64.b64decode(auth_b64.encode('ascii'))
+                username_b, _, password_b = auth.partition(b":")
+                username = username_b.decode('utf-8')
+                password = password_b.decode('utf-8')
+                users = self.application.users
+                if username not in users:
+                    logging.debug("Received nonexistent user '%s'." % username)
+                elif not pbkdf2_sha256.verify(password, users[username]):
+                    logging.error("Failed login for %s from %s." % (username, self.request.remote_ip))
+                else:
+                    logging.debug("User '%s' logged in." % username)
+                    return super(RequestHandlerWithAuth, self)._execute(transforms, *args, **kwargs)
+
+        self.set_status(401)
+        realm = getattr(self.application, 'realm', '')
+        self.set_header("WWW-Authenticate", "Basic realm='%s'" % realm)
+        self._transforms = []
+        self.write("401: Authentifizierung erforderlich.")
+        self.finish()

@@ -26,7 +26,7 @@ class Mail(object):
         self.variables["MAILRECEIVED"] = text["Received"]
 
 
-def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
+def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
     # see http://tools.ietf.org/html/rfc3501#section-6.4.4 (for search)
     # and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
     imapmail.select(mailbox)
@@ -39,11 +39,11 @@ def filter(imapmail, mails, filterCriteria, mailbox="inbox"):
         for uid in response:
             mailInfo, mailText = helper.imapCommand(imapmail, "UID", "FETCH", uid, "(rfc822)")
             data = email.message_from_string(mailText)
-            mails.append(Mail(uid, helper.getConfigValue("variables"), data))
+            mails.append(Mail(uid, config("variables"), data))
     return mails
 
 
-def answer(imapmail, mails, subject, text, address="(back)"):
+def answer(config, imapmail, mails, subject, text, address="(back)"):
     # see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
     for mail in mails:
         stringToHash = "%s: %s" % (subject, text)
@@ -62,14 +62,15 @@ def answer(imapmail, mails, subject, text, address="(back)"):
                 "Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered." % (
                     mail.uid, clientMailAddress, subject))
         else:
-            helper.smtpMail(clientMailAddress, "Content-Type:text/html\nSubject: %s\n\n%s" %
-                            (helper.processVariable(mail.variables, subject),
-                             helper.processVariable(mail.variables, text)))
+            headers = ("Content-Type:text/html\nSubject: %s\n\n%s" % (
+                helper.processVariable(mail.variables, subject),
+                helper.processVariable(mail.variables, text)))
+            helper.smtpMail(config, clientMailAddress, headers)
             flag(imapmail, [mail], "NETSEC-Answered-" + subjectHash)
     return mails
 
 
-def move(imapmail, mails, destination):
+def move(config, imapmail, mails, destination):
     imapmail.create("\"%s\"" % destination)
 
     for mail in mails:
@@ -78,13 +79,13 @@ def move(imapmail, mails, destination):
     return mails
 
 
-def flag(imapmail, mails, flag):
+def flag(config, imapmail, mails, flag):
     for mail in mails:
         helper.imapCommand(imapmail, "UID", "STORE", mail.uid, "+FLAGS", flag)
     return mails
 
 
-def log(imapmail, mails, msg, lvl="ERROR"):
+def log(config, imapmail, mails, msg, lvl="ERROR"):
     if lvl == "DEBUG":
         logging.debug("Log: " + msg)
     else:
@@ -92,12 +93,12 @@ def log(imapmail, mails, msg, lvl="ERROR"):
     return mails
 
 
-def delete(imapmail, mails):
+def delete(config, imapmail, mails):
     flag(imapmail, mails, "\\DELETED")
     imapmail.expunge()
 
 
-def save(imapmail, mails):
+def save(config, imapmail, mails):
     for mail in mails:
         clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
         attachPath = os.path.join(helper.getConfigValue("settings", "attachment_path"),
@@ -124,7 +125,7 @@ def save(imapmail, mails):
     return mails
 
 
-def script(imapmail, mails, name, *args):
+def script(config, imapmail, mails, name, *args):
     try:
         loadedScript = __import__("scripts.%s" % name)
     except ImportError:

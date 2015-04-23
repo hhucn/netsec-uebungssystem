@@ -1,14 +1,14 @@
 {
-	"settings": {
-		"loglevel":"Error",
-		"attachment_path":"attachments",
-		"html_path":"htmldocs",
-		"delay":3
+	"loglevel":"Error",
+	"attachment_path":"attachments",
+	"html_path":"htmldocs",
+	"mail": {
+		"smtp_server": "smtp.gmail.com",
+		"imap_server": "imap.gmail.com",
+		"delay": 3
 	},
-	"login": {
-		"smtpmail_server":  "smtp.gmail.com",
-		"imapmail_server":  "imap.gmail.com",
-		"korrektur_server_port": 8080
+	"httpd": {
+		"port": 8080
 	},
 	"rules": [
 		{

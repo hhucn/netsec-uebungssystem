@@ -1,34 +1,10 @@
 from __future__ import unicode_literals
 
-import argparse
 import imaplib
 import logging
-import json
+import os
 import re
 import smtplib
-import os
-
-configPath = ""
-configDefaultPath = ""
-
-
-def setupLogging():
-    if getConfigValue("settings", "loglevel") == "ERROR":
-        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)
-    else:
-        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
-
-
-def setupArguments():
-    global configPath, configDefaultPath
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "-config", default=os.path.join("config.json"),
-                        help="Path to the config.json to be used", dest="configPath")
-    parser.add_argument("-d", "-default", default=os.path.join("config_default.json"),
-                        help="Path to the config_default.json to be used", dest="configDefaultPath")
-    args = vars(parser.parse_args())
-    configPath = args["configPath"]
-    configDefaultPath = args["configDefaultPath"]
 
 
 def processVariable(variables, text):
@@ -58,34 +34,12 @@ def imapCommand(imapmail, command, *args):
         return
 
 
-def getConfigValue(*args):
-    with open(configDefaultPath) as defaultsFile:
-        defaultsValue = json.load(defaultsFile)
-        if os.path.isfile(configPath):
-            with open(configPath) as userFile:
-                userValue = json.load(userFile)
-                try:
-                    for path in args:
-                        userValue = userValue[path]
-                    return userValue
-                except KeyError:
-                    pass
-        try:
-            for path in args:
-                defaultsValue = defaultsValue[path]
-            return defaultsValue
-        except KeyError:
-            pass
-
-        logging.error("Tried to access config value at path '%s', which doesn't exist." % os.sep.join(args))
-
-
-def smtpMail(to, what):
-    smtpmail = smtplib.SMTP(getConfigValue("login", "smtpmail_server"))
+def smtpMail(config, to, what):
+    smtpmail = smtplib.SMTP(config("mail.smtp_server"))
     smtpmail.ehlo()
     smtpmail.starttls()
-    smtpmail.login(getConfigValue("login", "mail_address"), getConfigValue("login", "mail_password"))
-    smtpmail.sendmail(getConfigValue("login", "mail_address"), to, what)
+    smtpmail.login(config("mail.address"), config("mail.password"))
+    smtpmail.sendmail(config("mail.address"), to, what)
     smtpmail.quit()
 
 

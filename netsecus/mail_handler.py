@@ -4,19 +4,17 @@ import imaplib
 import logging
 import time
 
-from ..tools import helper
-from ..tools import rules
+from . import helper
+from . import rules
 
 
-def main():
-    helper.setupArguments()
+def mainloop(config):
     helper.patch_imaplib()
-    helper.setupLogging()
 
     imapmail = loginIMAP(
-        helper.getConfigValue("login", "imapmail_server"),
-        helper.getConfigValue("login", "mail_address"),
-        helper.getConfigValue("login", "mail_password"))
+        config("mail.imap_server"),
+        config("mail.address"),
+        config("mail.password"))
 
     imapmail._command("CAPABILITY")
     if "UTF8" in imapmail.readline().decode("utf-8"):
@@ -38,7 +36,7 @@ def main():
             if firstRun or "EXISTS" in imapmail.readline().decode("utf-8"):
                 imapmail._command("DONE")
                 imapmail.readline()
-                ruleLoop(imapmail)
+                ruleLoop(config, imapmail)
                 imapmail._command("IDLE")
                 logging.debug("Entering IDLE state.")
             firstRun = False
@@ -46,14 +44,15 @@ def main():
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:
             try:
-                ruleLoop(imapmail)
-                time.sleep(helper.getConfigValue("settings", "delay"))
+                ruleLoop(config, imapmail)
+                time.sleep(config("mail.delay"))
             except KeyboardInterrupt:
                 logoutIMAP(imapmail)
+                raise
 
 
-def ruleLoop(imapmail):
-    for rule in helper.getConfigValue("rules"):
+def ruleLoop(config, imapmail):
+    for rule in config("rules"):
         processRule(imapmail, rule)
 
 

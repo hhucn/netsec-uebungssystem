@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import os
 import logging
 
-from ..tools import helper
+from . import helper
 
 
 def readStatus(student):

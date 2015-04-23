@@ -1,17 +1,23 @@
 Homework grading system for netsec
 ==================================
 
-useful for debugging: 
+useful for debugging:
 ```
 $ openssl s_client -crlf -connect imap.gmail.com:993
 ```
 
-Command to start the client (filter system):
+Command to start the mail filter system:
 ```
-$ python -m netsecus client
+$ python -m netsecus --only-mail
 ```
 
-Command to start the internal grading server:
+Command to start the web grading server:
 ```
-$ python -m netsecus server
+$ python -m netsecus --only-web
 ```
+
+Dependencies
+======
+
+* tornado
+* passlib

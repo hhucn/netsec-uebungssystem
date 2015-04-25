@@ -38,7 +38,7 @@ def main():
 
     config = Config.read(args.config_default_path, args.config_path)
 
-    if config("loglevel") == "ERROR":
+    if config("loglevel").upper() == "ERROR":
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)
     else:
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)

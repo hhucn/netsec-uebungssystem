@@ -53,17 +53,17 @@ def mainloop(config):
 
 def ruleLoop(config, imapmail):
     for rule in config("rules"):
-        processRule(imapmail, rule)
+        processRule(config, imapmail, rule)
 
 
-def processRule(imapmail, rule):
+def processRule(config, imapmail, rule):
     logging.debug("**** rule: '%s'" % rule["title"])
 
     mails = []
 
     for step in rule["steps"]:
         logging.debug("* exec: %s" % step[0])
-        mails = getattr(rules, step[0])(imapmail, mails, *step[1:])
+        mails = getattr(rules, step[0])(config, imapmail, mails, *step[1:])
 
         if not mails:
             logging.debug("*  ret no mails")

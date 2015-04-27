@@ -25,11 +25,14 @@ class TableHandler(NetsecHandler):
         if os.path.exists(attachmentPath):
             for entry in os.listdir(attachmentPath):
                 if entry[0] != ".":
-                    abgaben.append(entry.lower())
+                    abgaben.append({
+                        "name":entry.lower(),
+                        "status":korrekturtools.readStatus(self.config, entry.lower())
+                        })
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('table', {'abgaben': abgaben})
+        self.render('table', {'reihen': abgaben})
 
 
 class ZipHandler(NetsecHandler):
@@ -54,9 +57,9 @@ class StatusHandler(NetsecHandler):
             student = uri
             status = ""
         if status:
-            korrekturtools.writeStatus(student, status)
+            korrekturtools.writeStatus(self.config, student, status)
         else:
-            self.write(korrekturtools.readStatus(student))
+            self.write(korrekturtools.readStatus(self.config, student))
 
 
 class KorrekturApp(tornado.web.Application):
@@ -64,6 +67,8 @@ class KorrekturApp(tornado.web.Application):
 
     def __init__(self, config, handlers):
         super(KorrekturApp, self).__init__(handlers)
+        for handler in handlers:
+            handler[1].config = config
         self.config = config
 
     @property

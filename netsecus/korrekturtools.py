@@ -6,10 +6,10 @@ import logging
 from . import helper
 
 
-def readStatus(student):
+def readStatus(config, student):
     student = student.lower()
 
-    path = helper.getConfigValue("settings", "attachment_path")
+    path = config("attachment_path")
 
     if not os.path.exists(path):
         return
@@ -30,11 +30,11 @@ def readStatus(student):
     return status
 
 
-def writeStatus(student, status):
+def writeStatus(config, student, status):
     student = student.lower()
     status = status.lower()
 
-    path = os.path.join(helper.getConfigValue("settings", "attachment_path"), student)
+    path = os.path.join(config("attachment_path"), student)
 
     if not os.path.exists(path):
         logging.error("Requested student '%s' hasn't submitted anything yet.")

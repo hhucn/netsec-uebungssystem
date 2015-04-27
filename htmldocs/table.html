@@ -2,7 +2,6 @@
 <html>
 <head>
 	<title>netsec-Übungssystem - Korrekturserver</title>
-	{% import netsecus.korrekturtools %}
 	<style type="text/css">
 		body {
 			font-family:sans-serif;
@@ -36,11 +35,13 @@
 			<th>Status</th>
 			<th>Download (zip)</th>
 		</tr>
-		{% for abgabe in abgaben %}
+		{% for reihe in reihen %}
+			{% set name = escape(reihe.get("name")) %}
+			{% set status = escape(reihe.get("status")) %}
 			<tr>
-				<td>{{ escape(abgabe) }}</td>
-				<td>{{ escape(netsecus.korrekturtools.readStatus(abgabe)) }}</td>
-				<td><a href="/zips/{{ escape(abgabe) }}">Abgabe downloaden</a></td>
+				<td>{{ name }}</td>
+				<td>{{ status }}</td>
+				<td><a href="/zips/{{ name }}">Abgabe downloaden</a></td>
 			</tr>
 		{% end %}
 	</table>

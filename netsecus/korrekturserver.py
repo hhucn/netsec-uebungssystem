@@ -26,8 +26,8 @@ class TableHandler(NetsecHandler):
             for entry in os.listdir(attachmentPath):
                 if entry[0] != ".":
                     abgaben.append({
-                        "name":entry.lower(),
-                        "status":korrekturtools.readStatus(self.config, entry.lower())
+                        "name": entry.lower(),
+                        "status": korrekturtools.readStatus(self.config, entry.lower())
                         })
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)

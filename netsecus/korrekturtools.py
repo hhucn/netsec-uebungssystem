@@ -3,8 +3,6 @@ from __future__ import unicode_literals
 import os
 import logging
 
-from . import helper
-
 
 def readStatus(config, student):
     student = student.lower()

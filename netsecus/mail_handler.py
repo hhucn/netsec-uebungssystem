@@ -11,9 +11,14 @@ from . import rules
 def mainloop(config):
     helper.patch_imaplib()
 
+    try:
+        username = config('mail.username')
+    except KeyError:
+        username = config('mail.address')
+
     imapmail = loginIMAP(
         config("mail.imap_server"),
-        config("mail.address"),
+        username,
         config("mail.password"))
 
     imapmail._command("CAPABILITY")

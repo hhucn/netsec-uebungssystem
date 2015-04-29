@@ -16,12 +16,7 @@ class Mail(object):
         self.uid = uid
         self.variables = var
         self.text = text
-        mailFrom = re.search(r"\<(.*)\>", text["From"])
-        if mailFrom:
-            self.variables["MAILFROM"] = mailFrom.group(0)
-        else:
-            self.variables["MAILFROM"] = ""
-
+        self.variables["MAILFROM"] = text["From"]
         self.variables["MAILDATE"] = text["Date"]
         self.variables["MAILRECEIVED"] = text["Received"]
 
@@ -100,8 +95,9 @@ def delete(config, imapmail, mails):
 
 def save(config, imapmail, mails):
     for mail in mails:
-        clientMailAddress = re.findall(r"(.*)\@.*", mail.variables["MAILFROM"])[0].lower()
-        attachPath = os.path.join(config("attachment_path"), helper.escapePath(clientMailAddress))
+        clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", mail.variables["MAILFROM"])
+        clientIdentifier = clientMailAddress.group(1)
+        attachPath = os.path.join(config("attachment_path"), helper.escapePath(clientIdentifier))
         timestamp = str(int(time.time()))
 
         if not os.path.exists(attachPath):

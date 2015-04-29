@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import smtplib
+import sys
 
 import tornado.web
 from passlib.hash import pbkdf2_sha256
@@ -59,6 +60,9 @@ def patch_imaplib():
 
 
 def imaplibSendPatch(self, data):
+    if sys.version_info >= (3, 0):
+        return
+
     data = data.encode("utf-8")
 
     bytes = len(data)

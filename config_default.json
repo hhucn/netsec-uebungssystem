@@ -1,5 +1,5 @@
 {
-	"loglevel":"Error",
+	"loglevel":"debug",
 	"attachment_path":"attachments",
 	"html_path":"htmldocs",
 	"mail": {

@@ -22,8 +22,9 @@ def mainloop(config):
         config("mail.password"))
 
     imapmail._command("CAPABILITY")
-    if "UTF8" in imapmail.readline().decode("utf-8"):
-        imapmail.readline()  # "OK" from "CAPABILITY" command
+    capabilities = imapmail.readline().decode("utf-8")
+    imapmail.readline()  # "OK" from "CAPABILITY" command
+    if "UTF8" in capabilities:
         imapmail._command("ENABLE", "UTF8")
         imapmail.readline()  # "* ENABLED" from "ENABLE"
         imapmail.readline()  # "OK" from "ENABLE" command

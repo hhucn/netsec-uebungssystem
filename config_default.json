@@ -1,6 +1,7 @@
 {
 	"loglevel":"debug",
 	"attachment_path":"attachments",
+	"database_path":"databases",
 	"html_path":"htmldocs",
 	"mail": {
 		"smtp_server": "smtp.gmail.com",

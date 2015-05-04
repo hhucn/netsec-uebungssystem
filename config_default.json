@@ -28,7 +28,7 @@
 		{
 			"title":"Übungsfilter",
 			"steps":[
-				["filter","(SUBJECT \"Übung\")"],
+				["filter","SUBJECT \"Übung\" OR FROM '@hhu.de' FROM '@uni-duesseldorf.de'"],
 				["save"],
 				["script","currentMarks","send"],
 				["move","Übungs-Mails"]

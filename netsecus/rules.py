@@ -6,6 +6,8 @@ import email
 import os
 import re
 import time
+import imp
+import sys
 
 from . import helper
 
@@ -122,9 +124,9 @@ def save(config, imapmail, mails):
 
 def script(config, imapmail, mails, name, *args):
     try:
-        loadedScript = __import__("scripts.%s" % name)
+        loadedScript = imp.load_source(name, os.path.join(config("script_path"), "%s.py" % name))
     except ImportError:
-        logging.error("ImportError raised for script '%s'." % name)
+        logging.error("Exception thrown while loading script '%s.py'." % name)
         return mails
 
     return loadedScript.run(imapmail, mails, *args)

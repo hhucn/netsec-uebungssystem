@@ -7,7 +7,6 @@ import os
 import re
 import time
 import imp
-import sys
 
 from . import helper
 from .mail import Mail

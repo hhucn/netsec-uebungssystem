@@ -118,4 +118,4 @@ def script(config, imapmail, mails, name, *args):
         logging.error("Exception thrown while loading script '%s.py'." % name)
         return mails
 
-    return loadedScript.run(imapmail, mails, *args)
+    return loadedScript.run(config, imapmail, mails, *args)

@@ -1,7 +1,7 @@
 {
 	"loglevel":"debug",
 	"attachment_path":"attachments",
-	"database_path":"databases",
+	"database_path":"databases.sqlite",
 	"html_path":"htmldocs",
 	"script_path":"scripts",
 	"mail": {
@@ -32,8 +32,7 @@
 			"steps":[
 				["filter","SUBJECT \"Übung\" OR FROM '@hhu.de' FROM '@uni-duesseldorf.de'"],
 				["save"],
-				["script","currentMarks","send"],
-				["move","Übungs-Mails"]
+				["script","resolveMailAlias","send"]
 			]
 		}
 	],

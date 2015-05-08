@@ -10,17 +10,7 @@ import imp
 import sys
 
 from . import helper
-
-
-class Mail(object):
-
-    def __init__(self, uid, var, text):
-        self.uid = uid
-        self.variables = var
-        self.text = text
-        self.variables["MAILFROM"] = text["From"]
-        self.variables["MAILDATE"] = text["Date"]
-        self.variables["MAILRECEIVED"] = text["Received"]
+from .mail import Mail
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):

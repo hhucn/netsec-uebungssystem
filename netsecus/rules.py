@@ -25,7 +25,11 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
         for uid in response:
             mailInfo, mailText = helper.imapCommand(imapmail, "UID", "FETCH", uid, "(rfc822)")
             data = email.message_from_string(mailText)
-            mails.append(Mail(uid, config("variables"), data))
+
+            clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", data["From"])
+            clientIdentifier = clientMailAddress.group(1)
+            clientHost = clientMailAddress.group(2)
+            mails.append(Mail(uid, config("variables"), {"identifier": clientIdentifier, "host": clientHost}, data))
     return mails
 
 

@@ -31,8 +31,9 @@
 			"title":"Übungsfilter",
 			"steps":[
 				["filter","SUBJECT \"Übung\" OR FROM '@hhu.de' FROM '@uni-duesseldorf.de'"],
+				["script","resolveMailAlias"],
 				["save"],
-				["script","resolveMailAlias","send"]
+				["move","Übungsabgaben"]
 			]
 		}
 	],

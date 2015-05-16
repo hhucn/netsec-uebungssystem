@@ -62,6 +62,27 @@ class StatusHandler(NetsecHandler):
             self.write(korrekturtools.readStatus(self.config, student))
 
 
+class DetailHandler(NetsecHandler):
+    def get(self):
+        uri = self.request.uri.split("/")
+        uri = uri[2:] # remove empty element and "detail"
+        print(uri)
+        return
+        files = []
+        attachmentPath = self.application.config("attachment_path")
+        if os.path.exists(attachmentPath):
+            for entry in os.listdir(os.path.join(attachmentPath, "a")):
+                if entry[0] != ".":
+                    files.append({
+                        "name": entry.lower(),
+                        "status": korrekturtools.readStatus(self.config, entry.lower())
+                        })
+        else:
+            logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
+
+        self.render('detail', {'files': {'name': files, 'size': size }})
+
+
 class KorrekturApp(tornado.web.Application):
     realm = 'netsec Uebungsabgabesystem'
 
@@ -81,6 +102,7 @@ def mainloop(config):
         (r"/", TableHandler),
         (r"/zips/.*", ZipHandler),
         (r"/status/.*", StatusHandler),
+        (r"/detail/.*", DetailHandler),
     ])
 
     port = config('httpd.port')

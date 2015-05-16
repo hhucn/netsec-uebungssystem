@@ -65,7 +65,7 @@ class StatusHandler(NetsecHandler):
 class DetailHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri.split("/")
-        uri = uri[2:] # remove empty element and "detail"
+        uri = uri[2:]  # remove empty element and "detail"
         print(uri)
         return
         files = []
@@ -80,7 +80,7 @@ class DetailHandler(NetsecHandler):
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'files': {'name': files, 'size': size }})
+        self.render('detail', {'files': {'name': files, 'size': size}})
 
 
 class KorrekturApp(tornado.web.Application):

@@ -90,9 +90,7 @@ def delete(config, imapmail, mails):
 
 def save(config, imapmail, mails):
     for mail in mails:
-        clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", mail.variables["MAILFROM"])
-        clientIdentifier = clientMailAddress.group(1)
-        attachPath = os.path.join(config("attachment_path"), helper.escapePath(clientIdentifier))
+        attachPath = os.path.join(config("attachment_path"), helper.escapePath(mail.address["identifier"]))
         timestamp = str(int(time.time()))
 
         if not os.path.exists(attachPath):

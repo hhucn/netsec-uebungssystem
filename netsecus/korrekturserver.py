@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import logging
 import os
+from datetime import datetime
 
 import tornado.ioloop
 import tornado.web
@@ -65,22 +66,27 @@ class StatusHandler(NetsecHandler):
 class DetailHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri.split("/")
-        uri = uri[2:]  # remove empty element and "detail"
-        print(uri)
-        return
+        uri = uri[2:][0]  # remove empty element and "detail", get student ID
+        
         files = []
+        mailtext = ""
         attachmentPath = self.application.config("attachment_path")
         if os.path.exists(attachmentPath):
-            for entry in os.listdir(os.path.join(attachmentPath, "a")):
-                if entry[0] != ".":
+            studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(uri))
+            for entry in os.listdir(studentAttachmentPath):
+                if entry == "mailtext.txt":
+                    mailtext = "Mailtexttest"
+                elif entry[0] != ".":
+                    timestamp, name = entry.split(" ", 1)
                     files.append({
-                        "name": entry.lower(),
-                        "status": korrekturtools.readStatus(self.config, entry.lower())
+                        "name": name,
+                        "size": "%s KB" % str(os.path.getsize(os.path.join(studentAttachmentPath, entry)) / 1024),
+                        "date": datetime.fromtimestamp(float(timestamp)).strftime("%Y-%m-%d %H-%M")
                         })
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'files': {'name': files, 'size': size}})
+        self.render('detail', {'identifier': uri, 'files': files})
 
 
 class KorrekturApp(tornado.web.Application):

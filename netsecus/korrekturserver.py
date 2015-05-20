@@ -67,7 +67,7 @@ class DetailHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri.split("/")
         uri = uri[2:][0]  # remove empty element and "detail", get student ID
-        
+
         files = []
         mailtext = ""
         attachmentPath = self.application.config("attachment_path")
@@ -86,7 +86,7 @@ class DetailHandler(NetsecHandler):
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'identifier': uri, 'files': files})
+        self.render('detail', {'identifier': uri, 'files': files, 'mailtext': mailtext})
 
 
 class KorrekturApp(tornado.web.Application):

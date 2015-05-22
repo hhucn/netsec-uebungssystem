@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>netsec-Übungssystem - Korrekturserver</title>
+	{% if redirect %}
+		<meta http-equiv="refresh" content="3; /">
+	{% end %}
+</head>
+<body>
+	<h1>Status-Ver&auml;nderung der Abgabe von {{ identifier }}</h1>
+	<br>
+	{% if redirect %}
+	Der Status für <b>{{ identifier }}</b> wurde erfolgreich auf <b>{{ currentstatus }}</b> gesetzt.
+	{% else %}
+	Der Status für <b>{{ identifier }} konnte nicht gesetzt werden.</b> Der Status wurde nach Aufruf der Detail-Seite von <b>{{ laststatus }}</b> auf <b>{{ currentstatus }}</b> gesetzt.
+	{% end %}
+	<br>
+	<a href="/detail/{{ identifier }}">Zur&uuml;ck</a> zur Abgabeseite von <b>{{ identifier }}</b>.
+</body>
+</html>

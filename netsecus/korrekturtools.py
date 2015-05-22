@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 import os
 import logging
 
+from . import helper
 
 def readStatus(config, student):
     student = student.lower()
-
     path = config("attachment_path")
 
     if not os.path.exists(path):

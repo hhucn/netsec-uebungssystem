@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import logging
 import os
 from datetime import datetime
+import io
 
 import tornado.ioloop
 import tornado.web
@@ -28,7 +29,7 @@ class TableHandler(NetsecHandler):
                 if entry[0] != ".":
                     abgaben.append({
                         "name": entry.lower(),
-                        "status": korrekturtools.readStatus(self.config, entry.lower())
+                        "status": korrekturtools.readStatus(self.application.config, entry.lower()),
                         })
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
@@ -50,17 +51,19 @@ class ZipHandler(NetsecHandler):
 
 
 class StatusHandler(NetsecHandler):
-    def get(self):
-        uri = self.request.uri.replace("/status/", "")
-        if uri.count("/") == 1:
-            student, status = uri.split("/")
+    def post(self):
+        identifier = self.get_argument("identifier")
+        laststatus = self.get_argument("laststatus")
+        currentstatus = self.get_argument("currentstatus")
+
+        savedstatus = korrekturtools.readStatus(self.application.config, identifier)
+
+        if not laststatus == savedstatus:
+            self.render("status", { "redirect": 0, "laststatus": laststatus, "currentstatus": currentstatus, "identifier": identifier })
         else:
-            student = uri
-            status = ""
-        if status:
-            korrekturtools.writeStatus(self.config, student, status)
-        else:
-            self.write(korrekturtools.readStatus(self.config, student))
+            korrekturtools.writeStatus(self.application.config, identifier, currentstatus)
+            self.render("status", { "redirect": 1, "currentstatus": currentstatus, "identifier": identifier })
+
 
 
 class DetailHandler(NetsecHandler):
@@ -75,7 +78,10 @@ class DetailHandler(NetsecHandler):
             studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(uri))
             for entry in os.listdir(studentAttachmentPath):
                 if entry == "mailtext.txt":
-                    mailtext = "Mailtexttest"
+                    with io.open(os.path.join(studentAttachmentPath, "mailtext.txt"), "rt") as mailfile:
+                        mailtext = mailfile.read()
+                    if not mailtext:
+                        mailtext = "Kein Text mitgesendet."
                 elif entry[0] != ".":
                     timestamp, name = entry.split(" ", 1)
                     files.append({
@@ -86,7 +92,7 @@ class DetailHandler(NetsecHandler):
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'identifier': uri, 'files': files, 'mailtext': mailtext})
+        self.render('detail', {'identifier': uri, 'files': files, 'mailtext': mailtext, 'korrekturstatus': korrekturtools.readStatus(self.application.config, uri)})
 
 
 class KorrekturApp(tornado.web.Application):
@@ -107,7 +113,7 @@ def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
         (r"/zips/.*", ZipHandler),
-        (r"/status/.*", StatusHandler),
+        (r"/status?.*", StatusHandler),
         (r"/detail/.*", DetailHandler),
     ])
 

@@ -59,11 +59,11 @@ class StatusHandler(NetsecHandler):
         savedstatus = korrekturtools.readStatus(self.application.config, identifier)
 
         if not laststatus == savedstatus:
-            self.render("status", { "redirect": 0, "laststatus": laststatus, "currentstatus": currentstatus, "identifier": identifier })
+            self.render("status", {"redirect": 0, "laststatus": laststatus,
+                        "currentstatus": currentstatus, "identifier": identifier})
         else:
             korrekturtools.writeStatus(self.application.config, identifier, currentstatus)
-            self.render("status", { "redirect": 1, "currentstatus": currentstatus, "identifier": identifier })
-
+            self.render("status", {"redirect": 1, "currentstatus": currentstatus, "identifier": identifier})
 
 
 class DetailHandler(NetsecHandler):
@@ -92,7 +92,8 @@ class DetailHandler(NetsecHandler):
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'identifier': uri, 'files': files, 'mailtext': mailtext, 'korrekturstatus': korrekturtools.readStatus(self.application.config, uri)})
+        self.render('detail', {'identifier': uri, 'files': files, 'mailtext': mailtext,
+                    'korrekturstatus': korrekturtools.readStatus(self.application.config, uri)})
 
 
 class KorrekturApp(tornado.web.Application):

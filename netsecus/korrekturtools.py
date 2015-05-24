@@ -5,6 +5,7 @@ import logging
 
 from . import helper
 
+
 def readStatus(config, student):
     student = student.lower()
     path = config("attachment_path")

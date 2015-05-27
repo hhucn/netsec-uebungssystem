@@ -114,7 +114,7 @@ def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
         (r"/zips/.*", ZipHandler),
-        (r"/status?.*", StatusHandler),
+        (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),
     ])
 

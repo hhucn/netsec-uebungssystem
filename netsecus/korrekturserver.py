@@ -82,7 +82,7 @@ class DetailHandler(NetsecHandler):
                         mailtext = mailfile.read()
                     if not mailtext:
                         mailtext = "Kein Text mitgesendet."
-                elif entry[0] != "." and entry != "korrekturstatus.txt":
+                elif entry[0] != ".":
                     timestamp, name = entry.split(" ", 1)
                     files.append({
                         "name": name,

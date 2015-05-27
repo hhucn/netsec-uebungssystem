@@ -84,7 +84,7 @@ def log(config, imapmail, mails, msg, lvl="ERROR"):
 
 
 def delete(config, imapmail, mails):
-    flag(imapmail, mails, "\\DELETED")
+    flag(config, imapmail, mails, "\\DELETED")
     imapmail.expunge()
 
 

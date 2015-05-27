@@ -2,44 +2,43 @@ from __future__ import unicode_literals
 
 import os
 import logging
+import sqlite3
 
 from . import helper
 
 
 def readStatus(config, student):
-    student = student.lower()
-    path = config("attachment_path")
+    database = getStatusTable(config)
+    cursor = database.cursor()
 
-    if not os.path.exists(path):
-        return
+    cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
+    statusRow = cursor.fetchone()[0]  # just get first status
 
-    path = os.path.join(path, student)
-
-    if not os.path.exists(path):
-        return "Student ohne Abgabe"
-
-    path = os.path.join(path, "korrekturstatus.txt")
-
-    if not os.path.exists(path):
+    if statusRow:
+        return statusRow
+    else:
         return "Unbearbeitet"
-
-    statusfile = open(path, "r")
-    status = statusfile.read()
-    statusfile.close()
-    return status
 
 
 def writeStatus(config, student, status):
-    student = student.lower()
-    status = status.lower()
+    database = getStatusTable(config)
+    cursor = database.cursor()
 
-    path = os.path.join(config("attachment_path"), student)
+    # Check if we need to create a new row first
+    cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
+    statusRow = cursor.fetchone()[0]
 
-    if not os.path.exists(path):
-        logging.error("Requested student '%s' hasn't submitted anything yet.")
-        return
+    if statusRow:
+        cursor.execute("UPDATE status SET status = ? WHERE identifier = ?", (status, student,))
+    else:
+        cursor.execute("INSERT INTO status VALUES(?, ?)", (student, status, ))
+    database.commit()
 
-    path = os.path.join(path, "korrekturstatus.txt")
 
-    with open(path, "w") as statusfile:
-        statusfile.write(status)
+def getStatusTable(config):
+    statusDatabasePath = config("database_path")
+    statusDatabase = sqlite3.connect(statusDatabasePath)
+    cursor = statusDatabase.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS status
+         (`identifier` text UNIQUE, `status` text, PRIMARY KEY (`identifier`));""")
+    return statusDatabase

@@ -100,16 +100,11 @@ def save(config, imapmail, mails):
             if payloadPart.get_filename():
                 attachFile = open(os.path.join(attachPath, timestamp + " " +
                                                helper.escapePath(payloadPart.get_filename())), "w")
-            elif payloadPart.get_payload():
-                attachFile = open(os.path.join(attachPath, "mailtext.txt"), "a")
-            else:
-                pass
+                dataToWrite = str(payloadPart.get_payload(decode="True"))
 
-            dataToWrite = str(payloadPart.get_payload(decode="True"))
-
-            if dataToWrite:
-                attachFile.write(dataToWrite)
-            attachFile.close()
+                if dataToWrite:
+                    attachFile.write(dataToWrite)
+                attachFile.close()
     return mails
 
 

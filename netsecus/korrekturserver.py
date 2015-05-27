@@ -77,12 +77,7 @@ class DetailHandler(NetsecHandler):
         if os.path.exists(attachmentPath):
             studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(uri))
             for entry in os.listdir(studentAttachmentPath):
-                if entry == "mailtext.txt":
-                    with io.open(os.path.join(studentAttachmentPath, "mailtext.txt"), "rt") as mailfile:
-                        mailtext = mailfile.read()
-                    if not mailtext:
-                        mailtext = "Kein Text mitgesendet."
-                elif entry[0] != ".":
+                if entry[0] != ".":
                     timestamp, name = entry.split(" ", 1)
                     files.append({
                         "name": name,
@@ -92,7 +87,7 @@ class DetailHandler(NetsecHandler):
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'identifier': uri, 'files': files, 'mailtext': mailtext,
+        self.render('detail', {'identifier': uri, 'files': files,
                     'korrekturstatus': korrekturtools.readStatus(self.application.config, uri)})
 
 

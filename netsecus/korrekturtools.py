@@ -5,12 +5,15 @@ import logging
 import sqlite3
 
 from . import helper
+from . import sheet
+from . import task
 
 
 def readStatus(config, student):
     database = getStatusTable(config)
     cursor = database.cursor()
 
+    # Check if we need to create a new row first
     cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
     statusRow = cursor.fetchone()[0]  # just get first status
 
@@ -35,6 +38,29 @@ def writeStatus(config, student, status):
     database.commit()
 
 
+def getTasksForSheet(config, sheetNumber):
+    taskDatabasePath = config("database_path")
+    taskDatabase = sqlite3.connect(taskDatabasePath)
+    cursor = taskDatabase.cursor()
+
+    cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetNumber = ?", (sheetNumber, ))
+    tasks = cursor.fetchall()
+
+    print tasks
+
+
+def getSheets(config):
+    sheetDatabase = getSheetTable(config)
+    sheetCursor = sheetDatabase.cursor()
+    taskDatabase = getTaskTable(config)
+    sheetCursor = taskDatabase.cursor()
+
+    sheetCursor.execute("SELECT number FROM sheets")
+
+    for sheet in sheetCursor.fetchall():
+        tasksForSheet = getTasksForSheet(config, sheet[0])  # 'number' value is in column #0
+
+
 def getStatusTable(config):
     statusDatabasePath = config("database_path")
     statusDatabase = sqlite3.connect(statusDatabasePath)
@@ -42,3 +68,21 @@ def getStatusTable(config):
     cursor.execute("""CREATE TABLE IF NOT EXISTS status
          (`identifier` text UNIQUE, `status` text, PRIMARY KEY (`identifier`));""")
     return statusDatabase
+
+
+def getSheetTable(config):
+    sheetDatabasePath = config("database_path")
+    sheetDatabase = sqlite3.connect(sheetDatabasePath)
+    cursor = sheetDatabase.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS sheets
+         (`number` int UNIQUE, PRIMARY KEY (`number`));""")
+    return sheetDatabase
+
+
+def getTaskTable(config):
+    taskDatabasePath = config("database_path")
+    taskDatabase = sqlite3.connect(taskDatabasePath)
+    cursor = taskDatabase.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS tasks (`id` int AUTO_INCREMENT, `sheetNumber` int,
+        `taskNumber` int, `description` text, `maxPoints` float, PRIMARY KEY (`id`));""")
+    return taskDatabase

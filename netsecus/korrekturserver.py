@@ -91,6 +91,12 @@ class DetailHandler(NetsecHandler):
                     'korrekturstatus': korrekturtools.readStatus(self.application.config, uri)})
 
 
+class TaskHandler(NetsecHandler):
+    def get(self):
+        sheets = korrekturtools.getSheets(self.application.config)
+        self.render('task', {'sheets': sheets})
+
+
 class KorrekturApp(tornado.web.Application):
     realm = 'netsec Uebungsabgabesystem'
 
@@ -108,6 +114,7 @@ class KorrekturApp(tornado.web.Application):
 def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
+        (r"/tasks", TaskHandler),
         (r"/zips/.*", ZipHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>netsec-Übungssystem - Korrekturserver</title>
+	<style type="text/css">
+		body {
+			font-family:sans-serif;
+			line-height:1.5;
+			font-size:14px;
+			color:#333333;
+		}
+
+		th {
+			color:#222222;
+			text-align:left;
+			border-bottom:1px #999999 solid;
+		}
+
+		th,td {
+			padding:5px;
+		}
+
+		table {
+			width:100%;
+			height:100%;
+			padding:5px;
+			border-spacing:0;
+		}
+	</style>
+</head>
+<body>
+	<table>
+		<tr>
+			<th>Blatt</th>
+			<th>Aufgabe</th>
+			<th>Aufgabenstellung</th>
+			<th>max. Punkte</th>
+		</tr>
+		{% for sheet in sheets %}
+			{% for task in tasks %}
+				<tr>
+					<th>{{ sheet.number }}</th>
+					<th>{{ task.number }}</th>
+					<th>{{ task.description }}</th>
+					<th>{{ task.maxPoints }}</th>
+				</tr>
+			{% end %}
+		{% end %}
+	</table>
+</body>
+</html>

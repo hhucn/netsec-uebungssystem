@@ -5,8 +5,8 @@ import logging
 import sqlite3
 
 from . import helper
-from . import sheet
-from . import task
+from .sheet import Sheet
+from .task import Task
 
 
 def readStatus(config, student):
@@ -46,7 +46,13 @@ def getTasksForSheet(config, sheetNumber):
     cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetNumber = ?", (sheetNumber, ))
     tasks = cursor.fetchall()
 
-    print tasks
+    taskObjects = []
+
+    for task in tasks:
+        # 0: taskNumber, 1: description, 2: maxPoints
+        taskObjects.append(Task(task[0], task[1], task[2]))
+
+    return taskObjects
 
 
 def getSheets(config):
@@ -57,8 +63,14 @@ def getSheets(config):
 
     sheetCursor.execute("SELECT number FROM sheets")
 
+    sheetObjects = []
+
     for sheet in sheetCursor.fetchall():
-        tasksForSheet = getTasksForSheet(config, sheet[0])  # 'number' value is in column #0
+        # 'number' value is in column #0
+        tasksForSheet = getTasksForSheet(config, sheet[0])
+        sheetObjects.append(Sheet(sheet[0], tasksForSheet))
+
+    return sheetObjects
 
 
 def getStatusTable(config):

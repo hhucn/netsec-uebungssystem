@@ -37,7 +37,7 @@
 			<th>max. Punkte</th>
 		</tr>
 		{% for sheet in sheets %}
-			{% for task in tasks %}
+			{% for task in sheet.tasks %}
 				<tr>
 					<th>{{ sheet.number }}</th>
 					<th>{{ task.number }}</th>

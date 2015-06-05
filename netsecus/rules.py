@@ -56,7 +56,7 @@ def answer(config, imapmail, mails, subject, text, address="(back)"):
                 helper.processVariable(mail.variables, subject),
                 helper.processVariable(mail.variables, text)))
             helper.smtpMail(config, clientMailAddress, headers)
-            flag(imapmail, [mail], "NETSEC-Answered-" + subjectHash)
+            flag(config, imapmail, [mail], "NETSEC-Answered-" + subjectHash)
     return mails
 
 

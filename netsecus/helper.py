@@ -40,10 +40,15 @@ def imapCommand(imapmail, command, *args):
 
 
 def smtpMail(config, to, what):
+    try:
+        username = config('mail.username')
+    except KeyError:
+        username = config('mail.address')
+
     smtpmail = smtplib.SMTP(config("mail.smtp_server"))
     smtpmail.ehlo()
     smtpmail.starttls()
-    smtpmail.login(config("mail.address"), config("mail.password"))
+    smtpmail.login(username, config("mail.password"))
     smtpmail.sendmail(config("mail.address"), to, what)
     smtpmail.quit()
 

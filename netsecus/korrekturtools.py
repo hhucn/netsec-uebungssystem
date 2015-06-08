@@ -1,10 +1,7 @@
 from __future__ import unicode_literals
 
-import os
-import logging
 import sqlite3
 
-from . import helper
 from .sheet import Sheet
 from .task import Task
 

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import logging
 import os
 from datetime import datetime
-import io
 
 import tornado.ioloop
 import tornado.web
@@ -72,7 +71,7 @@ class DetailHandler(NetsecHandler):
         uri = uri[2:][0]  # remove empty element and "detail", get student ID
 
         files = []
-        mailtext = ""
+
         attachmentPath = self.application.config("attachment_path")
         if os.path.exists(attachmentPath):
             studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(uri))

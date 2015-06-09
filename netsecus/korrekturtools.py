@@ -12,10 +12,10 @@ def readStatus(config, student):
 
     # Check if we need to create a new row first
     cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
-    statusRow = cursor.fetchone()[0]  # just get first status
+    statusRow = cursor.fetchone()
 
     if statusRow:
-        return statusRow
+        return statusRow[0]  # just get first status
     else:
         return "Unbearbeitet"
 
@@ -26,7 +26,7 @@ def writeStatus(config, student, status):
 
     # Check if we need to create a new row first
     cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
-    statusRow = cursor.fetchone()[0]
+    statusRow = cursor.fetchone()
 
     if statusRow:
         cursor.execute("UPDATE status SET status = ? WHERE identifier = ?", (status, student,))

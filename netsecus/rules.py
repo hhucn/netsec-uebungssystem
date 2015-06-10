@@ -90,7 +90,7 @@ def delete(config, imapmail, mails):
 
 def save(config, imapmail, mails):
     for mail in mails:
-        attachPath = os.path.join(config("attachment_path"), helper.escapePath(mail.address["identifier"]))
+        attachPath = os.path.join(config("attachment_path"), helper.escapePath(mail.address["identifier"]).lower())
         timestamp = str(int(time.time()))
 
         if not os.path.exists(attachPath):

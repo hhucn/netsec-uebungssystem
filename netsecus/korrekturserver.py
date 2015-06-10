@@ -78,9 +78,14 @@ class DetailHandler(NetsecHandler):
             for entry in os.listdir(studentAttachmentPath):
                 if entry[0] != ".":
                     timestamp, name = entry.split(" ", 1)
+                    filesize = os.path.getsize(os.path.join(studentAttachmentPath, entry)) / 1024
+
+                    if filesize == 0:
+                        filesize = 1
+
                     files.append({
                         "name": name,
-                        "size": "%s KB" % str(os.path.getsize(os.path.join(studentAttachmentPath, entry)) / 1024),
+                        "size": "%i KB" % filesize,
                         "date": datetime.fromtimestamp(float(timestamp)).strftime("%Y-%m-%d %H-%M")
                         })
         else:

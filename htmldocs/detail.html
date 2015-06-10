@@ -15,9 +15,9 @@
 	<form name="statusform" action="/status" method="POST">
 		<input type="hidden" name="laststatus" value="{{ korrekturstatus }}">
 		<input type="hidden" name="identifier" value="{{ identifier }}">
-		<select selected="{{ korrekturstatus }}" name="currentstatus">
+		<select name="currentstatus">
 			{% for status in ("Unbearbeitet", "Angefangen", "Fertig") %}
-				<option value="{{ status }}">{{ status }}</option>
+				<option value="{{ status }}" {% if status == korrekturstatus %}selected{% end %}>{{ status }}</option>
 			{% end %}
 		</select>
 		<input type="submit" value="Status neu setzen">
@@ -31,13 +31,10 @@
 			<th>Gr&ouml;&szlig;e</th>
 		</tr>
 		{% for file in files %}
-			{% set name = escape(file.get("name")) %}
-			{% set date = escape(file.get("date")) %}
-			{% set size = escape(file.get("size")) %}
 			<tr>
-				<td>{{ name }}</td>
-				<td>{{ date }}</td>
-				<td>{{ size }}</td>
+				<td>{{ escape(file.get("name")) }}</td>
+				<td>{{ escape(file.get("date")) }}</td>
+				<td>{{ escape(file.get("size")) }}</td>
 			</tr>
 		{% end %}
 	</table>

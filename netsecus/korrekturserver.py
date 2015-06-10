@@ -77,8 +77,9 @@ class DetailHandler(NetsecHandler):
             studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(uri))
             for entry in os.listdir(studentAttachmentPath):
                 if entry[0] != ".":
-                    timestamp, name = entry.split(" ", 1)
-                    filesize = os.path.getsize(os.path.join(studentAttachmentPath, entry)) / 1024
+                    pathToFile = os.path.join(studentAttachmentPath, entry)
+                    fileHash, name = entry.split(" ", 1)
+                    filesize = os.path.getsize(pathToFile) / 1024
 
                     if filesize == 0:
                         filesize = 1
@@ -86,7 +87,8 @@ class DetailHandler(NetsecHandler):
                     files.append({
                         "name": name,
                         "size": "%i KB" % filesize,
-                        "date": datetime.fromtimestamp(float(timestamp)).strftime("%Y-%m-%d %H-%M")
+                        "date": os.path.getmtime(pathToFile),
+                        "hash": fileHash
                         })
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)

@@ -98,12 +98,16 @@ def save(config, imapmail, mails):
 
         for payloadPart in mail.text.walk():
             if payloadPart.get_filename():
-                attachFile = open(os.path.join(attachPath, timestamp + " " +
-                                               helper.escapePath(payloadPart.get_filename())), "w")
-                dataToWrite = str(payloadPart.get_payload(decode="True"))
+                payload = str(payloadPart.get_payload(decode="True"))
 
-                if dataToWrite:
-                    attachFile.write(dataToWrite)
+                hashObject = hashlib.sha256()
+                hashObject.update(payload)
+                payloadHash = hashObject.hexdigest()
+                attachFile = open(os.path.join(attachPath, payloadHash + " " +
+                                               helper.escapePath(payloadPart.get_filename())), "w")
+
+                if payload:
+                    attachFile.write(payload)
                 attachFile.close()
     return mails
 

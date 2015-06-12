@@ -108,7 +108,7 @@ def save(config, imapmail, mails):
                 hashObject.update(payload)
                 payloadHash = hashObject.hexdigest()
                 payloadPath = os.path.join(attachPath, payloadHash + " " +
-                                               helper.escapePath(payloadPart.get_filename()))
+                                           helper.escapePath(payloadPart.get_filename()))
                 attachFile = open(payloadPath, "w")
 
                 if payload:

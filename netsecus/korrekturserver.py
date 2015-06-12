@@ -49,6 +49,25 @@ class ZipHandler(NetsecHandler):
         self.write(requestedFile)
 
 
+class DownloadHandler(NetsecHandler):
+    def get(self):
+        uri = self.request.uri[10:]  # cut away "/download/"
+
+        identifier, sha = uri.split("/")
+        name = korrekturtools.getFileName(self.application.config, identifier, sha)
+
+        attachmentPath = self.application.config("attachment_path")
+        filePath = os.path.join(attachmentPath, identifier, "%s %s" % (sha, name))
+
+        self.set_header("Content-Type", "application/x-octet-stream")
+        self.set_header("Content-Disposition", "attachment; filename=" + name)
+
+        with open(filePath, "r") as f:
+            self.write(f.read())
+
+        self.finish()
+
+
 class StatusHandler(NetsecHandler):
     def post(self):
         identifier = self.get_argument("identifier")
@@ -124,6 +143,7 @@ def mainloop(config):
         (r"/", TableHandler),
         (r"/tasks", TaskHandler),
         (r"/zips/.*", ZipHandler),
+        (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),
     ])

@@ -29,12 +29,14 @@
 			<th>Name</th>
 			<th>Eingangsdatum</th>
 			<th>Gr&ouml;&szlig;e</th>
+			<th>Download</th>
 		</tr>
 		{% for file in files %}
 			<tr>
 				<td>{{ escape(file.get("name")) }}</td>
 				<td>{{ escape(file.get("date")) }}</td>
 				<td>{{ escape(file.get("size")) }}</td>
+				<td><a href="/download/{{ escape(identifier) }}/{{ escape(file.get("hash")) }}">Download</a></td>
 			</tr>
 		{% end %}
 	</table>

@@ -35,6 +35,29 @@ def writeStatus(config, student, status):
     database.commit()
 
 
+def setFile(config, identifier, sha, name):
+    fileDatabase = getFileTable(config)
+    cursor = fileDatabase.cursor()
+
+    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ?", (identifier, sha,))
+
+    if not cursor.fetchone():
+        # doesn't exist, create now.
+        # if this is true (already exists), there's no need to create
+        # it again, as it is the same file. Some user uploaded a file
+        # with the same content and the same name twice.
+        cursor.execute("INSERT INTO files VALUES(?, ?, ?)", (identifier, sha, name,))
+        fileDatabase.commit()
+
+
+def getFileName(config, identifier, sha):
+    fileDatabase = getFileTable(config)
+    cursor = fileDatabase.cursor()
+
+    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ?", (identifier, sha,))
+    return cursor.fetchone()[0]
+
+
 def getTasksForSheet(config, sheetNumber):
     taskDatabasePath = config("database_path")
     taskDatabase = sqlite3.connect(taskDatabasePath)
@@ -68,6 +91,15 @@ def getSheets(config):
         sheetObjects.append(Sheet(sheet[0], tasksForSheet))
 
     return sheetObjects
+
+
+def getFileTable(config):
+    fileDatabasePath = config("database_path")
+    fileDatabase = sqlite3.connect(fileDatabasePath)
+    cursor = fileDatabase.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS files
+        (`identifier` text, `sha` text, `name` text);""")
+    return fileDatabase
 
 
 def getStatusTable(config):

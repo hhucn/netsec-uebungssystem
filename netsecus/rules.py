@@ -11,6 +11,7 @@ import calendar
 
 from . import helper
 from .mail import Mail
+from . import korrekturtools
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
@@ -91,7 +92,8 @@ def delete(config, imapmail, mails):
 
 def save(config, imapmail, mails):
     for mail in mails:
-        attachPath = os.path.join(config("attachment_path"), helper.escapePath(mail.address["identifier"]).lower())
+        identifier = helper.escapePath(mail.address["identifier"]).lower()
+        attachPath = os.path.join(config("attachment_path"), identifier)
 
         mailDateTime = dateutil.parser.parse(mail.text["Date"])
         mailDateTimeStamp = calendar.timegm(mailDateTime.utctimetuple())
@@ -103,18 +105,19 @@ def save(config, imapmail, mails):
         for payloadPart in mail.text.walk():
             if payloadPart.get_filename():
                 payload = str(payloadPart.get_payload(decode="True"))
-
+                payloadName = helper.escapePath(payloadPart.get_filename())
                 hashObject = hashlib.sha256()
                 hashObject.update(payload)
                 payloadHash = hashObject.hexdigest()
-                payloadPath = os.path.join(attachPath, payloadHash + " " +
-                                           helper.escapePath(payloadPart.get_filename()))
+                payloadPath = os.path.join(attachPath, payloadHash + " " + payloadName)
                 attachFile = open(payloadPath, "w")
 
                 if payload:
                     attachFile.write(payload)
                 attachFile.close()
                 os.utime(payloadPath, mailCreationModificationTuple)
+
+                korrekturtools.setFile(config, identifier, payloadHash, payloadName)
     return mails
 
 

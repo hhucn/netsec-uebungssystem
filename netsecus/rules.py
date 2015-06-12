@@ -5,8 +5,9 @@ import logging
 import email
 import os
 import re
-import time
 import imp
+import dateutil.parser
+import calendar
 
 from . import helper
 from .mail import Mail
@@ -91,7 +92,10 @@ def delete(config, imapmail, mails):
 def save(config, imapmail, mails):
     for mail in mails:
         attachPath = os.path.join(config("attachment_path"), helper.escapePath(mail.address["identifier"]).lower())
-        timestamp = str(int(time.time()))
+
+        mailDateTime = dateutil.parser.parse(mail.text["Date"])
+        mailDateTimeStamp = calendar.timegm(mailDateTime.utctimetuple())
+        mailCreationModificationTuple = (mailDateTimeStamp, mailDateTimeStamp)
 
         if not os.path.exists(attachPath):
             os.makedirs(attachPath)
@@ -103,12 +107,14 @@ def save(config, imapmail, mails):
                 hashObject = hashlib.sha256()
                 hashObject.update(payload)
                 payloadHash = hashObject.hexdigest()
-                attachFile = open(os.path.join(attachPath, payloadHash + " " +
-                                               helper.escapePath(payloadPart.get_filename())), "w")
+                payloadPath = os.path.join(attachPath, payloadHash + " " +
+                                               helper.escapePath(payloadPart.get_filename()))
+                attachFile = open(payloadPath, "w")
 
                 if payload:
                     attachFile.write(payload)
                 attachFile.close()
+                os.utime(payloadPath, mailCreationModificationTuple)
     return mails
 
 

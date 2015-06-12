@@ -80,6 +80,8 @@ class DetailHandler(NetsecHandler):
                     pathToFile = os.path.join(studentAttachmentPath, entry)
                     fileHash, name = entry.split(" ", 1)
                     filesize = os.path.getsize(pathToFile) / 1024
+                    fileDateTimestamp = os.path.getmtime(pathToFile)
+                    fileDateTime = datetime.fromtimestamp(fileDateTimestamp).strftime("%Y-%m-%d %H:%M:%S %z")
 
                     if filesize == 0:
                         filesize = 1
@@ -87,7 +89,7 @@ class DetailHandler(NetsecHandler):
                     files.append({
                         "name": name,
                         "size": "%i KB" % filesize,
-                        "date": os.path.getmtime(pathToFile),
+                        "date": fileDateTime,
                         "hash": fileHash
                         })
         else:

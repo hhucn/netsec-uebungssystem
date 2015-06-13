@@ -51,7 +51,7 @@ class ZipHandler(NetsecHandler):
 
 class DownloadHandler(NetsecHandler):
     def get(self):
-        uri = self.request.uri[10:]  # cut away "/download/"
+        uri = self.request.uri[len("/download/"):]  # cut away "/download/"
 
         identifier, sha = uri.split("/")
         name = korrekturtools.getFileName(self.application.config, identifier, sha)

@@ -40,10 +40,10 @@
 					<a href="/download/{{ escape(identifier) }}/{{ escape(file.get("hash")) }}">Download</a>
 					<br>
 					<small>
-						{{ file.get("hash")[1:16] }}<br>
-						{{ file.get("hash")[17:32] }}<br>
-						{{ file.get("hash")[33:48] }}<br>
-						{{ file.get("hash")[49:64] }}
+						{{ file.get("hash")[:16] }}<br>
+						{{ file.get("hash")[16:32] }}<br>
+						{{ file.get("hash")[32:48] }}<br>
+						{{ file.get("hash")[48:] }}
 					</small>
 				</td>
 			</tr>

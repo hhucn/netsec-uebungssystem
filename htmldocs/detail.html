@@ -36,7 +36,16 @@
 				<td>{{ escape(file.get("name")) }}</td>
 				<td>{{ escape(file.get("date")) }}</td>
 				<td>{{ escape(file.get("size")) }}</td>
-				<td><a href="/download/{{ escape(identifier) }}/{{ escape(file.get("hash")) }}">Download</a></td>
+				<td>
+					<a href="/download/{{ escape(identifier) }}/{{ escape(file.get("hash")) }}">Download</a>
+					<br>
+					<small>
+						{{ file.get("hash")[1:16] }}<br>
+						{{ file.get("hash")[17:32] }}<br>
+						{{ file.get("hash")[33:48] }}<br>
+						{{ file.get("hash")[49:64] }}
+					</small>
+				</td>
 			</tr>
 		{% end %}
 	</table>

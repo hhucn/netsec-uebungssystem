@@ -23,6 +23,28 @@
 		<input type="submit" value="Status neu setzen">
 	</form>
 
+	<h3>Punkte</h3>
+	<table>
+		<tr>
+			<th>Blatt</th>
+			<th>Aufgabe</th>
+			<th>Aufgabenstellung</th>
+			<th>max. Punkte</th>
+			<th>erreichte Punkte</th>
+		</tr>
+		{% for sheet in sheets %}
+			{% for task in sheet.tasks %}
+				<tr>
+					<td>{{ sheet.number }}</td>
+					<td>{{ task.number }}</td>
+					<td>{{ task.description }}</td>
+					<td>{{ task.maxPoints }}</td>
+					<td><input type="text" placeholder="{{ task.maxPoints }}"></td>
+				</tr>
+			{% end %}
+		{% end %}
+	</table>
+
 	<h3>Dateien</h3>
 	<table>
 		<tr>

@@ -6,7 +6,9 @@ from .sheet import Sheet
 from .task import Task
 
 
-def readStatus(config, student):
+# Getter methods for values from tables
+
+def getStatus(config, student):
     database = getStatusTable(config)
     cursor = database.cursor()
 
@@ -15,12 +17,73 @@ def readStatus(config, student):
     statusRow = cursor.fetchone()
 
     if statusRow:
-        return statusRow[0]  # just get first status
+        return statusRow[0]  # get first column, "status"
     else:
         return "Unbearbeitet"
 
 
-def writeStatus(config, student, status):
+def getFileName(config, identifier, sha):
+    fileDatabase = getFileTable(config)
+    cursor = fileDatabase.cursor()
+
+    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ?", (identifier, sha,))
+    return cursor.fetchone()[0]
+
+
+def getReachedPoints(config, sheetNumber, taskNumber, identifier):
+    pointsDatabase = getPointsTable(config)
+    cursor = pointsDatabase.cursor()
+
+    cursor.execute("SELECT reachedPoints FROM points WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?", (sheetNumber, taskNumber, identifier,))
+
+    reachedPoints = cursor.fetchone()
+
+    if reachedPoints:
+        return reachedPoints
+
+    return 0
+
+
+def getTasksForSheet(config, sheetNumber, student=None):
+    taskDatabase = getTaskTable(config)
+    cursor = taskDatabase.cursor()
+
+    cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetNumber = ?", (sheetNumber, ))
+    tasks = cursor.fetchall()
+
+    taskObjects = []
+
+    for task in tasks:
+        taskNumber, description, maxPoints = task
+        reachedPoints = 0
+
+        if student:
+            reachedPoints = getReachedPoints(config, sheetNumber, taskNumber, student)
+
+        taskObjects.append(Task(taskNumber, description, maxPoints, reachedPoints))
+
+    return taskObjects
+
+
+def getSheets(config, student=None):
+    sheetDatabase = getSheetTable(config)
+    sheetCursor = sheetDatabase.cursor()
+
+    sheetCursor.execute("SELECT number FROM sheets")
+
+    sheetObjects = []
+
+    for sheet in sheetCursor.fetchall():
+        sheetNumber = sheet[0]
+        tasksForSheet = getTasksForSheet(config, sheetNumber, student)
+        sheetObjects.append(Sheet(sheetNumber, tasksForSheet))
+
+    return sheetObjects
+
+
+# Setter methods for table values
+
+def setStatus(config, student, status):
     database = getStatusTable(config)
     cursor = database.cursor()
 
@@ -50,48 +113,7 @@ def setFile(config, identifier, sha, name):
         fileDatabase.commit()
 
 
-def getFileName(config, identifier, sha):
-    fileDatabase = getFileTable(config)
-    cursor = fileDatabase.cursor()
-
-    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ?", (identifier, sha,))
-    return cursor.fetchone()[0]
-
-
-def getTasksForSheet(config, sheetNumber):
-    taskDatabasePath = config("database_path")
-    taskDatabase = sqlite3.connect(taskDatabasePath)
-    cursor = taskDatabase.cursor()
-
-    cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetNumber = ?", (sheetNumber, ))
-    tasks = cursor.fetchall()
-
-    taskObjects = []
-
-    for task in tasks:
-        # 0: taskNumber, 1: description, 2: maxPoints
-        taskObjects.append(Task(task[0], task[1], task[2]))
-
-    return taskObjects
-
-
-def getSheets(config):
-    sheetDatabase = getSheetTable(config)
-    sheetCursor = sheetDatabase.cursor()
-    taskDatabase = getTaskTable(config)
-    sheetCursor = taskDatabase.cursor()
-
-    sheetCursor.execute("SELECT number FROM sheets")
-
-    sheetObjects = []
-
-    for sheet in sheetCursor.fetchall():
-        # 'number' value is in column #0
-        tasksForSheet = getTasksForSheet(config, sheet[0])
-        sheetObjects.append(Sheet(sheet[0], tasksForSheet))
-
-    return sheetObjects
-
+# Table getter methods
 
 def getFileTable(config):
     fileDatabasePath = config("database_path")
@@ -109,6 +131,16 @@ def getStatusTable(config):
     cursor.execute("""CREATE TABLE IF NOT EXISTS status
          (`identifier` text UNIQUE, `status` text, PRIMARY KEY (`identifier`));""")
     return statusDatabase
+
+
+def getPointsTable(config):
+    pointsDatabasePath = config("database_path")
+    pointsDatabase = sqlite3.connect(pointsDatabasePath)
+    cursor = pointsDatabase.cursor()
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS points
+         (`sheetNumber` int, `taskNumber` int, `identifier` text, `reachedPoints` float);""")
+    return pointsDatabase
 
 
 def getSheetTable(config):

@@ -28,7 +28,7 @@ class TableHandler(NetsecHandler):
                 if entry[0] != ".":
                     abgaben.append({
                         "name": entry.lower(),
-                        "status": korrekturtools.readStatus(self.application.config, entry.lower()),
+                        "status": korrekturtools.getStatus(self.application.config, entry.lower()),
                         })
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
@@ -74,26 +74,26 @@ class StatusHandler(NetsecHandler):
         laststatus = self.get_argument("laststatus")
         currentstatus = self.get_argument("currentstatus")
 
-        savedstatus = korrekturtools.readStatus(self.application.config, identifier)
+        savedstatus = korrekturtools.getStatus(self.application.config, identifier)
 
         if not laststatus == savedstatus:
             self.render("status", {"redirect": 0, "laststatus": laststatus,
                         "currentstatus": currentstatus, "identifier": identifier})
         else:
-            korrekturtools.writeStatus(self.application.config, identifier, currentstatus)
+            korrekturtools.setStatus(self.application.config, identifier, currentstatus)
             self.render("status", {"redirect": 1, "currentstatus": currentstatus, "identifier": identifier})
 
 
 class DetailHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri.split("/")
-        uri = uri[2:][0]  # remove empty element and "detail", get student ID
+        identifier = uri[2:][0]  # remove empty element and "detail", get student ID
 
         files = []
 
         attachmentPath = self.application.config("attachment_path")
         if os.path.exists(attachmentPath):
-            studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(uri))
+            studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(identifier))
             for entry in os.listdir(studentAttachmentPath):
                 if entry[0] != ".":
                     pathToFile = os.path.join(studentAttachmentPath, entry)
@@ -114,8 +114,9 @@ class DetailHandler(NetsecHandler):
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
-        self.render('detail', {'identifier': uri, 'files': files,
-                    'korrekturstatus': korrekturtools.readStatus(self.application.config, uri)})
+        self.render('detail', {'identifier': identifier, 'files': files,
+                    'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
+                    'sheets': korrekturtools.getSheets(self.application.config, identifier)})
 
 
 class TaskHandler(NetsecHandler):

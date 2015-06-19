@@ -98,7 +98,7 @@ class PointsHandler(NetsecHandler):
                         "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
         else:
             korrekturtools.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
-            self.render("points", {"redirect": 1, "oldPoints": oldPoints, "reachedPoints": reachedPoints,
+            self.render("points", {"redirect": 1, "oldPoints": oldPoints, "reachedPoints": newPoints,
                         "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
 
 

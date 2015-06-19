@@ -41,10 +41,10 @@
 		{% for sheet in sheets %}
 			{% for task in sheet.tasks %}
 				<tr>
-					<th>{{ sheet.number }}</th>
-					<th>{{ task.number }}</th>
-					<th>{{ task.description }}</th>
-					<th>{{ task.maxPoints }}</th>
+					<td>{{ sheet.number }}</td>
+					<td>{{ task.number }}</td>
+					<td>{{ task.description }}</td>
+					<td>{{ task.maxPoints }}</td>
 				</tr>
 			{% end %}
 		{% end %}

@@ -13,9 +13,9 @@
 	<h1>Status-Ver&auml;nderung der Abgabe von {{ identifier }}</h1>
 	<br>
 	{% if redirect %}
-	Der Status für <b>{{ identifier }}</b> wurde erfolgreich auf <b>{{ currentstatus }}</b> gesetzt.
+		Der Status für <b>{{ identifier }}</b> wurde erfolgreich auf <b>{{ currentstatus }}</b> gesetzt.
 	{% else %}
-	Der Status für <b>{{ identifier }} konnte nicht gesetzt werden.</b> Der Status wurde nach Aufruf der Detail-Seite von <b>{{ laststatus }}</b> auf <b>{{ currentstatus }}</b> gesetzt.
+		Der Status für <b>{{ identifier }} konnte nicht gesetzt werden.</b> Der Status wurde nach Aufruf der Detail-Seite von <b>{{ laststatus }}</b> auf <b>{{ currentstatus }}</b> gesetzt.
 	{% end %}
 	<br>
 	Zur&uuml;ck zur <a href="/detail/{{ identifier }}">Abgabeseite von {{ identifier }}</a> oder zur <a href="/">&Uuml;bersicht</a>.

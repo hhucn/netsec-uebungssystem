@@ -22,7 +22,9 @@
 		</select>
 		<input type="submit" value="Status neu setzen">
 	</form>
-
+	<br>
+	<br>
+	<br>
 	<h3>Punkte</h3>
 	<table>
 		<tr>
@@ -31,6 +33,7 @@
 			<th>Aufgabenstellung</th>
 			<th>max. Punkte</th>
 			<th>erreichte Punkte</th>
+			<th>neue Punkte</th>
 		</tr>
 		{% for sheet in sheets %}
 			{% for task in sheet.tasks %}
@@ -39,12 +42,28 @@
 					<td>{{ task.number }}</td>
 					<td>{{ task.description }}</td>
 					<td>{{ task.maxPoints }}</td>
-					<td><input type="text" placeholder="{{ task.maxPoints }}"></td>
+					<td>{{ task.reachedPoints }}</td>
+					<td>
+						{% if sheet.editable %}
+							<form name="taskform" action="/points" method="POST">
+								<input type="hidden" name="identifier" value="{{ identifier }}">
+								<input type="hidden" name="sheetNumber" value="{{ sheet.number }}">
+								<input type="hidden" name="taskNumber" value="{{ task.number }}">
+								<input type="hidden" name="oldPoints" value="{{ task.reachedPoints }}">
+								<input type="number" name="newPoints" value="{{ task.reachedPoints }}" min="0" max="{{ task.maxPoints }}" step="any">
+								<input type="submit" value="Speichern">
+							</form>
+						{% else %}
+							<i>(Blatt ist nicht editierbar)</i>
+						{% end %}
+					</td>
 				</tr>
 			{% end %}
 		{% end %}
 	</table>
-
+	<br>
+	<br>
+	<br>
 	<h3>Dateien</h3>
 	<table>
 		<tr>

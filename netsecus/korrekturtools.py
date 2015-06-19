@@ -40,7 +40,7 @@ def getReachedPoints(config, sheetNumber, taskNumber, identifier):
     reachedPoints = cursor.fetchone()
 
     if reachedPoints:
-        return reachedPoints
+        return reachedPoints[0]
 
     return 0
 
@@ -70,14 +70,15 @@ def getSheets(config, student=None):
     sheetDatabase = getSheetTable(config)
     sheetCursor = sheetDatabase.cursor()
 
-    sheetCursor.execute("SELECT number FROM sheets")
+    sheetCursor.execute("SELECT number, editable FROM sheets")
 
     sheetObjects = []
 
     for sheet in sheetCursor.fetchall():
         sheetNumber = sheet[0]
+        editable = (sheet[1] == 1)  # SQLite doesn't support boolean, so we use 0/1
         tasksForSheet = getTasksForSheet(config, sheetNumber, student)
-        sheetObjects.append(Sheet(sheetNumber, tasksForSheet))
+        sheetObjects.append(Sheet(sheetNumber, tasksForSheet, editable))
 
     return sheetObjects
 
@@ -112,6 +113,23 @@ def setFile(config, identifier, sha, name):
         # with the same content and the same name twice.
         cursor.execute("INSERT INTO files VALUES(?, ?, ?)", (identifier, sha, name,))
         fileDatabase.commit()
+
+
+def setReachedPoints(config, sheetNumber, taskNumber, identifier, newPoints):
+    pointsDatabase = getPointsTable(config)
+    cursor = pointsDatabase.cursor()
+
+    cursor.execute("SELECT reachedPoints FROM points WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?",
+                   (sheetNumber, taskNumber, identifier,))
+
+    reachedPoints = cursor.fetchone()
+
+    if reachedPoints:
+        cursor.execute("UPDATE points SET reachedPoints =? WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?",
+                       (newPoints, sheetNumber, taskNumber, identifier,))
+    else:
+        cursor.execute("INSERT INTO points VALUES(?, ?, ?, ?)", (sheetNumber, taskNumber, identifier, newPoints))
+    pointsDatabase.commit()
 
 
 # Table getter methods
@@ -149,7 +167,7 @@ def getSheetTable(config):
     sheetDatabase = sqlite3.connect(sheetDatabasePath)
     cursor = sheetDatabase.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS sheets
-         (`number` int UNIQUE, PRIMARY KEY (`number`));""")
+         (`number` int UNIQUE, `editable` boolean, PRIMARY KEY (`number`));""")
     return sheetDatabase
 
 

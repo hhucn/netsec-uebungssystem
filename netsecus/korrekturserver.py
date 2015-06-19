@@ -84,6 +84,24 @@ class StatusHandler(NetsecHandler):
             self.render("status", {"redirect": 1, "currentstatus": currentstatus, "identifier": identifier})
 
 
+class PointsHandler(NetsecHandler):
+    def post(self):
+        identifier = self.get_argument("identifier")
+        sheetNumber = self.get_argument("sheetNumber")
+        taskNumber = self.get_argument("taskNumber")
+        oldPoints = self.get_argument("oldPoints")
+        newPoints = self.get_argument("newPoints")
+        reachedPoints = korrekturtools.getReachedPoints(self.application.config, sheetNumber, taskNumber, identifier)
+
+        if not oldPoints == str(reachedPoints):
+            self.render("points", {"redirect": 0, "oldPoints": oldPoints, "reachedPoints": reachedPoints,
+                        "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
+        else:
+            korrekturtools.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
+            self.render("points", {"redirect": 1, "oldPoints": oldPoints, "reachedPoints": reachedPoints,
+                        "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
+
+
 class DetailHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri.split("/")
@@ -147,6 +165,7 @@ def mainloop(config):
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),
+        (r"/points", PointsHandler),
     ])
 
     port = config('httpd.port')

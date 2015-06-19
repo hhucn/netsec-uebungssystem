@@ -92,13 +92,24 @@ class PointsHandler(NetsecHandler):
         oldPoints = self.get_argument("oldPoints")
         newPoints = self.get_argument("newPoints")
         reachedPoints = korrekturtools.getReachedPoints(self.application.config, sheetNumber, taskNumber, identifier)
+        maxPoints = 0
 
-        if not oldPoints == str(reachedPoints):
-            self.render("points", {"redirect": 0, "oldPoints": oldPoints, "reachedPoints": reachedPoints,
-                        "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
+        task = korrekturtools.getTaskFromSheet(self.application.config, sheetNumber, taskNumber)
+        if task:
+            maxPoints = task.maxPoints
+
+        if not float(oldPoints) == reachedPoints:
+            # Someone submitted new points after this user opened the detail page, but before he could submit his points
+            self.render("points", {"redirect": 0, "error": "modified", "oldPoints": oldPoints,
+                        "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
+                        "identifier": identifier})
+        elif maxPoints < float(newPoints):
+            self.render("points", {"redirect": 0, "error": "overMaxPoints", "oldPoints": oldPoints,
+                        "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
+                        "identifier": identifier})
         else:
             korrekturtools.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
-            self.render("points", {"redirect": 1, "oldPoints": oldPoints, "reachedPoints": newPoints,
+            self.render("points", {"redirect": 1, "error": "", "oldPoints": oldPoints, "reachedPoints": newPoints,
                         "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
 
 

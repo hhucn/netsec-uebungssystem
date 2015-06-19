@@ -45,6 +45,20 @@ def getReachedPoints(config, sheetNumber, taskNumber, identifier):
     return 0
 
 
+def getTaskFromSheet(config, sheetNumber, taskNumber):
+    taskDatabase = getTaskTable(config)
+    cursor = taskDatabase.cursor()
+
+    cursor.execute("SELECT description, maxPoints FROM tasks WHERE sheetNumber = ? AND taskNumber = ?",
+                   (sheetNumber, taskNumber))
+    task = cursor.fetchone()
+
+    if task:
+        return Task(taskNumber, task[0], task[1], 0)
+
+    return None
+
+
 def getTasksForSheet(config, sheetNumber, student=None):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()

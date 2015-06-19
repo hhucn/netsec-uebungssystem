@@ -101,12 +101,12 @@ class PointsHandler(NetsecHandler):
         if not float(oldPoints) == reachedPoints:
             # Someone submitted new points after this user opened the detail page, but before he could submit his points
             self.render("points", {"redirect": 0, "error": "modified", "oldPoints": oldPoints,
-                        "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
-                        "identifier": identifier})
+                                   "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
+                                   "identifier": identifier})
         elif maxPoints < float(newPoints):
             self.render("points", {"redirect": 0, "error": "overMaxPoints", "oldPoints": oldPoints,
-                        "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
-                        "identifier": identifier})
+                                   "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
+                                   "identifier": identifier})
         else:
             korrekturtools.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
             self.render("points", {"redirect": 1, "error": "", "oldPoints": oldPoints, "reachedPoints": newPoints,

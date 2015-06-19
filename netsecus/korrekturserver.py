@@ -115,8 +115,8 @@ class DetailHandler(NetsecHandler):
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
 
         self.render('detail', {'identifier': identifier, 'files': files,
-                    'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
-                    'sheets': korrekturtools.getSheets(self.application.config, identifier)})
+                               'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
+                               'sheets': korrekturtools.getSheets(self.application.config, identifier)})
 
 
 class TaskHandler(NetsecHandler):

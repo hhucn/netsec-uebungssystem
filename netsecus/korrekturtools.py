@@ -34,7 +34,8 @@ def getReachedPoints(config, sheetNumber, taskNumber, identifier):
     pointsDatabase = getPointsTable(config)
     cursor = pointsDatabase.cursor()
 
-    cursor.execute("SELECT reachedPoints FROM points WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?", (sheetNumber, taskNumber, identifier,))
+    cursor.execute("SELECT reachedPoints FROM points WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?",
+                   (sheetNumber, taskNumber, identifier,))
 
     reachedPoints = cursor.fetchone()
 

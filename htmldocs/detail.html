@@ -38,7 +38,7 @@
 		{% for sheet in sheets %}
 			{% for task in sheet.tasks %}
 				<tr>
-					<td>{{ sheet.number }}</td>
+					<td><a href="/sheet/{{ sheet.number }}">{{ sheet.number }}</a></td>
 					<td>{{ task.number }}</td>
 					<td>{{ task.description }}</td>
 					<td>{{ task.maxPoints }}</td>

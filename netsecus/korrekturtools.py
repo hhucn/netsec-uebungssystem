@@ -80,6 +80,19 @@ def getTasksForSheet(config, sheetNumber, student=None):
     return taskObjects
 
 
+def getSheetFromNumber(config, sheetNumber):
+    taskDatabase = getTaskTable(config)
+    cursor = taskDatabase.cursor()
+
+    cursor.execute("SELECT number, editable FROM sheets WHERE number = ?", (sheetNumber, ))
+    sheet = cursor.fetchone()
+
+    if sheet:
+        tasks = getTasksForSheet(config, sheetNumber)
+        return Sheet(sheet[0], tasks, sheet[1] == "1")
+    return None
+
+
 def getSheets(config, student=None):
     sheetDatabase = getSheetTable(config)
     sheetCursor = sheetDatabase.cursor()

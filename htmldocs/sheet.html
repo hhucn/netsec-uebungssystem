@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>netsec-Übungssystem - Korrekturserver</title>
+	{% include ../htmldocs/style.css %}
+</head>
+<body>
+	{% include ../htmldocs/menubar.html %}
+
+	<h1>Blatt {{ sheet.number }}</h1>
+
+	<table>
+		<tr>
+			<th>Aufgabe</th>
+			<th>Aufgabenstellung</th>
+			<th>max. Punkte</th>
+		</tr>
+		{% for task in sheet.tasks %}
+			<tr>
+				<td>{{ task.number }}</td>
+				<td>{{ task.description }}</td>
+				<td>{{ task.maxPoints }}</td>
+			</tr>
+		{% end %}
+	</table>
+</body>
+</html>

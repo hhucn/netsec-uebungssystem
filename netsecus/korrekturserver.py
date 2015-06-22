@@ -134,10 +134,24 @@ class DetailHandler(NetsecHandler):
             self.redirect("/")
 
 
-class SheetHandler(NetsecHandler):
+class SheetsHandler(NetsecHandler):
     def get(self):
         sheets = korrekturtools.getSheets(self.application.config)
-        self.render('task', {'sheets': sheets})
+        self.render('sheets', {'sheets': sheets})
+
+
+class SheetHandler(NetsecHandler):
+    def get(self):
+        uri = self.request.uri.split("/")
+        requestedSheet = uri[2:][0]  # remove empty element and "sheet", get sheet number
+
+        sheet = korrekturtools.getSheetFromNumber(self.application.config, requestedSheet)
+
+        if sheet:
+            self.render('sheet', {'sheet': sheet})
+        else:
+            logging.error("Specified sheet ('%s') does not exist." % requestedSheet)
+            self.redirect("/sheets")
 
 
 class KorrekturApp(tornado.web.Application):
@@ -157,7 +171,8 @@ class KorrekturApp(tornado.web.Application):
 def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
-        (r"/sheet", SheetHandler),
+        (r"/sheets", SheetsHandler),
+        (r"/sheet/.*", SheetHandler),
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),

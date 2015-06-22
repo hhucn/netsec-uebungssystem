@@ -36,19 +36,6 @@ class TableHandler(NetsecHandler):
         self.render('table', {'reihen': abgaben})
 
 
-class ZipHandler(NetsecHandler):
-    def get(self):
-        requestedFile = self.request.uri.replace("/zips/", "/zips").replace("/zips", "")
-
-        if len(requestedFile) == 0:
-            self.set_status(404)
-            self.write("Zur&uuml;ck zur <a href=\"/\">&Uuml;bersicht</a>")
-            self.finish()
-            return
-
-        self.write(requestedFile)
-
-
 class DownloadHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri[len("/download/"):]  # cut away "/download/"
@@ -148,7 +135,7 @@ class DetailHandler(NetsecHandler):
                                'sheets': korrekturtools.getSheets(self.application.config, identifier)})
 
 
-class TaskHandler(NetsecHandler):
+class SheetHandler(NetsecHandler):
     def get(self):
         sheets = korrekturtools.getSheets(self.application.config)
         self.render('task', {'sheets': sheets})
@@ -171,8 +158,7 @@ class KorrekturApp(tornado.web.Application):
 def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
-        (r"/tasks", TaskHandler),
-        (r"/zips/.*", ZipHandler),
+        (r"/sheet", SheetHandler),
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),

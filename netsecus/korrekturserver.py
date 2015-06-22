@@ -107,12 +107,11 @@ class DetailHandler(NetsecHandler):
 
         files = []
 
-        attachmentPath = self.application.config("attachment_path")
+        attachmentPath = os.path.join(self.application.config("attachment_path"), helper.escapePath(identifier))
         if os.path.exists(attachmentPath):
-            studentAttachmentPath = os.path.join(attachmentPath, helper.escapePath(identifier))
-            for entry in os.listdir(studentAttachmentPath):
+            for entry in os.listdir(attachmentPath):
                 if entry[0] != ".":
-                    pathToFile = os.path.join(studentAttachmentPath, entry)
+                    pathToFile = os.path.join(attachmentPath, entry)
                     fileHash, name = entry.split(" ", 1)
                     filesize = os.path.getsize(pathToFile) / 1024
                     fileDateTimestamp = os.path.getmtime(pathToFile)
@@ -127,12 +126,13 @@ class DetailHandler(NetsecHandler):
                         "date": fileDateTime,
                         "hash": fileHash
                         })
-        else:
-            logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
-
-        self.render('detail', {'identifier': identifier, 'files': files,
+            self.render('detail', {'identifier': identifier, 'files': files,
                                'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
                                'sheets': korrekturtools.getSheets(self.application.config, identifier)})
+        else:
+            logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
+            self.redirect("/")
+
 
 
 class SheetHandler(NetsecHandler):

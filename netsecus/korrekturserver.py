@@ -127,12 +127,11 @@ class DetailHandler(NetsecHandler):
                         "hash": fileHash
                         })
             self.render('detail', {'identifier': identifier, 'files': files,
-                               'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
-                               'sheets': korrekturtools.getSheets(self.application.config, identifier)})
+                                   'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
+                                   'sheets': korrekturtools.getSheets(self.application.config, identifier)})
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
             self.redirect("/")
-
 
 
 class SheetHandler(NetsecHandler):

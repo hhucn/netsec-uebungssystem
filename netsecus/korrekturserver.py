@@ -64,7 +64,11 @@ class StatusHandler(NetsecHandler):
         savedstatus = korrekturtools.getStatus(self.application.config, identifier)
 
         if not laststatus == savedstatus:
-            self.render("status-error", {"laststatus": laststatus, "currentstatus": currentstatus, "identifier": identifier})
+            self.render("status-error", {
+                "laststatus": laststatus,
+                "currentstatus": currentstatus,
+                "identifier": identifier
+            })
         else:
             korrekturtools.setStatus(self.application.config, identifier, currentstatus)
             self.redirect("/detail/%s" % identifier)

@@ -19,7 +19,8 @@ def mainloop(config):
     imapmail = loginIMAP(
         config("mail.imap_server"),
         username,
-        config("mail.password"))
+        config("mail.password"),
+        config("mail.ssl"))
 
     imapmail._command("CAPABILITY")
     capabilities = imapmail.readline().decode("utf-8")
@@ -78,13 +79,16 @@ def processRule(config, imapmail, rule):
     logging.debug("**** done: '%s'" % rule["title"])
 
 
-def loginIMAP(server, address, password):
+def loginIMAP(server, address, password, ssl=True):
     if not address or not password:
         err = "IMAP login information incomplete. (Missing address or password)"
         logging.error(err)
         raise ValueError(err)
     else:
-        imapmail = imaplib.IMAP4_SSL(server)
+        if ssl:
+            imapmail = imaplib.IMAP4_SSL(server)
+        else:
+            imapmail = imaplib.IMAP4(server)
         imapmail.login(address, password)
         logging.debug("IMAP login (%s on %s)" % (address, server))
     return imapmail

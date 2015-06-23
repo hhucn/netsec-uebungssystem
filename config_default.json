@@ -7,7 +7,8 @@
 	"mail": {
 		"smtp_server": "smtp.gmail.com",
 		"imap_server": "imap.gmail.com",
-		"delay": 3
+		"delay": 3,
+		"ssl": true
 	},
 	"httpd": {
 		"port": 8080

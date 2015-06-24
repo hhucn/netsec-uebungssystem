@@ -112,7 +112,6 @@ class RequestHandlerWithAuth(tornado.web.RequestHandler):
                 elif not pbkdf2_sha256.verify(password, users[username]):
                     logging.error("Failed login for %s from %s." % (username, self.request.remote_ip))
                 else:
-                    logging.debug("User '%s' logged in." % username)
                     return super(RequestHandlerWithAuth, self)._execute(transforms, *args, **kwargs)
 
         self.set_status(401)

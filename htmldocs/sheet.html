@@ -8,20 +8,65 @@
 	{% include ../htmldocs/menubar.html %}
 
 	<h1>Blatt {{ sheet.number }}</h1>
-
-	<table>
+	<form method="post" action="/sheetmanager">
+		<input type="hidden" name="type" value="renameSheet">
+		<input type="hidden" name="oldNumber" value="{{ sheet.number }}">
+		<input type="hidden" name="sheetID" value="{{ sheet.id }}">
+		<label>
+			Blattnummer: 
+			<input type="number" name="newNumber" min="0" step="1" value="{{ sheet.number }}">
+		</label>
+		<input type="submit" value="Speichern">
+	</form>
+	<table class="table">
 		<tr>
 			<th>Aufgabe</th>
 			<th>Aufgabenstellung</th>
 			<th>max. Punkte</th>
+			<th></th>
 		</tr>
 		{% for task in sheet.tasks %}
 			<tr>
-				<td>{{ task.number }}</td>
-				<td>{{ task.description }}</td>
-				<td>{{ task.maxPoints }}</td>
+				<form method="post" action="/sheetmanager">
+					<input type="hidden" name="type" value="editTask">
+					<input type="hidden" name="sheetID" value="{{ sheet.id }}">
+					<td>
+						<input type="hidden" name="oldNumber" value="{{ task.number }}">
+						<input type="number" name="newNumber" min="0" step="1" value="{{ task.number }}">
+					</td>
+					<td>
+						<input type="hidden" name="oldDescription" value="{{ task.description }}">
+						<input type="text" name="newDescription" value="{{ task.description }}" style="width:100%">
+					</td>
+					<td>
+						<input type="hidden" name="oldPoints" value="{{ task.maxPoints }}">
+						<input type="number" name="newPoints" min="0" step="any" value="{{ task.maxPoints }}">
+					</td>
+					<td>
+						<label><input type="checkbox" value="0"> L&ouml;schen</label><br>
+						<input type="submit" value="Speichern">
+					</td>
+				</form>
 			</tr>
 		{% end %}
+		<tr>
+			<form method="post" action="/sheetmanager">
+				<input type="hidden" name="type" value="newTask">
+				<input type="hidden" name="sheetID" value="{{ sheet.id }}">
+				<td>
+					<input type="number" name="number" min="0" step="1">
+				</td>
+				<td>
+					<input type="text" name="description" style="width:100%">
+				</td>
+				<td>
+					<input type="number" name="points" min="0" step="any">
+				</td>
+				<td>
+					<input type="submit" value="Hinzuf&uuml;gen">
+				</td>
+			</form>
+		</tr>
 	</table>
 </body>
 </html>

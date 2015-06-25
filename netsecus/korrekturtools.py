@@ -30,12 +30,12 @@ def getFileName(config, identifier, sha):
     return cursor.fetchone()[0]
 
 
-def getReachedPoints(config, sheetNumber, taskNumber, identifier):
+def getReachedPoints(config, sheetID, taskNumber, identifier):
     pointsDatabase = getPointsTable(config)
     cursor = pointsDatabase.cursor()
 
-    cursor.execute("SELECT reachedPoints FROM points WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?",
-                   (sheetNumber, taskNumber, identifier,))
+    cursor.execute("SELECT reachedPoints FROM points WHERE sheetID = ? AND taskNumber = ? AND identifier = ?",
+                   (sheetID, taskNumber, identifier,))
 
     reachedPoints = cursor.fetchone()
 
@@ -45,12 +45,12 @@ def getReachedPoints(config, sheetNumber, taskNumber, identifier):
     return 0
 
 
-def getTaskFromSheet(config, sheetNumber, taskNumber):
+def getTaskFromSheet(config, sheetID, taskNumber):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()
 
-    cursor.execute("SELECT description, maxPoints FROM tasks WHERE sheetNumber = ? AND taskNumber = ?",
-                   (sheetNumber, taskNumber))
+    cursor.execute("SELECT description, maxPoints FROM tasks WHERE sheetID = ? AND taskNumber = ?",
+                   (sheetID, taskNumber))
     task = cursor.fetchone()
 
     if task:
@@ -59,11 +59,11 @@ def getTaskFromSheet(config, sheetNumber, taskNumber):
     return None
 
 
-def getTasksForSheet(config, sheetNumber, student=None):
+def getTasksForSheet(config, sheetID, student=None):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()
 
-    cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetNumber = ?", (sheetNumber, ))
+    cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetID = ?", (sheetID, ))
     tasks = cursor.fetchall()
 
     taskObjects = []
@@ -73,23 +73,40 @@ def getTasksForSheet(config, sheetNumber, student=None):
         reachedPoints = 0
 
         if student:
-            reachedPoints = getReachedPoints(config, sheetNumber, taskNumber, student)
+            reachedPoints = getReachedPoints(config, sheetID, taskNumber, student)
 
         taskObjects.append(Task(taskNumber, description, maxPoints, reachedPoints))
 
     return taskObjects
 
 
-def getSheetFromNumber(config, sheetNumber):
-    taskDatabase = getTaskTable(config)
-    cursor = taskDatabase.cursor()
+def getSheetFromNumber(config, sheetID):
+    sheetDatabase = getSheetTable(config)
+    cursor = sheetDatabase.cursor()
 
-    cursor.execute("SELECT number, editable FROM sheets WHERE number = ?", (sheetNumber, ))
+    cursor.execute("SELECT ROWID, editable FROM sheets WHERE number = ?", (sheetID, ))
     sheet = cursor.fetchone()
 
     if sheet:
-        tasks = getTasksForSheet(config, sheetNumber)
-        return Sheet(sheet[0], tasks, sheet[1] == "1")
+        tasks = getTasksForSheet(config, sheetID)
+        editable = sheet[1] == "1"
+        rowID = sheet[0]
+        return Sheet(sheetID, tasks, editable, rowID)
+    return None
+
+
+def getSheetFromID(config, sheetID):
+    sheetDatabase = getSheetTable(config)
+    cursor = sheetDatabase.cursor()
+
+    cursor.execute("SELECT number, editable FROM sheets WHERE ROWID = ?", (sheetID, ))
+    sheet = cursor.fetchone()
+
+    if sheet:
+        sheetNumber = sheet[0]
+        tasks = getTasksForSheet(config, sheetID)
+        editable = (sheet[1] == "1")
+        return Sheet(sheetNumber, tasks, editable, sheetID)
     return None
 
 
@@ -97,15 +114,16 @@ def getSheets(config, student=None):
     sheetDatabase = getSheetTable(config)
     sheetCursor = sheetDatabase.cursor()
 
-    sheetCursor.execute("SELECT number, editable FROM sheets")
+    sheetCursor.execute("SELECT ROWID, number, editable FROM sheets")
 
     sheetObjects = []
 
     for sheet in sheetCursor.fetchall():
-        sheetNumber = sheet[0]
+        sheetNumber = sheet[1]
         editable = (sheet[1] == 1)  # SQLite doesn't support boolean, so we use 0/1
-        tasksForSheet = getTasksForSheet(config, sheetNumber, student)
-        sheetObjects.append(Sheet(sheetNumber, tasksForSheet, editable))
+        rowID = sheet[0]
+        tasksForSheet = getTasksForSheet(config, rowID, student)
+        sheetObjects.append(Sheet(sheetNumber, tasksForSheet, editable, rowID))
 
     return sheetObjects
 
@@ -157,6 +175,23 @@ def setReachedPoints(config, sheetNumber, taskNumber, identifier, newPoints):
     else:
         cursor.execute("INSERT INTO points VALUES(?, ?, ?, ?)", (sheetNumber, taskNumber, identifier, newPoints))
     pointsDatabase.commit()
+
+
+def setSheetNumberForID(config, sheetID, oldNumber, newNumber):
+    sheetDatabase = getSheetTable(config)
+    sheetCursor = sheetDatabase.cursor()
+
+    sheetCursor.execute("UPDATE sheets SET number = ? WHERE ROWID = ?", (newNumber, sheetID, ))
+    sheetDatabase.commit()
+
+    taskDatabase = getTaskTable(config)
+    taskCursor = taskDatabase.cursor()
+
+    print(newNumber)
+    print(oldNumber)
+
+    taskCursor.execute("UPDATE tasks SET sheetNumber = ? WHERE sheetNumber = ?", (newNumber, oldNumber, ))
+    taskDatabase.commit()
 
 
 # Table getter methods

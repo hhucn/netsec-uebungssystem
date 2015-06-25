@@ -103,6 +103,39 @@ class PointsHandler(NetsecHandler):
                         "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
 
 
+class SheetManagerHandler(NetsecHandler):
+    def post(self):
+        manageType = self.get_argument("type")
+
+        if manageType == "renameSheet":
+            oldNumber = self.get_argument("oldNumber")
+            newNumber = self.get_argument("newNumber")
+            sheetID = self.get_argument("sheetID")
+
+            sheet = korrekturtools.getSheetFromID(self.application.config, sheetID)
+
+            if not sheet:
+                self.render("sheet-error", {"error": "idNotFound"})
+                return
+
+            if not str(sheet.number) == oldNumber:
+                self.render("sheet-error", {"error": "modified"})
+                return
+
+            if korrekturtools.getSheetFromNumber(self.application.config, newNumber):
+                self.render("sheet-error", {"error": "exists"})
+                return
+
+            korrekturtools.setSheetNumberForID(self.application.config, sheetID, oldNumber, newNumber)
+            self.redirect("/sheet/%s" % newNumber)
+        elif manageType == "editTask":
+            print("a")
+        elif manageType == "newTask":
+            print("a")
+        else:
+            logging.error("Specified SheetManager type '%s' does not exist." % manageType)
+
+
 class DetailHandler(NetsecHandler):
     def get(self):
         uri = self.request.uri.split("/")
@@ -176,6 +209,7 @@ def mainloop(config):
         (r"/", TableHandler),
         (r"/sheets", SheetsHandler),
         (r"/sheet/.*", SheetHandler),
+        (r"/sheetmanager", SheetManagerHandler),
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),

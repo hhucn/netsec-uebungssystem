@@ -7,14 +7,14 @@
 <body>
 	{% include ../htmldocs/menubar.html %}
 
-	<h1>Blatt {{ sheet.number }}</h1>
+	<h1>{{ sheet.name }}</h1>
 	<form method="post" action="/sheetmanager">
 		<input type="hidden" name="type" value="renameSheet">
-		<input type="hidden" name="oldNumber" value="{{ sheet.number }}">
+		<input type="hidden" name="oldName" value="{{ sheet.name }}">
 		<input type="hidden" name="sheetID" value="{{ sheet.id }}">
 		<label>
-			Blattnummer: 
-			<input type="number" name="newNumber" min="0" step="1" value="{{ sheet.number }}">
+			Blattname: 
+			<input type="text" name="newName" value="{{ sheet.name }}">
 		</label>
 		<input type="submit" value="Speichern">
 	</form>

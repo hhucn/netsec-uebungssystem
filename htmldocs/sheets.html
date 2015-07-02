@@ -10,20 +10,28 @@
 	<table>
 		<tr>
 			<th>Blatt</th>
-			<th>Aufgabe</th>
-			<th>Aufgabenstellung</th>
-			<th>max. Punkte</th>
+			<th>Editierbarkeit</th>
+			<th>Zeitraum</th>
 		</tr>
 		{% for sheet in sheets %}
-			{% for task in sheet.tasks %}
-				<tr>
-					<td><a href="/sheet/{{ sheet.number }}">{{ sheet.number }}</a></td>
-					<td>{{ task.number }}</td>
-					<td>{{ task.description }}</td>
-					<td>{{ task.maxPoints }}</td>
-				</tr>
-			{% end %}
+			<tr>
+				<td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+				<td>
+					{% if sheet.editable %}
+						<i>Editierbar</i>
+					{% else %}
+						Nicht editierbar
+					{% end %}
+				</td>
+				<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
+			</tr>
 		{% end %}
 	</table>
+	<br>
+	<form method="post" action="/sheetmanager">
+		<input type="hidden" name="type" value="addSheet">
+		<input type="text" name="name" placeholder="Blatt-Name" width="200px">
+		<input type="submit" value="Hinzufügen">
+	</form>
 </body>
 </html>

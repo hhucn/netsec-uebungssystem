@@ -8,12 +8,12 @@ from .task import Task
 
 # Getter methods for values from tables
 
-def getStatus(config, student):
+def getStatus(config, identifier, sheetID):
     database = getStatusTable(config)
     cursor = database.cursor()
 
     # Check if we need to create a new row first
-    cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
+    cursor.execute("SELECT status FROM status WHERE identifier = ? AND sheetID = ?", (identifier, sheetID))
     statusRow = cursor.fetchone()
 
     if statusRow:
@@ -22,20 +22,19 @@ def getStatus(config, student):
         return "Unbearbeitet"
 
 
-def getFileName(config, identifier, sha):
+def getFileName(config, identifier, sha, sheetID):
     fileDatabase = getFileTable(config)
     cursor = fileDatabase.cursor()
 
-    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ?", (identifier, sha,))
+    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ? AND sheetID = ?", (identifier, sha, sheetID))
     return cursor.fetchone()[0]
 
 
-def getReachedPoints(config, sheetID, taskNumber, identifier):
+def getReachedPoints(config, sheetID, taskID, identifier):
     pointsDatabase = getPointsTable(config)
     cursor = pointsDatabase.cursor()
 
-    cursor.execute("SELECT reachedPoints FROM points WHERE sheetID = ? AND taskNumber = ? AND identifier = ?",
-                   (sheetID, taskNumber, identifier,))
+    cursor.execute("SELECT reachedPoints FROM points WHERE sheetID = ? AND taskID = ? AND identifier = ?", (sheetID, taskID, identifier,))
 
     reachedPoints = cursor.fetchone()
 
@@ -45,16 +44,16 @@ def getReachedPoints(config, sheetID, taskNumber, identifier):
     return 0
 
 
-def getTaskFromSheet(config, sheetID, taskNumber):
+def getTaskFromSheet(config, sheetID, taskID):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()
 
-    cursor.execute("SELECT description, maxPoints FROM tasks WHERE sheetID = ? AND taskNumber = ?",
-                   (sheetID, taskNumber))
+    cursor.execute("SELECT description, maxPoints FROM tasks WHERE sheetID = ? AND taskID = ?", (sheetID, taskID))
     task = cursor.fetchone()
 
     if task:
-        return Task(taskNumber, task[0], task[1], 0)
+        description, maxPoints = task
+        return Task(taskNumber, description, maxPoints, 0)
 
     return None
 
@@ -63,7 +62,7 @@ def getTasksForSheet(config, sheetID, student=None):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()
 
-    cursor.execute("SELECT taskNumber, description, maxPoints FROM tasks WHERE sheetID = ?", (sheetID, ))
+    cursor.execute("SELECT taskID, description, maxPoints FROM tasks WHERE sheetID = ?", (sheetID, ))
     tasks = cursor.fetchall()
 
     taskObjects = []
@@ -80,18 +79,21 @@ def getTasksForSheet(config, sheetID, student=None):
     return taskObjects
 
 
-def getSheetFromNumber(config, sheetID):
+def getSheetFromNumber(config, sheetName):
     sheetDatabase = getSheetTable(config)
     cursor = sheetDatabase.cursor()
 
-    cursor.execute("SELECT ROWID, editable FROM sheets WHERE number = ?", (sheetID, ))
+    cursor.execute("SELECT sheetID, editable, start, end FROM sheets WHERE name = ?", (sheetName, ))
     sheet = cursor.fetchone()
 
     if sheet:
-        tasks = getTasksForSheet(config, sheetID)
-        editable = sheet[1] == "1"
+        tasks = getTasksForSheet(config, sheetName)
         rowID = sheet[0]
-        return Sheet(sheetID, tasks, editable, rowID)
+        editable = sheet[1] == "1"
+        start = sheet[2]
+        end = sheet[3]
+
+        return Sheet(rowID, sheetName, tasks, editable, start, end)
     return None
 
 
@@ -99,14 +101,15 @@ def getSheetFromID(config, sheetID):
     sheetDatabase = getSheetTable(config)
     cursor = sheetDatabase.cursor()
 
-    cursor.execute("SELECT number, editable FROM sheets WHERE ROWID = ?", (sheetID, ))
+    cursor.execute("SELECT name, editable FROM sheets WHERE sheetID = ?", (sheetID, ))
     sheet = cursor.fetchone()
 
     if sheet:
-        sheetNumber = sheet[0]
-        tasks = getTasksForSheet(config, sheetID)
+        sheetName = sheet[0]
         editable = (sheet[1] == "1")
-        return Sheet(sheetNumber, tasks, editable, sheetID)
+        tasks = getTasksForSheet(config, sheetID)
+
+        return Sheet(sheetID, sheetName, tasks, editable)
     return None
 
 
@@ -114,16 +117,16 @@ def getSheets(config, student=None):
     sheetDatabase = getSheetTable(config)
     sheetCursor = sheetDatabase.cursor()
 
-    sheetCursor.execute("SELECT ROWID, number, editable FROM sheets")
+    sheetCursor.execute("SELECT sheetID, name, editable FROM sheets")
 
     sheetObjects = []
 
     for sheet in sheetCursor.fetchall():
-        sheetNumber = sheet[1]
-        editable = (sheet[1] == 1)  # SQLite doesn't support boolean, so we use 0/1
-        rowID = sheet[0]
-        tasksForSheet = getTasksForSheet(config, rowID, student)
-        sheetObjects.append(Sheet(sheetNumber, tasksForSheet, editable, rowID))
+        sheetID = sheet[0]
+        name = sheet[1]
+        editable = (sheet[2] == "1")  # SQLite doesn't support boolean, so we use 0/1
+        tasksForSheet = getTasksForSheet(config, sheetID, student)
+        sheetObjects.append(Sheet(sheetID, name, tasksForSheet, editable))
 
     return sheetObjects
 
@@ -135,62 +138,65 @@ def setStatus(config, student, status):
     cursor = database.cursor()
 
     # Check if we need to create a new row first
-    cursor.execute("SELECT status FROM status WHERE identifier = ?", (student,))
+    cursor.execute("SELECT status FROM status WHERE identifier = ? AND sheetID = ?", (student, sheetID))
     statusRow = cursor.fetchone()
 
     if statusRow:
-        cursor.execute("UPDATE status SET status = ? WHERE identifier = ?", (status, student,))
+        cursor.execute("UPDATE status SET status = ? WHERE identifier = ? AND sheetID = ?", (status, student, sheetID))
     else:
-        cursor.execute("INSERT INTO status VALUES(?, ?)", (student, status, ))
+        cursor.execute("INSERT INTO status VALUES(?, ?, ?)", (student, sheetID, status))
     database.commit()
 
 
-def setFile(config, identifier, sha, name):
+def setSheet(config, name):
+    database = getStatusTable(config)
+    cursor = database.cursor()
+
+    cursor.execute("INSERT INTO sheets (name) VALUES(?)", (name, ))
+    database.commit()
+
+
+def setFile(config, identifier, sheetID, sha, name):
     fileDatabase = getFileTable(config)
     cursor = fileDatabase.cursor()
 
-    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ?", (identifier, sha,))
+    cursor.execute("SELECT name FROM files WHERE identifier = ? AND sha = ? AND sheetID = ?", (identifier, sha, sheetID))
 
     if not cursor.fetchone():
         # doesn't exist, create now.
         # if this is true (already exists), there's no need to create
         # it again, as it is the same file. Some user uploaded a file
         # with the same content and the same name twice.
-        cursor.execute("INSERT INTO files VALUES(?, ?, ?)", (identifier, sha, name,))
+        cursor.execute("INSERT INTO files VALUES(?, ?, ?, ?)", (identifier, sha, name, sheetID))
         fileDatabase.commit()
 
 
-def setReachedPoints(config, sheetNumber, taskNumber, identifier, newPoints):
+def setReachedPoints(config, sheetID, taskID, identifier, newPoints):
     pointsDatabase = getPointsTable(config)
     cursor = pointsDatabase.cursor()
 
-    cursor.execute("SELECT reachedPoints FROM points WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?",
-                   (sheetNumber, taskNumber, identifier,))
+    cursor.execute("SELECT reachedPoints FROM points WHERE sheetID = ? AND taskID = ? AND identifier = ?", (sheetID, taskID, identifier))
 
     reachedPoints = cursor.fetchone()
 
     if reachedPoints:
-        cursor.execute("UPDATE points SET reachedPoints =? WHERE sheetNumber = ? AND taskNumber = ? AND identifier = ?",
-                       (newPoints, sheetNumber, taskNumber, identifier,))
+        cursor.execute("UPDATE points SET reachedPoints = ? WHERE sheetID = ? AND taskID = ? AND identifier = ?", (newPoints, sheetID, taskID, identifier,))
     else:
-        cursor.execute("INSERT INTO points VALUES(?, ?, ?, ?)", (sheetNumber, taskNumber, identifier, newPoints))
+        cursor.execute("INSERT INTO points VALUES(?, ?, ?, ?)", (identifier, sheetID, taskID, newPoints))
     pointsDatabase.commit()
 
 
-def setSheetNumberForID(config, sheetID, oldNumber, newNumber):
+def setSheetNameForID(config, sheetID, oldName, newName):
     sheetDatabase = getSheetTable(config)
     sheetCursor = sheetDatabase.cursor()
 
-    sheetCursor.execute("UPDATE sheets SET number = ? WHERE ROWID = ?", (newNumber, sheetID, ))
+    sheetCursor.execute("UPDATE sheets SET name = ? WHERE sheetID = ?", (newName, sheetID))
     sheetDatabase.commit()
 
     taskDatabase = getTaskTable(config)
     taskCursor = taskDatabase.cursor()
 
-    print(newNumber)
-    print(oldNumber)
-
-    taskCursor.execute("UPDATE tasks SET sheetNumber = ? WHERE sheetNumber = ?", (newNumber, oldNumber, ))
+    taskCursor.execute("UPDATE tasks SET sheetID = ? WHERE sheetID = ?", (newName, oldName))
     taskDatabase.commit()
 
 
@@ -201,7 +207,7 @@ def getFileTable(config):
     fileDatabase = sqlite3.connect(fileDatabasePath)
     cursor = fileDatabase.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS files
-        (`identifier` text, `sha` text, `name` text);""")
+        (`identifier` text, `sha` text, `name` text, `sheetID` Integer);""")
     return fileDatabase
 
 
@@ -210,7 +216,7 @@ def getStatusTable(config):
     statusDatabase = sqlite3.connect(statusDatabasePath)
     cursor = statusDatabase.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS status
-         (`identifier` text UNIQUE, `status` text, PRIMARY KEY (`identifier`));""")
+        (`identifier` text, `sheetID` Integer, `status` text);""")
     return statusDatabase
 
 
@@ -219,8 +225,8 @@ def getPointsTable(config):
     pointsDatabase = sqlite3.connect(pointsDatabasePath)
     cursor = pointsDatabase.cursor()
 
-    cursor.execute("""CREATE TABLE IF NOT EXISTS points
-         (`sheetNumber` int, `taskNumber` int, `identifier` text, `reachedPoints` float);""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS points 
+        (`identifier` text, `sheetID` Integer, `taskID` Integer, `reachedPoints` float);""")
     return pointsDatabase
 
 
@@ -229,7 +235,7 @@ def getSheetTable(config):
     sheetDatabase = sqlite3.connect(sheetDatabasePath)
     cursor = sheetDatabase.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS sheets
-         (`number` int UNIQUE, `editable` boolean, PRIMARY KEY (`number`));""")
+        (`sheetID` Integer PRIMARY KEY AUTOINCREMENT, `editable` boolean, `name` text, `start` Integer, `end` Integer);""")
     return sheetDatabase
 
 
@@ -237,6 +243,6 @@ def getTaskTable(config):
     taskDatabasePath = config("database_path")
     taskDatabase = sqlite3.connect(taskDatabasePath)
     cursor = taskDatabase.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS tasks (`id` int AUTO_INCREMENT, `sheetNumber` int,
-        `taskNumber` int, `description` text, `maxPoints` float, PRIMARY KEY (`id`));""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS tasks
+        (`sheetID` Integer, `taskID` Integer PRIMARY KEY AUTOINCREMENT, `name` text, `description` text, `maxPoints` float);""")
     return taskDatabase

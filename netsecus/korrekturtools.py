@@ -50,12 +50,12 @@ def getTaskFromSheet(config, sheetID, taskID):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()
 
-    cursor.execute("SELECT description, maxPoints FROM tasks WHERE sheetID = ? AND taskID = ?", (sheetID, taskID))
+    cursor.execute("SELECT name, description, maxPoints FROM tasks WHERE sheetID = ? AND taskID = ?", (sheetID, taskID))
     task = cursor.fetchone()
 
     if task:
-        description, maxPoints = task
-        return Task(taskID, description, maxPoints, 0)
+        name, description, maxPoints = task
+        return Task(taskID, name, description, maxPoints, 0)
 
     return None
 
@@ -64,19 +64,19 @@ def getTasksForSheet(config, sheetID, student=None):
     taskDatabase = getTaskTable(config)
     cursor = taskDatabase.cursor()
 
-    cursor.execute("SELECT taskID, description, maxPoints FROM tasks WHERE sheetID = ?", (sheetID, ))
+    cursor.execute("SELECT taskID, name, description, maxPoints FROM tasks WHERE sheetID = ?", (sheetID, ))
     tasks = cursor.fetchall()
 
     taskObjects = []
 
     for task in tasks:
-        taskNumber, description, maxPoints = task
+        taskNumber, taskName, description, maxPoints = task
         reachedPoints = 0
 
         if student:
             reachedPoints = getReachedPoints(config, sheetID, taskNumber, student)
 
-        taskObjects.append(Task(taskNumber, description, maxPoints, reachedPoints))
+        taskObjects.append(Task(taskNumber, taskName, description, maxPoints, reachedPoints))
 
     return taskObjects
 
@@ -200,6 +200,16 @@ def setSheetNameForID(config, sheetID, oldName, newName):
     taskCursor = taskDatabase.cursor()
 
     taskCursor.execute("UPDATE tasks SET sheetID = ? WHERE sheetID = ?", (newName, oldName))
+    taskDatabase.commit()
+
+
+def setNewTaskForSheet(config, sheetID, taskName, taskDescription, taskPoints):
+    taskDatabase = getTaskTable(config)
+    taskCursor = taskDatabase.cursor()
+
+    taskCursor.execute("""INSERT INTO tasks (sheetID, name, description, maxPoints)
+                          VALUES(?, ?, ?, ?)""", (sheetID, taskName, taskDescription, taskPoints))
+
     taskDatabase.commit()
 
 

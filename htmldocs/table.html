@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>netsec-Übungssystem - Korrekturserver</title>
-	{% include ../htmldocs/style.css %}
+    <title>netsec-Übungssystem - Korrekturserver</title>
+    {% include ../htmldocs/style.css %}
 </head>
 <body>
-	{% include ../htmldocs/menubar.html %}
+    {% include ../htmldocs/menubar.html %}
 
-	<table>
-		<tr>
-			<th>Student</th>
-			<th>Status</th>
-			<th>Details</th>
-		</tr>
-		{% for reihe in reihen %}
-			{% set name = escape(reihe.get("name")) %}
-			{% set status = escape(reihe.get("status")) %}
-			<tr>
-				<td>{{ name }}</td>
-				<td>{{ status }}</td>
-				<td><a href="/detail/{{ name }}">Details</a></td>
-			</tr>
-		{% end %}
-	</table>
+    <table class="table-border">
+        <tr>
+            <th>Blattname</th>
+            <th>Bearbeitungszeitraum</th>
+        </tr>
+        {% for sheet in sheets %}
+            <tr>
+                <td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+                <td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
+            </tr>
+        {% end %}
+    </table>
+
 </body>
 </html>

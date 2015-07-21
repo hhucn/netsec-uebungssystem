@@ -21,19 +21,7 @@ class NetsecHandler(helper.RequestHandlerWithAuth):
 
 class TableHandler(NetsecHandler):
     def get(self):
-        abgaben = []
-        attachmentPath = self.application.config("attachment_path")
-        if os.path.exists(attachmentPath):
-            for entry in os.listdir(attachmentPath):
-                if entry[0] != ".":
-                    abgaben.append({
-                        "name": entry.lower(),
-                        "status": korrekturtools.getStatus(self.application.config, entry.lower()),
-                        })
-        else:
-            logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
-
-        self.render('table', {'reihen': abgaben})
+        self.render("table", {"sheets": korrekturtools.getSheets(self.application.config)})
 
 
 class DownloadHandler(NetsecHandler):

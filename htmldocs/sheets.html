@@ -9,13 +9,23 @@
 
 	<table>
 		<tr>
+			<th>Blatt-ID</th>
 			<th>Blatt</th>
+			<th>Aufgaben</th>
 			<th>Editierbarkeit</th>
 			<th>Zeitraum</th>
 		</tr>
 		{% for sheet in sheets %}
 			<tr>
+				<td>{{ sheet.id }}</td>
 				<td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+				<td>
+					<ul>
+						{% for task in sheet.tasks %}
+							<li>{{ task.name }}</li>
+						{% end %}
+					</ul>
+				</td>
 				<td>
 					{% if sheet.editable %}
 						<i>Editierbar</i>

@@ -96,8 +96,8 @@ class SheetManagerHandler(NetsecHandler):
         manageType = self.get_argument("type")
 
         if manageType == "renameSheet":
-            oldNumber = self.get_argument("oldNumber")
-            newNumber = self.get_argument("newNumber")
+            oldName = self.get_argument("oldName")
+            newName = self.get_argument("newName")
             sheetID = self.get_argument("sheetID")
 
             sheet = korrekturtools.getSheetFromID(self.application.config, sheetID)
@@ -106,20 +106,28 @@ class SheetManagerHandler(NetsecHandler):
                 self.render("sheet-error", {"error": "idNotFound"})
                 return
 
-            if not str(sheet.number) == oldNumber:
+            if not str(sheet.name) == oldName:
                 self.render("sheet-error", {"error": "modified"})
                 return
 
-            if korrekturtools.getSheetFromNumber(self.application.config, newNumber):
+            if korrekturtools.getSheetFromNumber(self.application.config, newName):
                 self.render("sheet-error", {"error": "exists"})
                 return
 
-            korrekturtools.setSheetNumberForID(self.application.config, sheetID, oldNumber, newNumber)
-            self.redirect("/sheet/%s" % newNumber)
+            korrekturtools.setSheetNameForID(self.application.config, sheetID, oldName, newName)
+            self.redirect("/sheet/%s" % sheetID)
+        elif manageType == "addSheet":
+            korrekturtools.setSheet(self.application.config, self.get_argument("name"))
+            self.redirect("/sheets")
         elif manageType == "editTask":
-            print("a")
+            print("rename")
         elif manageType == "newTask":
-            print("a")
+            sheetID = self.get_argument("sheetID")
+            taskName = self.get_argument("name")
+            taskDescription = self.get_argument("description")
+            taskPoints = self.get_argument("points")
+            korrekturtools.setNewTaskForSheet(self.application.config, sheetID, taskName, taskDescription, taskPoints)
+            self.redirect("/sheet/%s" % sheetID)
         else:
             logging.error("Specified SheetManager type '%s' does not exist." % manageType)
 
@@ -169,7 +177,7 @@ class SheetHandler(NetsecHandler):
         uri = self.request.uri.split("/")
         requestedSheet = uri[2:][0]  # remove empty element and "sheet", get sheet number
 
-        sheet = korrekturtools.getSheetFromNumber(self.application.config, requestedSheet)
+        sheet = korrekturtools.getSheetFromID(self.application.config, requestedSheet)
 
         if sheet:
             self.render('sheet', {'sheet': sheet})

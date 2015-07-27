@@ -131,6 +131,15 @@ def getSheets(config, student=None):
     return sheetObjects
 
 
+def getSubmissionForSheet(config, sheetID):
+    submissionDatabase = getSubmissionTable(config)
+    submissionCursor = submissionDatabase.cursor()
+
+    submissionCursor.execute("SELECT sheetID, studentID, submissionID, finished FROM submissions")
+
+    return submissionCursor.fetchall()
+
+
 # Setter methods for table values
 
 def setStatus(config, student, sheetID, status):
@@ -261,3 +270,13 @@ def getTaskTable(config):
         (`sheetID` Integer, `taskID` Integer PRIMARY KEY AUTOINCREMENT, `name` text,
             `description` text, `maxPoints` float);""")
     return taskDatabase
+
+
+def getSubmissionTable(config):
+    submissionDatabasePath = config("database_path")
+    submissionDatabase = sqlite3.connect(submissionDatabasePath)
+    cursor = submissionDatabase.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS submissions
+        (`sheetID` Integer, `studentID` Integer, `submissionID` Integer PRIMARY KEY AUTOINCREMENT,
+        `finished` boolean);""")
+    return submissionDatabase

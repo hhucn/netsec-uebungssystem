@@ -10,11 +10,13 @@
     <table class="table-border">
         <tr>
             <th>Blattname</th>
+            <th>Abgaben</th>
             <th>Bearbeitungszeitraum</th>
         </tr>
         {% for sheet in sheets %}
             <tr>
                 <td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+                <td>{{ sheet.submissionsFinished }} von {{ sheet.submissions }} bearbeitet.</td>
                 <td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
             </tr>
         {% end %}

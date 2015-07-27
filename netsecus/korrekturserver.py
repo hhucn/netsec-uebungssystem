@@ -21,7 +21,20 @@ class NetsecHandler(helper.RequestHandlerWithAuth):
 
 class TableHandler(NetsecHandler):
     def get(self):
-        self.render("table", {"sheets": korrekturtools.getSheets(self.application.config)})
+        sheets = korrekturtools.getSheets(self.application.config)
+
+        # Count submissions for a sheet
+        for sheet in sheets:
+            sheetSubmissions = korrekturtools.getSubmissionForSheet(self.application.config, sheet.id)
+            sheet.submissions = len(sheetSubmissions)
+
+            sheetSubmissionsFinished = 0
+            for submission in sheetSubmissions:
+                if submission.finished:
+                    sheetSubmissionsFinished = sheetSubmissionsFinished + 1
+            sheet.submissionsFinished = sheetSubmissionsFinished
+
+        self.render("table", {"sheets": sheets})
 
 
 class DownloadHandler(NetsecHandler):

@@ -8,7 +8,7 @@ import tornado.ioloop
 import tornado.web
 
 from . import helper
-from . import korrekturtools
+from . import database
 
 
 class NetsecHandler(helper.RequestHandlerWithAuth):
@@ -21,11 +21,11 @@ class NetsecHandler(helper.RequestHandlerWithAuth):
 
 class TableHandler(NetsecHandler):
     def get(self):
-        sheets = korrekturtools.getSheets(self.application.config)
+        sheets = database.getSheets(self.application.config)
 
         # Count submissions for a sheet
         for sheet in sheets:
-            sheetSubmissions = korrekturtools.getSubmissionForSheet(self.application.config, sheet.id)
+            sheetSubmissions = database.getSubmissionForSheet(self.application.config, sheet.id)
             sheet.submissions = len(sheetSubmissions)
 
             sheetSubmissionsFinished = 0
@@ -42,7 +42,7 @@ class DownloadHandler(NetsecHandler):
         uri = self.request.uri[len("/download/"):]  # cut away "/download/"
 
         identifier, sha = uri.split("/")
-        name = korrekturtools.getFileName(self.application.config, identifier, sha)
+        name = database.getFileName(self.application.config, identifier, sha)
 
         attachmentPath = self.application.config("attachment_path")
         filePath = os.path.join(attachmentPath, identifier, "%s %s" % (sha, name))
@@ -62,7 +62,7 @@ class StatusHandler(NetsecHandler):
         laststatus = self.get_argument("laststatus")
         currentstatus = self.get_argument("currentstatus")
 
-        savedstatus = korrekturtools.getStatus(self.application.config, identifier)
+        savedstatus = database.getStatus(self.application.config, identifier)
 
         if not laststatus == savedstatus:
             self.render("status-error", {
@@ -71,7 +71,7 @@ class StatusHandler(NetsecHandler):
                 "identifier": identifier
             })
         else:
-            korrekturtools.setStatus(self.application.config, identifier, currentstatus)
+            database.setStatus(self.application.config, identifier, currentstatus)
             self.redirect("/detail/%s" % identifier)
 
 
@@ -82,10 +82,10 @@ class PointsHandler(NetsecHandler):
         taskNumber = self.get_argument("taskNumber")
         oldPoints = self.get_argument("oldPoints")
         newPoints = self.get_argument("newPoints")
-        reachedPoints = korrekturtools.getReachedPoints(self.application.config, sheetNumber, taskNumber, identifier)
+        reachedPoints = database.getReachedPoints(self.application.config, sheetNumber, taskNumber, identifier)
         maxPoints = 0
 
-        task = korrekturtools.getTaskFromSheet(self.application.config, sheetNumber, taskNumber)
+        task = database.getTaskFromSheet(self.application.config, sheetNumber, taskNumber)
         if task:
             maxPoints = task.maxPoints
 
@@ -99,7 +99,7 @@ class PointsHandler(NetsecHandler):
                                    "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
                                    "identifier": identifier})
         else:
-            korrekturtools.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
+            database.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
             self.render("points", {"redirect": 1, "error": "", "oldPoints": oldPoints, "reachedPoints": newPoints,
                         "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})
 
@@ -113,7 +113,7 @@ class SheetManagerHandler(NetsecHandler):
             newName = self.get_argument("newName")
             sheetID = self.get_argument("sheetID")
 
-            sheet = korrekturtools.getSheetFromID(self.application.config, sheetID)
+            sheet = database.getSheetFromID(self.application.config, sheetID)
 
             if not sheet:
                 self.render("sheet-error", {"error": "idNotFound"})
@@ -123,14 +123,14 @@ class SheetManagerHandler(NetsecHandler):
                 self.render("sheet-error", {"error": "modified"})
                 return
 
-            if korrekturtools.getSheetFromNumber(self.application.config, newName):
+            if database.getSheetFromNumber(self.application.config, newName):
                 self.render("sheet-error", {"error": "exists"})
                 return
 
-            korrekturtools.setSheetNameForID(self.application.config, sheetID, oldName, newName)
+            database.setSheetNameForID(self.application.config, sheetID, oldName, newName)
             self.redirect("/sheet/%s" % sheetID)
         elif manageType == "addSheet":
-            korrekturtools.setSheet(self.application.config, self.get_argument("name"))
+            database.setSheet(self.application.config, self.get_argument("name"))
             self.redirect("/sheets")
         elif manageType == "editTask":
             print("rename")
@@ -139,7 +139,7 @@ class SheetManagerHandler(NetsecHandler):
             taskName = self.get_argument("name")
             taskDescription = self.get_argument("description")
             taskPoints = self.get_argument("points")
-            korrekturtools.setNewTaskForSheet(self.application.config, sheetID, taskName, taskDescription, taskPoints)
+            database.setNewTaskForSheet(self.application.config, sheetID, taskName, taskDescription, taskPoints)
             self.redirect("/sheet/%s" % sheetID)
         else:
             logging.error("Specified SheetManager type '%s' does not exist." % manageType)
@@ -172,8 +172,8 @@ class DetailHandler(NetsecHandler):
                         "hash": fileHash
                         })
             self.render('detail', {'identifier': identifier, 'files': files,
-                                   'korrekturstatus': korrekturtools.getStatus(self.application.config, identifier),
-                                   'sheets': korrekturtools.getSheets(self.application.config, identifier)})
+                                   'korrekturstatus': database.getStatus(self.application.config, identifier),
+                                   'sheets': database.getSheets(self.application.config, identifier)})
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
             self.redirect("/")
@@ -181,7 +181,7 @@ class DetailHandler(NetsecHandler):
 
 class SheetsHandler(NetsecHandler):
     def get(self):
-        sheets = korrekturtools.getSheets(self.application.config)
+        sheets = database.getSheets(self.application.config)
         self.render('sheets', {'sheets': sheets})
 
 
@@ -190,7 +190,7 @@ class SheetHandler(NetsecHandler):
         uri = self.request.uri.split("/")
         requestedSheet = uri[2:][0]  # remove empty element and "sheet", get sheet number
 
-        sheet = korrekturtools.getSheetFromID(self.application.config, requestedSheet)
+        sheet = database.getSheetFromID(self.application.config, requestedSheet)
 
         if sheet:
             self.render('sheet', {'sheet': sheet})

@@ -11,7 +11,7 @@ import calendar
 
 from . import helper
 from .mail import Mail
-from . import korrekturtools
+from . import database
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
@@ -117,7 +117,7 @@ def save(config, imapmail, mails):
                 attachFile.close()
                 os.utime(payloadPath, mailCreationModificationTuple)
 
-                korrekturtools.setFile(config, identifier, payloadHash, payloadName)
+                database.setFile(config, identifier, payloadHash, payloadName)
     return mails
 
 

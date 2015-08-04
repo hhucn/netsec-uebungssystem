@@ -99,6 +99,8 @@ def save(config, imapmail, mails):
         mailDateTimeStamp = calendar.timegm(mailDateTime.utctimetuple())
         mailCreationModificationTuple = (mailDateTimeStamp, mailDateTimeStamp)
 
+        currentSheet = config("currentSheet")
+
         if not os.path.exists(attachPath):
             os.makedirs(attachPath)
 
@@ -117,7 +119,7 @@ def save(config, imapmail, mails):
                 attachFile.close()
                 os.utime(payloadPath, mailCreationModificationTuple)
 
-                database.setFile(config, identifier, payloadHash, payloadName)
+                database.setFile(config, identifier, currentSheet, payloadHash, payloadName)
     return mails
 
 

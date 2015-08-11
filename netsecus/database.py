@@ -1,14 +1,60 @@
 from __future__ import unicode_literals
 
+import logging
 import sqlite3
 
-from .sheet import Sheet
-from .task import Task
 
+def addFileToSubmission(config, submissionID, identifier, sha, name):
+    # Add a file to the specified submission and identifier (student)
+
+    fileDatabase = getFileTable(config)
+    cursor = fileDatabase.cursor()
+
+    cursor.execute("""SELECT fileID FROM files
+                      WHERE submissionID = ?
+                      AND identifier = ?
+                      AND sha = ?""",
+                   (submissionID, identifier, sha))
+
+    if cursor.fetchone():
+        # File is sent twice in one mail (realistic) OR the SHA of two different
+        # files collided (not that realistic...)
+        logging.debug("Two files with the same checksum submitted by %s"
+                      % identifier)
+    else:
+        cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
+                          VALUES(?, ?, ?)""", (submissionID, identifier, sha))
+        fileDatabase.submit()
+
+
+def submissionForTaskAndIdentifier(config, taskID, identifier, points):
+    # Get the submission ID for the specified task and identifier (student)
+    # if it does not exist, create it.
+
+    submissionDatabase = getSubmissionTable(config)
+    cursor = submissionDatabase.cursor()
+
+    cursor.execute("""SELECT submissionID FROM submissions
+                      WHERE taskID = ? AND identifier = ? AND points = ?""",
+                   (taskID, identifier, points))
+
+    existingSubmissionID = cursor.fetchone()
+
+    if existingSubmissionID:
+        return existingSubmissionID[0]  # just return submissionID
+    else:
+        # No submission for this task exists from this identifier
+        cursor.execute("""INSERT INTO
+                          submissions(taskID, identifier, points)
+                          VALUES(?, ?, ?)""", (taskID, identifier,
+                       points))
+        return cursor.lastrowid
 
 # Table getter methods
 
+
 def getSheetTable(config):
+    # Get the sheet table from the database
     sheetDatabasePath = config("database_path")
     sheetDatabase = sqlite3.connect(sheetDatabasePath)
     cursor = sheetDatabase.cursor()
@@ -20,7 +66,9 @@ def getSheetTable(config):
          `end` date);""")
     return sheetDatabase
 
+
 def getTaskTable(config):
+    # Get the task table from the database
     taskDatabasePath = config("database_path")
     taskDatabase = sqlite3.connect(taskDatabasePath)
     cursor = taskDatabase.cursor()
@@ -32,7 +80,9 @@ def getTaskTable(config):
          `maxPoints` float);""")
     return taskDatabase
 
+
 def getSubmissionTable(config):
+    # Get the submission table from the database
     submissionDatabasePath = config("database_path")
     submissionDatabase = sqlite3.connect(submissionDatabasePath)
     cursor = submissionDatabase.cursor()
@@ -43,7 +93,9 @@ def getSubmissionTable(config):
          `points` text);""")
     return submissionDatabase
 
+
 def getFileTable(config):
+    # Get the file table from the database
     fileDatabasePath = config("database_path")
     fileDatabase = sqlite3.connect(fileDatabasePath)
     cursor = fileDatabase.cursor()

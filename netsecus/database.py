@@ -115,15 +115,16 @@ def getSheets(config):
     sheetTable = getSheetTable(config)
     sheetCursor = sheetTable.cursor()
 
-    sheetCursor.execute("SELECT * from sheets")
+    sheetCursor.execute("SELECT sheetID, name, editable, start, end from sheets")
     rows = sheetCursor.fetchall()
     result = []
 
     for row in rows:
-        sheetID, editable, sheetName, sheetStartDate, sheetEndDate = row
+        sheetID, sheetName, editable, sheetStartDate, sheetEndDate = row
         result.append(Sheet(sheetID, sheetName, [], editable, sheetStartDate, sheetEndDate))
 
     return result
+
 
 def getSubmissionForSheet(config, id):
     return []

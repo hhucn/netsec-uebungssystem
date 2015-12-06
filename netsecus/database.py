@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 import logging
 import sqlite3
 
+from .sheet import Sheet
+
 
 def addFileToSubmission(config, submissionID, identifier, sha, name):
     # Add a file to the specified submission and identifier (student)
@@ -105,3 +107,23 @@ def getFileTable(config):
          `sha` text,
          `filename` text);""")
     return fileDatabase
+
+
+# Object getter methods
+
+def getSheets(config):
+    sheetTable = getSheetTable(config)
+    sheetCursor = sheetTable.cursor()
+
+    sheetCursor.execute("SELECT * from sheets")
+    rows = sheetCursor.fetchall()
+    result = []
+
+    for row in rows:
+        sheetID, editable, sheetName, sheetStartDate, sheetEndDate = row
+        result.append(Sheet(sheetID, sheetName, [], editable, sheetStartDate, sheetEndDate))
+
+    return result
+
+def getSubmissionForSheet(config, id):
+    return []

@@ -116,7 +116,7 @@ class RequestHandlerWithAuth(tornado.web.RequestHandler):
 
         self.set_status(401)
         realm = getattr(self.application, 'realm', '')
-        self.set_header("WWW-Authenticate", "Basic realm='%s'" % realm)
+        self.set_header("WWW-Authenticate", "Basic realm=\"%s\"" % realm)
         self._transforms = []
         self.write("401: Authentifizierung erforderlich.")
         self.finish()

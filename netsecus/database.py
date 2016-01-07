@@ -4,6 +4,7 @@ import logging
 import sqlite3
 
 from .sheet import Sheet
+from .submission import Submission
 
 
 def addFileToSubmission(config, submissionID, identifier, sha, name):
@@ -127,4 +128,27 @@ def getSheets(config):
 
 
 def getSubmissionForSheet(config, id):
-    return []
+    submissionTable = getSubmissionTable(config)
+    submissionCursor = submissionTable.cursor()
+
+    submissionCursor.execute("SELECT submissionID, taskID, identifier, points from submissions")
+    rows = submissionCursor.fetchall()
+    result = []
+
+    for row in rows:
+        submissionID, taskID, identifier, points = row
+        result.append(Submission(submissionID, taskID, identifier, points))
+
+    return result
+
+
+def getSheetFromID(config, id):
+    sheetTable = getSheetTable(config)
+    sheetCursor = sheetTable.cursor()
+
+    sheetCursor.execute("SELECT sheetID, editable, name, start, end from sheets")
+    sheet = sheetCursor.fetchone()
+
+    if sheet:
+        sheetID, sheetName, editable, sheetStartDate, sheetEndDate = sheet
+        return Sheet(sheetID, sheetName, [], editable, sheetStartDate, sheetEndDate)

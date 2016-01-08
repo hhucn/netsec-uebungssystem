@@ -5,6 +5,7 @@ import sqlite3
 
 from .sheet import Sheet
 from .submission import Submission
+from .task import Task
 
 
 def addFileToSubmission(config, submissionID, identifier, sha, name):
@@ -116,13 +117,14 @@ def getSheets(config):
     sheetTable = getSheetTable(config)
     sheetCursor = sheetTable.cursor()
 
-    sheetCursor.execute("SELECT sheetID, name, editable, start, end from sheets")
+    sheetCursor.execute("SELECT sheetID, name, editable, start, end FROM sheets")
     rows = sheetCursor.fetchall()
     result = []
 
     for row in rows:
         sheetID, sheetName, editable, sheetStartDate, sheetEndDate = row
-        result.append(Sheet(sheetID, sheetName, [], editable, sheetStartDate, sheetEndDate))
+        tasks = getTasksForSheet(config, sheetID)
+        result.append(Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate))
 
     return result
 
@@ -131,7 +133,7 @@ def getSubmissionForSheet(config, id):
     submissionTable = getSubmissionTable(config)
     submissionCursor = submissionTable.cursor()
 
-    submissionCursor.execute("SELECT submissionID, taskID, identifier, points from submissions")
+    submissionCursor.execute("SELECT submissionID, taskID, identifier, points FROM submissions")
     rows = submissionCursor.fetchall()
     result = []
 
@@ -146,9 +148,26 @@ def getSheetFromID(config, id):
     sheetTable = getSheetTable(config)
     sheetCursor = sheetTable.cursor()
 
-    sheetCursor.execute("SELECT sheetID, editable, name, start, end from sheets")
+    sheetCursor.execute("SELECT sheetID, editable, name, start, end FROM sheets WHERE sheetID = ?", (id, ))
     sheet = sheetCursor.fetchone()
 
     if sheet:
         sheetID, sheetName, editable, sheetStartDate, sheetEndDate = sheet
-        return Sheet(sheetID, sheetName, [], editable, sheetStartDate, sheetEndDate)
+        tasks = getTasksForSheet(config, id)
+        return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
+
+
+def getTasksForSheet(config, id):
+    taskTable = getTaskTable(config)
+    taskCursor = taskTable.cursor()
+
+    taskCursor.execute("SELECT taskID, name, description, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
+    tasks = taskCursor.fetchall()
+
+    result = []
+
+    for task in tasks:
+        taskID, name, description, maxPoints = task
+        result.append(Task(taskID, id, name, description, maxPoints))
+
+    return result

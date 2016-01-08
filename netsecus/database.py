@@ -171,3 +171,13 @@ def getTasksForSheet(config, id):
         result.append(Task(taskID, id, name, description, maxPoints))
 
     return result
+
+
+# Object setter/misc. functions
+
+def setSheet(config, name):
+    sheetTable = getSheetTable(config)
+    sheetCursor = sheetTable.cursor()
+
+    sheetCursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
+    sheetTable.commit()

@@ -181,3 +181,12 @@ def setSheet(config, name):
 
     sheetCursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
     sheetTable.commit()
+
+
+def setNewTaskForSheet(config, sheetID, name, description, maxPoints):
+    taskTable = getTaskTable(config)
+    taskCursor = taskTable.cursor()
+
+    taskCursor.execute("INSERT INTO tasks (sheetID, name, description, maxPoints) VALUES(?,?,?,?)",
+                       (sheetID, name, description, maxPoints))
+    taskTable.commit()

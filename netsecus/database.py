@@ -152,7 +152,7 @@ def getSheetFromID(config, id):
     sheet = sheetCursor.fetchone()
 
     if sheet:
-        sheetID, sheetName, editable, sheetStartDate, sheetEndDate = sheet
+        sheetID, editable, sheetName, sheetStartDate, sheetEndDate = sheet
         tasks = getTasksForSheet(config, id)
         return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
 

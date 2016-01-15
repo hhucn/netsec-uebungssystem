@@ -23,13 +23,14 @@
 			<th>Aufgabe</th>
 			<th>Aufgabenstellung</th>
 			<th>max. Punkte</th>
-			<th></th>
+			<th colspan="2"></th>
 		</tr>
 		{% for task in sheet.tasks %}
 			<tr>
 				<form method="post" action="/sheetmanager">
 					<input type="hidden" name="type" value="editTask">
-					<input type="hidden" name="sheetID" value="{{ sheet.id }}">
+                    <input type="hidden" name="sheetID" value="{{ sheet.id }}">
+                    <input type="hidden" name="taskID" value="{{ task.id }}">
 					<td>
 						<input type="hidden" name="oldName" value="{{ task.name }}">
 						<input type="text" name="newName" value="{{ task.name }}" style="width:100%">
@@ -42,15 +43,22 @@
 						<input type="hidden" name="oldPoints" value="{{ task.maxPoints }}">
 						<input type="number" name="newPoints" min="0" step="any" value="{{ task.maxPoints }}">
 					</td>
-					<td>
-						<label><input type="checkbox" value="0"> L&ouml;schen</label><br>
-						<input type="submit" value="Speichern">
+                    <td>
+                        <input type="submit" value="Speichern">
+                    </td>
+                </form>
+                <form method="post" action="/sheetmanager">
+                    <td>
+                        <input type="hidden" name="type" value="deleteTask">
+                        <input type="hidden" name="sheetID" value="{{ sheet.id }}">
+                        <input type="hidden" name="taskID" value="{{ task.id }}">
+                        <input type="submit" value="Löschen">
 					</td>
 				</form>
 			</tr>
 		{% end %}
 		<tr>
-			<td colspan="4">
+			<td colspan="5">
 				<hr>
 			</td>
 		</tr>
@@ -67,7 +75,7 @@
 				<td>
 					<input type="number" name="points" min="0" step="any">
 				</td>
-				<td>
+				<td colspan="2">
 					<input type="submit" value="Hinzuf&uuml;gen">
 				</td>
 			</form>

@@ -9,6 +9,7 @@ import tornado.web
 
 from . import helper
 from . import database
+from .task import Task
 
 
 class NetsecHandler(helper.RequestHandlerWithAuth):
@@ -133,7 +134,39 @@ class SheetManagerHandler(NetsecHandler):
             database.setSheet(self.application.config, self.get_argument("name"))
             self.redirect("/sheets")
         elif manageType == "editTask":
-            print("rename")
+            sheetID = self.get_argument("sheetID")
+            taskID = self.get_argument("taskID")
+            oldName = self.get_argument("oldName")
+            newName = self.get_argument("newName")
+            oldDesc = self.get_argument("oldDescription")
+            newDesc = self.get_argument("newDescription")
+            oldPoints = float(self.get_argument("oldPoints"))
+            newPoints = float(self.get_argument("newPoints"))
+
+            currentTask = database.getTaskFromID(self.application.config, taskID)
+
+            if(oldName == currentTask.name and oldDesc == currentTask.description and
+               oldPoints == currentTask.maxPoints):
+                newTask = Task(taskID, sheetID, newName, newDesc, newPoints)
+                database.replaceTask(self.application.config, taskID, newTask)
+                self.redirect("/sheet/%s" % sheetID)
+            else:
+                self.render("task-error", {"error": "modified"})
+        elif manageType == "deleteTask":
+            sheetID = self.get_argument("sheetID")
+            taskID = self.get_argument("taskID")
+            oldName = self.get_argument("oldName")
+            oldDesc = self.get_argument("oldDescription")
+            oldPoints = float(self.get_argument("oldPoints"))
+
+            currentTask = database.getTaskFromID(self.application.config, taskID)
+
+            if(oldName == currentTask.name and oldDesc == currentTask.description and
+               oldPoints == currentTask.maxPoints):
+                database.deleteTask(self.application.config, taskID)
+                self.redirect("/sheet/%s" % sheetID)
+            else:
+                self.render("task-error", {"error": "modified"})
         elif manageType == "newTask":
             sheetID = self.get_argument("sheetID")
             taskName = self.get_argument("name")

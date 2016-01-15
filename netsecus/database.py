@@ -157,6 +157,18 @@ def getSheetFromID(config, id):
         return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
 
 
+def getTaskFromID(config, id):
+    taskTable = getTaskTable(config)
+    taskCursor = taskTable.cursor()
+
+    taskCursor.execute("SELECT sheetID, name, description, maxPoints FROM tasks WHERE taskID = ?", (id, ))
+    task = taskCursor.fetchone()
+
+    if task:
+        sheetID, name, description, maxPoints = task
+        return Task(id, sheetID, name, description, maxPoints)
+
+
 def getTasksForSheet(config, id):
     taskTable = getTaskTable(config)
     taskCursor = taskTable.cursor()
@@ -189,4 +201,25 @@ def setNewTaskForSheet(config, sheetID, name, description, maxPoints):
 
     taskCursor.execute("INSERT INTO tasks (sheetID, name, description, maxPoints) VALUES(?,?,?,?)",
                        (sheetID, name, description, maxPoints))
+    taskTable.commit()
+
+
+def replaceTask(config, id, task):
+    taskTable = getTaskTable(config)
+    taskCursor = taskTable.cursor()
+
+    name = task.name
+    desc = task.description
+    maxPoints = task.maxPoints
+
+    askCursor.execute("UPDATE tasks SET name=? AND description=? and maxPoints=? WHERE taskID=?",
+                       (name, desc, maxPoints, id))
+    taskTable.commit()
+
+
+def deleteTask(config, id):
+    taskTable = getTaskTable(config)
+    taskCursor = taskTable.cursor()
+
+    taskCursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
     taskTable.commit()

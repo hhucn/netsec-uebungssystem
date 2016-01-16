@@ -212,7 +212,7 @@ def replaceTask(config, id, task):
     desc = task.description
     maxPoints = task.maxPoints
 
-    askCursor.execute("UPDATE tasks SET name=? AND description=? and maxPoints=? WHERE taskID=?",
+    taskCursor.execute("UPDATE tasks SET name=? AND description=? and maxPoints=? WHERE taskID=?",
                        (name, desc, maxPoints, id))
     taskTable.commit()
 

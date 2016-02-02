@@ -91,9 +91,14 @@ def escapePath(path):
 
 
 def checkResult(imapmail, expected):
+    # [1] Answer token "*": http://tools.ietf.org/html/rfc3501#section-2.2.2
     assert isinstance(expected, bytes)
+
     line = imapmail.readline()
-    if expected not in line:
+    line = re.sub(b"^([A-Z]|[0-9]){5,9} ", b"", line)  # remove tag
+    line = re.sub(b"^\* ", b"", line)  # remove "answer token" [1]
+
+    if not line.startswith(expected):
         raise MailError("Invalid response: '%s' expected, but got '%s'" % (expected, line))
 
 

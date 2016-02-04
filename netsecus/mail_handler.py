@@ -8,9 +8,17 @@ from . import helper
 from . import rules
 
 
-def mainloop(config):
+def mail_main(config):
     helper.patch_imaplib()
+    while True:
+        try:
+            mainloop(config)
+        except (OSError, helper.MailError) as e:
+            logging.error(e)
+        time.sleep(config("mail.delay"))
 
+
+def mainloop(config):
     try:
         username = config('mail.username')
     except KeyError:
@@ -37,16 +45,22 @@ def mainloop(config):
     imapmail._command("IDLE")
 
     if "idling" in imapmail.readline().decode("utf-8"):
+        def idle_loop():
+            imapmail._command("DONE")
+            imapmail.readline()
+            ruleLoop(config, imapmail)
+            imapmail._command("IDLE")
+            logging.debug("Entering IDLE state.")
+
         logging.debug("Server supports IDLE.")
-        firstRun = True
+        idle_loop()
         while True:
-            if firstRun or "EXISTS" in imapmail.readline().decode("utf-8"):
-                imapmail._command("DONE")
-                imapmail.readline()
-                ruleLoop(config, imapmail)
-                imapmail._command("IDLE")
-                logging.debug("Entering IDLE state.")
-            firstRun = False
+            line = imapmail.readline().decode("utf-8")
+            if not line:
+                raise helper.MailError('Connection interrupted')
+            if "EXISTS" in line:
+                # We got mail!
+                idle_loop()
     else:
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:

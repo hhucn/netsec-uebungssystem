@@ -54,14 +54,14 @@ def main():
         return 0
 
     if args.only_mail:
-        mail_handler.mainloop(config)
-        assert False, 'mainloop should never terminate'
+        mail_handler.mail_main(config)
+        assert False, 'mail_main should never terminate'
     if args.only_web:
         korrekturserver.mainloop(config)
         assert False, 'mainloop should never terminate'
 
     mail_thread = threading.Thread(
-        target=mail_handler.mainloop, args=(config,))
+        target=mail_handler.mail_main, args=(config,))
     mail_thread.daemon = True
     mail_thread.start()
     web_thread = threading.Thread(

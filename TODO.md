@@ -5,6 +5,7 @@ remove rules
 require mails to start with "Abgabe [Nr]"
 
 
+test with deliberately invalid UTF8
 PGP (students / system)
 Do away with html_path configuration option
 Use safe rendering language (Mustache?)

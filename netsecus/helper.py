@@ -122,3 +122,8 @@ class RequestHandlerWithAuth(tornado.web.RequestHandler):
         self._transforms = []
         self.write("401: Authentifizierung erforderlich.")
         self.finish()
+
+
+# An error in email handling, e.g. we got the wrong message back, connection interrupted etc.
+class MailError(BaseException):
+    pass

@@ -21,6 +21,8 @@ def processVariable(variables, text):
 def imapCommand(imapmail, command, *args):
     logging.debug("\t%s %s" % (command, " ".join(args)))
 
+    args = [a.encode('utf-8') for a in args]
+
     typ, dat = imapmail._simple_command(command, *args)
 
     if command == "UID":

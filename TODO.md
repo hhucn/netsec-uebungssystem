@@ -1,3 +1,5 @@
+allow running under Python 3
+
 Do away with html_path configuration option
 Use safe rendering language (Mustache?)
 

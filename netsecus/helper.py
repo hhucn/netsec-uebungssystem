@@ -94,6 +94,12 @@ def escapePath(path):
     return path
 
 
+def checkResult(imapmail, expected):
+    line = imapmail.readline()
+    if expected not in line:
+        print("'%s' expected, but read '%s'" % (expected, line))
+
+
 class RequestHandlerWithAuth(tornado.web.RequestHandler):
     def _execute(self, transforms, *args, **kwargs):
         # executed before everything else.

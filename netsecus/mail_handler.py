@@ -48,7 +48,7 @@ def mainloop(config):
         def idle_loop():
             imapmail._command("DONE")
             imapmail.readline()
-            ruleLoop(config, imapmail)
+            mailProcessing(config, imapmail)
             imapmail._command("IDLE")
             logging.debug("Entering IDLE state.")
 
@@ -65,11 +65,18 @@ def mainloop(config):
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:
             try:
-                ruleLoop(config, imapmail)
+                mailProcessing(config, imapmail)
                 time.sleep(config("mail.delay"))
             except KeyboardInterrupt:
                 logoutIMAP(imapmail)
                 raise
+
+
+def mailProcessing(config, imapmail):
+    filterCriteria = """SUBJECT "Abgabe" """
+    uids = rules.filter(config, imapmail, [], filterCriteria)
+    uids = rules.save(config, imapmail, uids)
+    uids = rules.move(config, imapmail, "Abgaben")
 
 
 def ruleLoop(config, imapmail):

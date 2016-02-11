@@ -63,13 +63,11 @@ def patch_imaplib():
     imaplib.Commands["DONE"] = ("AUTH", "SELECTED",)
     imaplib.Commands["ENABLE"] = ("AUTH",)
     imaplib.Commands["CABABILITY"] = ("AUTH",)
-    imaplib.IMAP4_SSL.send = imaplibSendPatch
 
+    if sys.version_info < (3, 0):
+        imaplib.IMAP4_SSL.send = imaplibSendPatch
 
 def imaplibSendPatch(self, data):
-    if sys.version_info >= (3, 0):
-        return
-
     data = data.encode("utf-8")
 
     bytes = len(data)

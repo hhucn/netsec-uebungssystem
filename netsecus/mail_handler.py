@@ -32,14 +32,14 @@ def mainloop(config):
 
     imapmail._command("CAPABILITY")
     capabilities = imapmail.readline().decode("utf-8")
-    helper.checkResult(imapmail, "OK")
+    helper.checkResult(imapmail, b"OK")
     if "UTF8" in capabilities:
         imapmail._command("ENABLE", "UTF8")
-        helper.checkResult(imapmail, "* ENABLED")
-        helper.checkResult(imapmail, "OK")
+        helper.checkResult(imapmail, b"* ENABLED")
+        helper.checkResult(imapmail, b"OK")
         imapmail._command("ENABLE", "UTF8=ACCEPT")
-        helper.checkResult(imapmail, "* ENABLED")
-        helper.checkResult(imapmail, "OK")
+        helper.checkResult(imapmail, b"* ENABLED")
+        helper.checkResult(imapmail, b"OK")
         logging.debug("Server supports UTF8")
 
     imapmail._command("IDLE")

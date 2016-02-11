@@ -67,6 +67,7 @@ def patch_imaplib():
     if sys.version_info < (3, 0):
         imaplib.IMAP4_SSL.send = imaplibSendPatch
 
+
 def imaplibSendPatch(self, data):
     data = data.encode("utf-8")
 

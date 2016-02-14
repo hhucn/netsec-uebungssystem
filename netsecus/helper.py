@@ -97,7 +97,7 @@ def checkResult(imapmail, expected):
     assert isinstance(expected, bytes)
     line = imapmail.readline()
     if expected not in line:
-        print("'%s' expected, but read '%s'" % (expected, line))
+        logging.error("'%s' expected, but read '%s'" % (expected, line))
 
 
 class RequestHandlerWithAuth(tornado.web.RequestHandler):

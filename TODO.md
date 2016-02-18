@@ -1,7 +1,4 @@
-debug option to see what we send and received
-switch to Python3 by default (add Python 2 support later)
 test reconnecting if connection aborts
-mit out of office testen (z.B. Limit 20 E-Mails/Tag)
 remove rules
 require mails to start with "Abgabe [Nr]"
 

@@ -74,7 +74,7 @@ def mainloop(config):
 
 
 def mailProcessing(config, imapmail):
-    filterCriteria = """SUBJECT "Abgabe" """
+    filterCriteria = "SUBJECT \"Abgabe\""
     uids = rules.filter(config, imapmail, [], filterCriteria)
     uids = rules.save(config, imapmail, uids)
     uids = rules.move(config, imapmail, "Abgaben")

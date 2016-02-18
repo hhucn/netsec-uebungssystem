@@ -130,6 +130,37 @@ class RequestHandlerWithAuth(tornado.web.RequestHandler):
         self.finish()
 
 
+def create_imap_conn(server, ssl, debug):
+    if ssl:
+        res = imaplib.IMAP4_SSL(server)
+    else:
+        res = imaplib.IMAP4(server)
+    if debug:
+        send_func = res.send
+        read_func = res.read
+        readline_func = res.readline
+
+        def _debug_send(data):
+            print('> %s' % data.decode('utf-8'), end='')
+            return send_func(data)
+
+        def _debug_read(size):
+            res = read_func(size)
+            print('< %s' % res.decode('utf-8'), end='')
+            return res
+
+        def _debug_readline():
+            res = readline_func()
+            print('< %s' % res.decode('utf-8'), end='')
+            return res
+
+        res.send = _debug_send
+        res.read = _debug_read
+        res.readline = _debug_readline
+
+    return res
+
+
 # An error in email handling, e.g. we got the wrong message back, connection interrupted etc.
 class MailError(BaseException):
     pass

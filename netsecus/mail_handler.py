@@ -28,7 +28,8 @@ def mainloop(config):
         config("mail.imap_server"),
         username,
         config("mail.password"),
-        config("mail.ssl"))
+        config("mail.ssl"),
+        config("loglevel") == "debug")
 
     imapmail._command("CAPABILITY")
     capabilities = imapmail.readline().decode("utf-8")
@@ -100,18 +101,15 @@ def processRule(config, imapmail, rule):
     logging.debug("**** done: '%s'" % rule["title"])
 
 
-def loginIMAP(server, address, password, ssl=True):
+def loginIMAP(server, address, password, ssl=True, debug=False):
     if not address or not password:
         err = "IMAP login information incomplete. (Missing address or password)"
         logging.error(err)
         raise ValueError(err)
-    else:
-        if ssl:
-            imapmail = imaplib.IMAP4_SSL(server)
-        else:
-            imapmail = imaplib.IMAP4(server)
-        imapmail.login(address, password)
-        logging.debug("IMAP login (%s on %s)" % (address, server))
+
+    imapmail = helper.create_imap_conn(server, ssl, debug)
+    imapmail.login(address, password)
+    logging.debug("IMAP login (%s on %s)" % (address, server))
     return imapmail
 
 

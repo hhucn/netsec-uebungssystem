@@ -1,20 +1,15 @@
 test reconnecting if connection aborts
 remove rules
 require mails to start with "Abgabe [Nr]"
-
+add CSRF protection
+switch to proper external stylesheet (<link rel>, will facilitate proper debugging / caching / highlighting etc.)
 
 test with deliberately invalid UTF8
 PGP (students / system)
 Do away with html_path configuration option
-Use safe rendering language (Mustache?)
-local test server with tests
-
-~~tokens as authentication? Would make mail aliases obsolete and prevents mail spoofing.~~
+fix rendering so that we can just include instead of ../htmldocs
 
 move attachments into *one* folder instead of date-sorted attachments.
-
 create a logfile per user to monitor changes on their contribution
-
 send mail back with checksums of attachments
-
 `def filter`: `email.message_from_string` accepts ASCII only. Rewrite.

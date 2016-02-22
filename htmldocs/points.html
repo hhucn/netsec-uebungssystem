@@ -2,7 +2,8 @@
 <html>
 <head>
 	<title>netsec-Übungssystem - Korrekturserver</title>
-	{% include ../htmldocs/style.css %}
+	<link rel="stylesheet" href="/static/style.css" />
+	<!-- TODO what is this strange redirect? Use proper HTTP redirects -->
 	{% if redirect %}
 		<meta http-equiv="refresh" content="3; /detail/{{ identifier }}">
 	{% end %}

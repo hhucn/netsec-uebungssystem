@@ -11,12 +11,14 @@ from . import helper
 from . import database
 from .task import Task
 
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATE_PATH = os.path.join(ROOT_PATH, "htmldocs")
+
 
 class NetsecHandler(helper.RequestHandlerWithAuth):
     def render(self, template, data):
-        htmlPath = self.application.config("html_path")
         super(NetsecHandler, self).render(
-            os.path.join("..", htmlPath, "%s.html" % template),
+            os.path.join(TEMPLATE_PATH, "%s.html" % template),
             **data)
 
 
@@ -256,6 +258,9 @@ def mainloop(config):
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),
         (r"/points", PointsHandler),
+        (r"/static/(.*)", tornado.web.StaticFileHandler, {
+            "path": os.path.join(ROOT_PATH, "static")
+        }),
     ])
 
     port = config('httpd.port')

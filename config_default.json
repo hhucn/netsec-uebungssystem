@@ -2,7 +2,6 @@
 	"loglevel":"debug",
 	"attachment_path":"attachments",
 	"database_path":"databases.sqlite",
-	"html_path":"htmldocs",
 	"script_path":"scripts",
 	"mail": {
 		"smtp_server": "smtp.gmail.com",

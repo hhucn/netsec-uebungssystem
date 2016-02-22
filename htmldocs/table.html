@@ -1,26 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>netsec-Übungssystem - Korrekturserver</title>
-    {% include ../htmldocs/style.css %}
-</head>
-<body>
-    {% include ../htmldocs/menubar.html %}
+{%include ../htmldocs/header.html %}
 
-    <table class="table-border">
+<table class="table-border">
+    <tr>
+        <th>Blattname</th>
+        <th>Abgaben</th>
+        <th>Bearbeitungszeitraum</th>
+    </tr>
+    {% for sheet in sheets %}
         <tr>
-            <th>Blattname</th>
-            <th>Abgaben</th>
-            <th>Bearbeitungszeitraum</th>
+            <td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+            <td>{{ sheet.submissionsFinished }} von {{ sheet.submissions }} bearbeitet.</td>
+            <td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
         </tr>
-        {% for sheet in sheets %}
-            <tr>
-                <td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
-                <td>{{ sheet.submissionsFinished }} von {{ sheet.submissions }} bearbeitet.</td>
-                <td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
-            </tr>
-        {% end %}
-    </table>
+    {% end %}
+</table>
 
-</body>
-</html>
+{%include ../htmldocs/footer.html %}

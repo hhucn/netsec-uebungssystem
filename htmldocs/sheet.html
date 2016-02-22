@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>netsec-Übungssystem - Korrekturserver</title>
-	{% include ../htmldocs/style.css %}
-</head>
-<body>
-	{% include ../htmldocs/menubar.html %}
+{%include ../htmldocs/header.html %}
 
 	<h1>{{ sheet.name }}</h1>
 	<form method="post" action="/sheetmanager">
@@ -13,7 +6,7 @@
 		<input type="hidden" name="oldName" value="{{ sheet.name }}">
 		<input type="hidden" name="sheetID" value="{{ sheet.id }}">
 		<label>
-			Blattname: 
+			Blattname:
 			<input type="text" name="newName" value="{{ sheet.name }}">
 		</label>
 		<input type="submit" value="Speichern">
@@ -49,10 +42,10 @@
                 </form>
                 <form method="post" action="/sheetmanager">
                     <td>
-                        <input type="hidden" name="type" value="deleteTask">
-                        <input type="hidden" name="sheetID" value="{{ sheet.id }}">
-                        <input type="hidden" name="taskID" value="{{ task.id }}">
-                        <input type="submit" value="Löschen">
+                        <input type="hidden" name="type" value="deleteTask" />
+                        <input type="hidden" name="sheetID" value="{{ sheet.id }}" />
+                        <input type="hidden" name="taskID" value="{{ task.id }}" />
+                        <input type="submit" value="Löschen" />
 					</td>
 				</form>
 			</tr>
@@ -81,5 +74,5 @@
 			</form>
 		</tr>
 	</table>
-</body>
-</html>
+
+{%include ../htmldocs/footer.html %}

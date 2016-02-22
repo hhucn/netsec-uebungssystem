@@ -1,94 +1,87 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>netsec-Übungssystem - Detail zu {{ identifier }}</title>
-	{% include ../htmldocs/style.css %}
-</head>
-<body>
-	{% include ../htmldocs/menubar.html %}
+{%include ../htmldocs/header.html %}
 
-	<h1>{{ identifier }}</h1>
+<h1>{{ identifier }}</h1>
 
-	<h3>Korrekturstatus</h3>
-	Aktueller Status: <b>{{ korrekturstatus }}</b>
-	<br>
-	<form name="statusform" action="/status" method="POST">
-		<input type="hidden" name="laststatus" value="{{ korrekturstatus }}">
-		<input type="hidden" name="identifier" value="{{ identifier }}">
-		<select name="currentstatus">
-			{% for status in ("Unbearbeitet", "Angefangen", "Fertig") %}
-				<option value="{{ status }}" {% if status == korrekturstatus %}selected{% end %}>{{ status }}</option>
-			{% end %}
-		</select>
-		<input type="submit" value="Status neu setzen">
-	</form>
-	<br>
-	<br>
-	<br>
-	<h3>Punkte</h3>
-	<table>
-		<tr>
-			<th>Blatt</th>
-			<th>Aufgabe</th>
-			<th>Aufgabenstellung</th>
-			<th>max. Punkte</th>
-			<th>erreichte Punkte</th>
-			<th>neue Punkte</th>
-		</tr>
-		{% for sheet in sheets %}
-			{% for task in sheet.tasks %}
-				<tr>
-					<td><a href="/sheet/{{ sheet.number }}">{{ sheet.number }}</a></td>
-					<td>{{ task.number }}</td>
-					<td>{{ task.description }}</td>
-					<td>{{ task.maxPoints }}</td>
-					<td>{{ task.reachedPoints }}</td>
-					<td>
-						{% if sheet.editable %}
-							<form name="taskform" action="/points" method="POST">
-								<input type="hidden" name="identifier" value="{{ identifier }}">
-								<input type="hidden" name="sheetNumber" value="{{ sheet.number }}">
-								<input type="hidden" name="taskNumber" value="{{ task.number }}">
-								<input type="hidden" name="oldPoints" value="{{ task.reachedPoints }}">
-								<input type="number" name="newPoints" value="{{ task.reachedPoints }}" min="0" max="{{ task.maxPoints }}" step="any">
-								<input type="submit" value="Speichern">
-							</form>
-						{% else %}
-							<i>(Blatt ist nicht editierbar)</i>
-						{% end %}
-					</td>
-				</tr>
-			{% end %}
+<h3>Korrekturstatus</h3>
+Aktueller Status: <b>{{ korrekturstatus }}</b>
+<br>
+<form name="statusform" action="/status" method="POST">
+	<input type="hidden" name="laststatus" value="{{ korrekturstatus }}">
+	<input type="hidden" name="identifier" value="{{ identifier }}">
+	<select name="currentstatus">
+		{% for status in ("Unbearbeitet", "Angefangen", "Fertig") %}
+			<option value="{{ status }}" {% if status == korrekturstatus %}selected{% end %}>{{ status }}</option>
 		{% end %}
-	</table>
-	<br>
-	<br>
-	<br>
-	<h3>Dateien</h3>
-	<table>
-		<tr>
-			<th>Name</th>
-			<th>Eingangsdatum</th>
-			<th>Gr&ouml;&szlig;e</th>
-			<th>Download</th>
-		</tr>
-		{% for file in files %}
+	</select>
+	<input type="submit" value="Status neu setzen">
+</form>
+<br>
+<br>
+<br>
+<h3>Punkte</h3>
+<table>
+	<tr>
+		<th>Blatt</th>
+		<th>Aufgabe</th>
+		<th>Aufgabenstellung</th>
+		<th>max. Punkte</th>
+		<th>erreichte Punkte</th>
+		<th>neue Punkte</th>
+	</tr>
+	{% for sheet in sheets %}
+		{% for task in sheet.tasks %}
 			<tr>
-				<td>{{ escape(file.get("name")) }}</td>
-				<td>{{ escape(file.get("date")) }}</td>
-				<td>{{ escape(file.get("size")) }}</td>
+				<td><a href="/sheet/{{ sheet.number }}">{{ sheet.number }}</a></td>
+				<td>{{ task.number }}</td>
+				<td>{{ task.description }}</td>
+				<td>{{ task.maxPoints }}</td>
+				<td>{{ task.reachedPoints }}</td>
 				<td>
-					<a href="/download/{{ escape(identifier) }}/{{ escape(file.get("hash")) }}">Download</a>
-					<br>
-					<small>
-						{{ file.get("hash")[:16] }}<br>
-						{{ file.get("hash")[16:32] }}<br>
-						{{ file.get("hash")[32:48] }}<br>
-						{{ file.get("hash")[48:] }}
-					</small>
+					{% if sheet.editable %}
+						<form name="taskform" action="/points" method="POST">
+							<input type="hidden" name="identifier" value="{{ identifier }}">
+							<input type="hidden" name="sheetNumber" value="{{ sheet.number }}">
+							<input type="hidden" name="taskNumber" value="{{ task.number }}">
+							<input type="hidden" name="oldPoints" value="{{ task.reachedPoints }}">
+							<input type="number" name="newPoints" value="{{ task.reachedPoints }}" min="0" max="{{ task.maxPoints }}" step="any">
+							<input type="submit" value="Speichern">
+						</form>
+					{% else %}
+						<i>(Blatt ist nicht editierbar)</i>
+					{% end %}
 				</td>
 			</tr>
 		{% end %}
-	</table>
-</body>
-</html>
+	{% end %}
+</table>
+<br>
+<br>
+<br>
+<h3>Dateien</h3>
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Eingangsdatum</th>
+		<th>Gr&ouml;&szlig;e</th>
+		<th>Download</th>
+	</tr>
+	{% for file in files %}
+		<tr>
+			<td>{{ escape(file.get("name")) }}</td>
+			<td>{{ escape(file.get("date")) }}</td>
+			<td>{{ escape(file.get("size")) }}</td>
+			<td>
+				<a href="/download/{{ escape(identifier) }}/{{ escape(file.get("hash")) }}">Download</a>
+				<br>
+				<small>
+					{{ file.get("hash")[:16] }}<br>
+					{{ file.get("hash")[16:32] }}<br>
+					{{ file.get("hash")[32:48] }}<br>
+					{{ file.get("hash")[48:] }}
+				</small>
+			</td>
+		</tr>
+	{% end %}
+</table>
+
+{%include ../htmldocs/footer.html %}

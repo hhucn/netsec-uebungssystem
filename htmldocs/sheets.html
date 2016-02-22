@@ -1,47 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>netsec-Übungssystem - Korrekturserver</title>
-	{% include ../htmldocs/style.css %}
-</head>
-<body>
-	{% include ../htmldocs/menubar.html %}
+{%include ../htmldocs/header.html %}
 
-	<table>
+<table>
+	<tr>
+		<th>Blatt-ID</th>
+		<th>Blatt</th>
+		<th>Aufgaben</th>
+		<th>Editierbarkeit</th>
+		<th>Zeitraum</th>
+	</tr>
+	{% for sheet in sheets %}
 		<tr>
-			<th>Blatt-ID</th>
-			<th>Blatt</th>
-			<th>Aufgaben</th>
-			<th>Editierbarkeit</th>
-			<th>Zeitraum</th>
-		</tr>
-		{% for sheet in sheets %}
-			<tr>
-				<td>{{ sheet.id }}</td>
-				<td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
-				<td>
-					<ul>
-						{% for task in sheet.tasks %}
-							<li>{{ task.name }}</li>
-						{% end %}
-					</ul>
-				</td>
-				<td>
-					{% if sheet.editable %}
-						<i>Editierbar</i>
-					{% else %}
-						Nicht editierbar
+			<td>{{ sheet.id }}</td>
+			<td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+			<td>
+				<ul>
+					{% for task in sheet.tasks %}
+						<li>{{ task.name }}</li>
 					{% end %}
-				</td>
-				<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
-			</tr>
-		{% end %}
-	</table>
-	<br>
-	<form method="post" action="/sheetmanager">
-		<input type="hidden" name="type" value="addSheet">
-		<input type="text" name="name" placeholder="Blatt-Name" width="200px">
-		<input type="submit" value="Hinzufügen">
-	</form>
-</body>
-</html>
+				</ul>
+			</td>
+			<td>
+				{% if sheet.editable %}
+					<i>Editierbar</i>
+				{% else %}
+					Nicht editierbar
+				{% end %}
+			</td>
+			<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
+		</tr>
+	{% end %}
+</table>
+<br>
+<form method="post" action="/sheetmanager">
+	<input type="hidden" name="type" value="addSheet">
+	<input type="text" name="name" placeholder="Blatt-Name" width="200px">
+	<input type="submit" value="Hinzufügen">
+</form>
+
+{%include ../htmldocs/footer.html %}

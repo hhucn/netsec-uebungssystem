@@ -1,0 +1,29 @@
+body {
+	font-family:sans-serif;
+	line-height:1.5;
+	font-size:14px;
+	color:#333333;
+}
+
+th {
+	color:#222222;
+	text-align:left;
+	border-bottom:1px #999999 solid;
+}
+
+th,td {
+	padding:5px;
+}
+
+td {
+	vertical-align: top;
+}
+
+table {
+	padding:5px;
+	border-spacing:0;
+}
+
+input[type=number] {
+	width:50px;
+}

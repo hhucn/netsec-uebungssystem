@@ -154,21 +154,6 @@ class SheetManagerHandler(NetsecHandler):
                 self.redirect("/sheet/%s" % sheetID)
             else:
                 self.render("task-error", {"error": "modified"})
-        elif manageType == "deleteTask":
-            sheetID = self.get_argument("sheetID")
-            taskID = self.get_argument("taskID")
-            oldName = self.get_argument("oldName")
-            oldDesc = self.get_argument("oldDescription")
-            oldPoints = float(self.get_argument("oldPoints"))
-
-            currentTask = database.getTaskFromID(self.application.config, taskID)
-
-            if(oldName == currentTask.name and oldDesc == currentTask.description and
-               oldPoints == currentTask.maxPoints):
-                database.deleteTask(self.application.config, taskID)
-                self.redirect("/sheet/%s" % sheetID)
-            else:
-                self.render("task-error", {"error": "modified"})
         elif manageType == "newTask":
             sheetID = self.get_argument("sheetID")
             taskName = self.get_argument("name")
@@ -178,6 +163,12 @@ class SheetManagerHandler(NetsecHandler):
             self.redirect("/sheet/%s" % sheetID)
         else:
             logging.error("Specified SheetManager type '%s' does not exist." % manageType)
+
+
+class TaskDeleteHandler(NetsecHandler):
+    def post(self, sheet_id, task_id):
+        database.deleteTask(self.application.config, int(task_id))
+        self.redirect("/sheet/%s" % sheet_id)
 
 
 class DetailHandler(NetsecHandler):
@@ -252,6 +243,7 @@ def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
         (r"/sheets", SheetsHandler),
+        (r"/sheet/([0-9]+)/task/([0-9]+)/delete", TaskDeleteHandler),
         (r"/sheet/.*", SheetHandler),
         (r"/sheetmanager", SheetManagerHandler),
         (r"/download/.*", DownloadHandler),

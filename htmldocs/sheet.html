@@ -40,14 +40,11 @@
                         <input type="submit" value="Speichern">
                     </td>
                 </form>
-                <form method="post" action="/sheetmanager">
                     <td>
-                        <input type="hidden" name="type" value="deleteTask" />
-                        <input type="hidden" name="sheetID" value="{{ sheet.id }}" />
-                        <input type="hidden" name="taskID" value="{{ task.id }}" />
+                		<form method="post" action="/sheet/{{sheet.id}}/task/{{task.id}}/delete">
                         <input type="submit" value="Löschen" />
+						</form>
 					</td>
-				</form>
 			</tr>
 		{% end %}
 		<tr>

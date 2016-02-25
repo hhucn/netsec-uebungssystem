@@ -8,53 +8,6 @@ from .submission import Submission
 from .task import Task
 
 
-def addFileToSubmission(config, submissionID, identifier, sha, name):
-    # Add a file to the specified submission and identifier (student)
-
-    fileDatabase = getTable(config, "files")
-    cursor = fileDatabase.cursor()
-
-    cursor.execute("""SELECT fileID FROM files
-                      WHERE submissionID = ?
-                      AND identifier = ?
-                      AND sha = ?""",
-                   (submissionID, identifier, sha))
-
-    if cursor.fetchone():
-        # File is sent twice in one mail (realistic) OR the SHA of two different
-        # files collided (not that realistic...)
-        logging.debug("Two files with the same checksum submitted by %s"
-                      % identifier)
-    else:
-        cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
-                          VALUES(?, ?, ?)""", (submissionID, identifier, sha))
-        fileDatabase.submit()
-
-
-def submissionForTaskAndIdentifier(config, taskID, identifier, points):
-    # Get the submission ID for the specified task and identifier (student)
-    # if it does not exist, create it.
-
-    submissionDatabase = getTable(config, "submissions")
-    cursor = submissionDatabase.cursor()
-
-    cursor.execute("""SELECT submissionID FROM submissions
-                      WHERE taskID = ? AND identifier = ? AND points = ?""",
-                   (taskID, identifier, points))
-
-    existingSubmissionID = cursor.fetchone()
-
-    if existingSubmissionID:
-        return existingSubmissionID[0]  # just return submissionID
-    else:
-        # No submission for this task exists from this identifier
-        cursor.execute("""INSERT INTO
-                          submissions(taskID, identifier, points)
-                          VALUES(?, ?, ?)""", (taskID, identifier,
-                       points))
-        return cursor.lastrowid
-
-
 def getTable(config, tableName):
     databasePath = config("database_path")
     database = sqlite3.connect(databasePath)
@@ -180,3 +133,50 @@ def deleteTask(config, id):
 
     taskCursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
     taskTable.commit()
+
+
+def addFileToSubmission(config, submissionID, identifier, sha, name):
+    # Add a file to the specified submission and identifier (student)
+
+    fileDatabase = getTable(config, "files")
+    cursor = fileDatabase.cursor()
+
+    cursor.execute("""SELECT fileID FROM files
+                      WHERE submissionID = ?
+                      AND identifier = ?
+                      AND sha = ?""",
+                   (submissionID, identifier, sha))
+
+    if cursor.fetchone():
+        # File is sent twice in one mail (realistic) OR the SHA of two different
+        # files collided (not that realistic...)
+        logging.debug("Two files with the same checksum submitted by %s"
+                      % identifier)
+    else:
+        cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
+                          VALUES(?, ?, ?)""", (submissionID, identifier, sha))
+        fileDatabase.submit()
+
+
+def submissionForTaskAndIdentifier(config, taskID, identifier, points):
+    # Get the submission ID for the specified task and identifier (student)
+    # if it does not exist, create it.
+
+    submissionDatabase = getTable(config, "submissions")
+    cursor = submissionDatabase.cursor()
+
+    cursor.execute("""SELECT submissionID FROM submissions
+                      WHERE taskID = ? AND identifier = ? AND points = ?""",
+                   (taskID, identifier, points))
+
+    existingSubmissionID = cursor.fetchone()
+
+    if existingSubmissionID:
+        return existingSubmissionID[0]  # just return submissionID
+    else:
+        # No submission for this task exists from this identifier
+        cursor.execute("""INSERT INTO
+                          submissions(taskID, identifier, points)
+                          VALUES(?, ?, ?)""", (taskID, identifier,
+                       points))
+        return cursor.lastrowid

@@ -12,31 +12,6 @@
 	"httpd": {
 		"port": 8080
 	},
-	"rules": [
-		{
-			"title":"Benchmark",
-			"steps":[
-				["filter","SUBJECT \"Benchmark\""],
-				["answer","netsecus Benchmark","Testing <answer> rule"],
-				["answer","netsecus Benchmark","Testing <answer> rule with specified mail address","martin.dessauer@hhu.de"],
-				["flag","SAVED"],
-				["log","Benchmark mail received."],
-				["script","testscript","Benchmark Request"],
-				["move","Benchmark"],
-				["save"],
-				["delete"]
-			]
-		},
-		{
-			"title":"Übungsfilter",
-			"steps":[
-				["filter","SUBJECT \"Übung\" OR FROM '@hhu.de' FROM '@uni-duesseldorf.de'"],
-				["script","resolveMailAlias"],
-				["save"],
-				["move","Übungsabgaben"]
-			]
-		}
-	],
 	"variables": {},
 	"korrektoren": {},
 	"currentSheet": 0

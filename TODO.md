@@ -1,4 +1,3 @@
-restructure database model (one function to create all tables, config implicitly available, open database only once)
 test reconnecting if connection aborts
 remove rules
 require mails to start with "Abgabe [Nr]"

@@ -4,7 +4,7 @@ import logging
 import time
 
 from . import helper
-from . import rules
+from . import commands
 
 
 def mail_main(config):
@@ -74,30 +74,9 @@ def mainloop(config):
 
 def mailProcessing(config, imapmail):
     filterCriteria = "SUBJECT \"Abgabe\""
-    uids = rules.filter(config, imapmail, [], filterCriteria)
-    uids = rules.save(config, imapmail, uids)
-    uids = rules.move(config, imapmail, uids, "Abgaben")
-
-
-def ruleLoop(config, imapmail):
-    for rule in config("rules"):
-        processRule(config, imapmail, rule)
-
-
-def processRule(config, imapmail, rule):
-    logging.debug("**** rule: '%s'" % rule["title"])
-
-    mails = []
-
-    for step in rule["steps"]:
-        logging.debug("* exec: %s" % step[0])
-        mails = getattr(rules, step[0])(config, imapmail, mails, *step[1:])
-
-        if not mails:
-            logging.debug("*  ret no mails")
-            break
-        logging.debug("*  ret %d mail(s)" % len(mails))
-    logging.debug("**** done: '%s'" % rule["title"])
+    uids = commands.filter(config, imapmail, [], filterCriteria)
+    uids = commands.save(config, imapmail, uids)
+    uids = commands.move(config, imapmail, uids, "Abgaben")
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

@@ -1,5 +1,4 @@
 test reconnecting if connection aborts
-remove rules
 require mails to start with "Abgabe [Nr]"
 add CSRF protection
 switch to proper external stylesheet (<link rel>, will facilitate proper debugging / caching / highlighting etc.)

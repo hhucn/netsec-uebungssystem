@@ -9,16 +9,17 @@ from .task import Task
 
 
 def getTable(config, tableName):
-    databasePath = config("database_path")
-    database = sqlite3.connect(databasePath)
+    if not hasattr(config, "database"):
+        databasePath = config("database_path")
+        config.database = sqlite3.connect(databasePath)
 
     tableStructure = config("tableStructures.%s" % tableName)
     createStatement = "CREATE TABLE IF NOT EXISTS %s (%s);" % (tableName, tableStructure)
 
-    cursor = database.cursor()
+    cursor = config.database.cursor()
     cursor.execute(createStatement)
 
-    return database
+    return config.database
 
 
 # Object getter methods

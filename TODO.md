@@ -3,6 +3,7 @@ require mails to start with "Abgabe [Nr]"
 add CSRF protection
 switch to proper external stylesheet (<link rel>, will facilitate proper debugging / caching / highlighting etc.)
 make sure to never use floats for points (use INTEGER tenths of a point instead)
+rewrite database code as class
 
 test with deliberately invalid UTF8
 PGP (students / system)

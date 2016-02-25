@@ -11,7 +11,7 @@ from .task import Task
 def addFileToSubmission(config, submissionID, identifier, sha, name):
     # Add a file to the specified submission and identifier (student)
 
-    fileDatabase = getFileTable(config)
+    fileDatabase = getTable(config, "files")
     cursor = fileDatabase.cursor()
 
     cursor.execute("""SELECT fileID FROM files
@@ -35,7 +35,7 @@ def submissionForTaskAndIdentifier(config, taskID, identifier, points):
     # Get the submission ID for the specified task and identifier (student)
     # if it does not exist, create it.
 
-    submissionDatabase = getSubmissionTable(config)
+    submissionDatabase = getTable(config, "submissions")
     cursor = submissionDatabase.cursor()
 
     cursor.execute("""SELECT submissionID FROM submissions
@@ -54,67 +54,24 @@ def submissionForTaskAndIdentifier(config, taskID, identifier, points):
                        points))
         return cursor.lastrowid
 
-# Table getter methods
 
+def getTable(config, tableName):
+    databasePath = config("database_path")
+    database = sqlite3.connect(databasePath)
 
-def getSheetTable(config):
-    # Get the sheet table from the database
-    sheetDatabasePath = config("database_path")
-    sheetDatabase = sqlite3.connect(sheetDatabasePath)
-    cursor = sheetDatabase.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS sheets
-        (`sheetID` Integer PRIMARY KEY AUTOINCREMENT,
-         `editable` boolean,
-         `name` text,
-         `start` date,
-         `end` date);""")
-    return sheetDatabase
+    tableStructure = config("tableStructures.%s" % tableName)
+    createStatement = "CREATE TABLE IF NOT EXISTS %s (%s);" % (tableName, tableStructure)
 
+    cursor = database.cursor()
+    cursor.execute(createStatement)
 
-def getTaskTable(config):
-    # Get the task table from the database
-    taskDatabasePath = config("database_path")
-    taskDatabase = sqlite3.connect(taskDatabasePath)
-    cursor = taskDatabase.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS tasks
-        (`taskID` Integer PRIMARY KEY AUTOINCREMENT,
-         `sheetID` Integer,
-         `name` text,
-         `description` text,
-         `maxPoints` float);""")
-    return taskDatabase
-
-
-def getSubmissionTable(config):
-    # Get the submission table from the database
-    submissionDatabasePath = config("database_path")
-    submissionDatabase = sqlite3.connect(submissionDatabasePath)
-    cursor = submissionDatabase.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS submissions
-        (`submissionID` Integer PRIMARY KEY AUTOINCREMENT,
-         `taskID` Integer,
-         `identifier` text,
-         `points` text);""")
-    return submissionDatabase
-
-
-def getFileTable(config):
-    # Get the file table from the database
-    fileDatabasePath = config("database_path")
-    fileDatabase = sqlite3.connect(fileDatabasePath)
-    cursor = fileDatabase.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS files
-        (`fileID` Integer PRIMARY KEY AUTOINCREMENT,
-         `submissionID` Integer,
-         `sha` text,
-         `filename` text);""")
-    return fileDatabase
+    return database
 
 
 # Object getter methods
 
 def getSheets(config):
-    sheetTable = getSheetTable(config)
+    sheetTable = getTable(config, "sheets")
     sheetCursor = sheetTable.cursor()
 
     sheetCursor.execute("SELECT sheetID, name, editable, start, end FROM sheets")
@@ -130,7 +87,7 @@ def getSheets(config):
 
 
 def getSubmissionForSheet(config, id):
-    submissionTable = getSubmissionTable(config)
+    submissionTable = getTable(config, "submissions")
     submissionCursor = submissionTable.cursor()
 
     submissionCursor.execute("SELECT submissionID, taskID, identifier, points FROM submissions")
@@ -145,7 +102,7 @@ def getSubmissionForSheet(config, id):
 
 
 def getSheetFromID(config, id):
-    sheetTable = getSheetTable(config)
+    sheetTable = getTable(config, "sheets")
     sheetCursor = sheetTable.cursor()
 
     sheetCursor.execute("SELECT sheetID, editable, name, start, end FROM sheets WHERE sheetID = ?", (id, ))
@@ -158,7 +115,7 @@ def getSheetFromID(config, id):
 
 
 def getTaskFromID(config, id):
-    taskTable = getTaskTable(config)
+    taskTable = getTable(config, "tasks")
     taskCursor = taskTable.cursor()
 
     taskCursor.execute("SELECT sheetID, name, description, maxPoints FROM tasks WHERE taskID = ?", (id, ))
@@ -170,7 +127,7 @@ def getTaskFromID(config, id):
 
 
 def getTasksForSheet(config, id):
-    taskTable = getTaskTable(config)
+    taskTable = getTable(config, "tasks")
     taskCursor = taskTable.cursor()
 
     taskCursor.execute("SELECT taskID, name, description, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
@@ -188,7 +145,7 @@ def getTasksForSheet(config, id):
 # Object setter/misc. functions
 
 def setSheet(config, name):
-    sheetTable = getSheetTable(config)
+    sheetTable = getTable(config, "sheets")
     sheetCursor = sheetTable.cursor()
 
     sheetCursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
@@ -196,7 +153,7 @@ def setSheet(config, name):
 
 
 def setNewTaskForSheet(config, sheetID, name, description, maxPoints):
-    taskTable = getTaskTable(config)
+    taskTable = getTable(config, "tasks")
     taskCursor = taskTable.cursor()
 
     taskCursor.execute("INSERT INTO tasks (sheetID, name, description, maxPoints) VALUES(?,?,?,?)",
@@ -205,7 +162,7 @@ def setNewTaskForSheet(config, sheetID, name, description, maxPoints):
 
 
 def replaceTask(config, id, task):
-    taskTable = getTaskTable(config)
+    taskTable = getTable(config, "tasks")
     taskCursor = taskTable.cursor()
 
     name = task.name
@@ -218,7 +175,7 @@ def replaceTask(config, id, task):
 
 
 def deleteTask(config, id):
-    taskTable = getTaskTable(config)
+    taskTable = getTable(config, "tasks")
     taskCursor = taskTable.cursor()
 
     taskCursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))

@@ -12,6 +12,12 @@
 	"httpd": {
 		"port": 8080
 	},
+	"tableStructures": {
+		"sheets": "`sheetID` Integer PRIMARY KEY AUTOINCREMENT, `editable` boolean, `name` text, `start` date, `end` date",
+		"tasks": "`taskID` Integer PRIMARY KEY AUTOINCREMENT, `sheetID` Integer, `name` text, `description` text, `maxPoints` float",
+		"submissions": "`submissionID` Integer PRIMARY KEY AUTOINCREMENT, `taskID` Integer, `identifier` text, `points` text",
+		"files": "`fileID` Integer PRIMARY KEY AUTOINCREMENT, `submissionID` Integer, `sha` text, `filename` text"
+	},
 	"variables": {},
 	"korrektoren": {},
 	"currentSheet": 0

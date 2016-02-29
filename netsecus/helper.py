@@ -32,13 +32,10 @@ def imapCommand(imapmail, command, *args):
     response = response[0]  # the response ships within a list with one element; we need to unpack that.
 
     if "OK" in code:
-        if response:
-            return response
-        return
+        return response
     else:
-        logging.error("Server responded with Code '%s' for '%s %s'." % (code, command, args))
-        raise Exception("Server responded with Code '%s' for '%s %s'." % (code, command, args))
-        return
+        err = "Server responded with Code '%s' for '%s %s'." % (code, command, args)
+        raise MailError(err)
 
 
 def smtpMail(config, to, what):
@@ -97,7 +94,7 @@ def checkResult(imapmail, expected):
     assert isinstance(expected, bytes)
     line = imapmail.readline()
     if expected not in line:
-        logging.error("'%s' expected, but read '%s'" % (expected, line))
+        raise MailError("Invalid response: '%s' expected, but got '%s'" % (expected, line))
 
 
 class RequestHandlerWithAuth(tornado.web.RequestHandler):

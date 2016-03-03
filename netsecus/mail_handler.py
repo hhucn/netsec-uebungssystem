@@ -14,9 +14,9 @@ def mail_main(config):
         try:
             mainloop(config)
         except (OSError, helper.MailError) as e:
+            logging.error(e)
             if config('loglevel') == 'debug':
                 traceback.print_exc()
-            logging.error(e)
         time.sleep(config("mail.delay"))
 
 

@@ -95,10 +95,7 @@ def checkResult(imapmail, expected):
     assert isinstance(expected, bytes)
 
     line = imapmail.readline()
-    line = re.sub(b"^([A-Z]|[0-9]){5,9} ", b"", line)  # remove tag
-    line = re.sub(b"^\* ", b"", line)  # remove "answer token" [1]
-
-    if not line.startswith(expected):
+    if not re.match(rb"^([A-Z]|[0-9]){5,9}\s+[*]?\s+" + expected, line):
         raise MailError("Invalid response: '%s' expected, but got '%s'" % (expected, line))
 
 

@@ -1,6 +1,13 @@
+Aufgabenstellung weg
+Namen weg
+Übersicht über alle Abgaben
+Übersicht über alle Abgaben eines Blatts
+Übersicht über alle Studenten
+Übersicht über alle Abgaben eines Studenten
 test reconnecting if connection aborts
 require mails to start with "Abgabe [Nr]"
 add CSRF protection
+REST, kein SheetManager
 switch to proper external stylesheet (<link rel>, will facilitate proper debugging / caching / highlighting etc.)
 make sure to never use floats for points (use INTEGER tenths of a point instead)
 rewrite database code as class

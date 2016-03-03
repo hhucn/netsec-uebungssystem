@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import logging
 import time
+import traceback
 
 from . import helper
 from . import commands
@@ -13,6 +14,8 @@ def mail_main(config):
         try:
             mainloop(config)
         except (OSError, helper.MailError) as e:
+            if config('loglevel') == 'debug':
+                traceback.print_exc()
             logging.error(e)
         time.sleep(config("mail.delay"))
 

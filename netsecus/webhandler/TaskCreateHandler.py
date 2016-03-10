@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
 from ..database import Database
-from .NetsecHandler import NetsecHandler
+from .ProtectedPostHandler import ProtectedPostHandler
 
 
-class TaskCreateHandler(NetsecHandler):
-    def post(self, sheet_id):
+class TaskCreateHandler(ProtectedPostHandler):
+    def postPassedCSRF(self, sheet_id):
         name = self.get_argument("name")
         points = self.get_argument("points")
         database = Database(self.application.config)

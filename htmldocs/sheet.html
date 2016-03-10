@@ -34,6 +34,7 @@
         </form>
         <td>
       		<form method="post" action="/sheet/{{sheet.id}}/task/{{task.id}}/delete">
+						{% module xsrf_form_html() %}
             <input type="submit" value="Löschen" />
 					</form>
 				</td>
@@ -46,6 +47,7 @@
 		</tr>
 		<tr>
 			<form method="post" action="/sheet/{{sheet.id}}/task/create">
+				{% module xsrf_form_html() %}
 				<td>
 					<input type="text" name="name" style="width:100%">
 				</td>

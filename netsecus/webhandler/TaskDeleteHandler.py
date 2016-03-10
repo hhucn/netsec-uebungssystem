@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
 from ..database import Database
-from .NetsecHandler import NetsecHandler
+from .ProtectedPostHandler import ProtectedPostHandler
 
 
-class TaskDeleteHandler(NetsecHandler):
-    def post(self, sheet_id, task_id):
+class TaskDeleteHandler(ProtectedPostHandler):
+    def postPassedCSRF(self, sheet_id, task_id):
         database = Database(self.application.config)
         database.deleteTask(int(task_id))
         self.redirect("/sheet/%s" % sheet_id)

@@ -30,6 +30,7 @@
 			<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
 			<td>
 				<form method="post" action="/sheet/{{ sheet.id }}/delete">
+					{% module xsrf_form_html() %}
 					<input type="submit" value="Löschen">
 				</form>
 			</td>
@@ -38,6 +39,7 @@
 </table>
 <br>
 <form method="post" action="/sheet/create">
+	{% module xsrf_form_html() %}
 	<input type="text" name="name" placeholder="Blatt-Name" width="200px">
 	<input type="submit" value="Hinzufügen">
 </form>

@@ -19,7 +19,7 @@ class Database(object):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `sheetID` (`sheetID` Integer PRIMARY KEY
                             AUTOINCREMENT, `editable` boolean, `name` text, `start` date, `end` date)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `taskID` (`taskID` Integer PRIMARY KEY
-                            AUTOINCREMENT, `sheetID` Integer, `name` text, `description` text, `maxPoints` float)""")
+                            AUTOINCREMENT, `sheetID` Integer, `name` text, `maxPoints` float)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissionID` (`submissionID` Integer PRIMARY KEY
                             AUTOINCREMENT, `taskID` Integer, `identifier` text, `points` text)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `fileID` (`fileID` Integer PRIMARY KEY
@@ -58,22 +58,22 @@ class Database(object):
             return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
 
     def getTaskFromID(self, id):
-        self.cursor.execute("SELECT sheetID, name, description, maxPoints FROM tasks WHERE taskID = ?", (id, ))
+        self.cursor.execute("SELECT sheetID, name, maxPoints FROM tasks WHERE taskID = ?", (id, ))
         task = self.cursor.fetchone()
 
         if task:
-            sheetID, name, description, maxPoints = task
-            return Task(id, sheetID, name, description, maxPoints)
+            sheetID, name, maxPoints = task
+            return Task(id, sheetID, name, maxPoints)
 
     def getTasksForSheet(self, id):
-        self.cursor.execute("SELECT taskID, name, description, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
+        self.cursor.execute("SELECT taskID, name, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
         tasks = self.cursor.fetchall()
 
         result = []
 
         for task in tasks:
-            taskID, name, description, maxPoints = task
-            result.append(Task(taskID, id, name, description, maxPoints))
+            taskID, name, maxPoints = task
+            result.append(Task(taskID, id, name, maxPoints))
 
         return result
 
@@ -81,18 +81,15 @@ class Database(object):
         self.cursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
         self.database.commit()
 
-    def setNewTaskForSheet(self, sheetID, name, description, maxPoints):
-        self.cursor.execute("INSERT INTO tasks (sheetID, name, description, maxPoints) VALUES(?,?,?,?)",
-                            (sheetID, name, description, maxPoints))
+    def setNewTaskForSheet(self, sheetID, name, maxPoints):
+        self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?,?)", (sheetID, name, maxPoints))
         self.database.commit()
 
     def replaceTask(self, id, task):
         name = task.name
-        desc = task.description
         maxPoints = task.maxPoints
 
-        self.cursor.execute("UPDATE tasks SET name=? AND description=? and maxPoints=? WHERE taskID=?",
-                            (name, desc, maxPoints, id))
+        self.cursor.execute("UPDATE tasks SET name=? AND maxPoints=? WHERE taskID=?", (name, maxPoints, id))
         self.database.commit()
 
     def deleteTask(self, id):

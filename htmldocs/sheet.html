@@ -13,7 +13,6 @@
 	<table class="table">
 		<tr>
 			<th>Aufgabe</th>
-			<th>Aufgabenstellung</th>
 			<th>max. Punkte</th>
 			<th colspan="2"></th>
 		</tr>
@@ -21,26 +20,23 @@
 			<tr>
 				<form method="post" action="/sheetmanager">
 					<input type="hidden" name="type" value="editTask">
-                    <input type="hidden" name="sheetID" value="{{ sheet.id }}">
-                    <input type="hidden" name="taskID" value="{{ task.id }}">
+          <input type="hidden" name="sheetID" value="{{ sheet.id }}">
+          <input type="hidden" name="taskID" value="{{ task.id }}">
 					<td>
 						<input type="text" name="name" value="{{ task.name }}" style="width:100%">
 					</td>
 					<td>
-						<input type="text" name="description" value="{{ task.description }}" style="width:100%">
-					</td>
-					<td>
 						<input type="number" name="points" min="0" step="any" value="{{ task.maxPoints }}">
 					</td>
-                    <td>
-                        <input type="submit" value="Speichern">
-                    </td>
-                </form>
-                    <td>
-                		<form method="post" action="/sheet/{{sheet.id}}/task/{{task.id}}/delete">
-                        <input type="submit" value="Löschen" />
-						</form>
-					</td>
+          <td>
+              <input type="submit" value="Speichern">
+          </td>
+        </form>
+        <td>
+      		<form method="post" action="/sheet/{{sheet.id}}/task/{{task.id}}/delete">
+            <input type="submit" value="Löschen" />
+					</form>
+				</td>
 			</tr>
 		{% end %}
 		<tr>
@@ -54,9 +50,6 @@
 				<input type="hidden" name="sheetID" value="{{ sheet.id }}">
 				<td>
 					<input type="text" name="name" style="width:100%">
-				</td>
-				<td>
-					<input type="text" name="description" style="width:100%">
 				</td>
 				<td>
 					<input type="number" name="points" min="0" step="any">

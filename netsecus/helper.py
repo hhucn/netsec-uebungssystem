@@ -8,6 +8,7 @@ import re
 import smtplib
 import sys
 
+import hashlib
 import tornado.web
 from passlib.hash import pbkdf2_sha256
 
@@ -163,3 +164,16 @@ def create_imap_conn(server, ssl, debug):
 # An error in email handling, e.g. we got the wrong message back, connection interrupted etc.
 class MailError(BaseException):
     pass
+
+
+def generateCSRFToken(config, address):
+    if not hasattr(config, "salt"):
+        config.salt = os.urandom(32)
+    hash = hashlib.sha256()
+    tohash = "%s%s" % (address, config.salt)
+    hash.update(tohash.encode("utf-8"))
+    return hash.hexdigest()
+
+
+def validateCSRFToken(config, address, token):
+    return token == generateCSRFToken(config, address)

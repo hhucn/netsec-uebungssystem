@@ -14,9 +14,7 @@ class TestSourceQuality(unittest.TestCase):
 
     def test_module_exec(self):
         self._test_output(subprocess.check_output(
-            ['python', '-m', 'netsecus', 'client', '--help'], cwd=root_dir))
-        self._test_output(subprocess.check_output(
-            ['python', '-m', 'netsecus', 'server', '--help'], cwd=root_dir))
+            ['python3', '-m', 'netsecus', '--help'], cwd=root_dir))
 
 if __name__ == '__main__':
     unittest.main()

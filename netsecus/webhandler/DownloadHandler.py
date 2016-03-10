@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from ..database import Database
 from .NetsecHandler import NetsecHandler
 
 class DownloadHandler(NetsecHandler):
@@ -7,7 +8,8 @@ class DownloadHandler(NetsecHandler):
         uri = self.request.uri[len("/download/"):]  # cut away "/download/"
 
         identifier, sha = uri.split("/")
-        name = database.getFileName(self.application.config, identifier, sha)
+        database = Database(self.application.config)
+        name = database.getFileName(identifier, sha)
 
         attachmentPath = self.application.config("attachment_path")
         filePath = os.path.join(attachmentPath, identifier, "%s %s" % (sha, name))

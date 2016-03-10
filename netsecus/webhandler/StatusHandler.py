@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from ..database import Database
 from .NetsecHandler import NetsecHandler
 
 class StatusHandler(NetsecHandler):
@@ -7,8 +8,8 @@ class StatusHandler(NetsecHandler):
         identifier = self.get_argument("identifier")
         laststatus = self.get_argument("laststatus")
         currentstatus = self.get_argument("currentstatus")
-
-        savedstatus = database.getStatus(self.application.config, identifier)
+        database = Database(self.application.config)
+        savedstatus = database.getStatus(identifier)
 
         if not laststatus == savedstatus:
             self.render("status-error", {
@@ -17,5 +18,5 @@ class StatusHandler(NetsecHandler):
                 "identifier": identifier
             })
         else:
-            database.setStatus(self.application.config, identifier, currentstatus)
+            database.setStatus(identifier, currentstatus)
             self.redirect("/detail/%s" % identifier)

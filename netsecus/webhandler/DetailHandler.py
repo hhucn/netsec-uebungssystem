@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from ..database import Database
 from .NetsecHandler import NetsecHandler
 
 class DetailHandler(NetsecHandler):
@@ -28,9 +29,10 @@ class DetailHandler(NetsecHandler):
                         "date": fileDateTime,
                         "hash": fileHash
                         })
+            database = Database(self.application.config)
             self.render('detail', {'identifier': identifier, 'files': files,
-                                   'korrekturstatus': database.getStatus(self.application.config, identifier),
-                                   'sheets': database.getSheets(self.application.config, identifier)})
+                                   'korrekturstatus': database.getStatus(identifier),
+                                   'sheets': database.getSheets(identifier)})
         else:
             logging.error("Specified attachment path ('%s') does not exist." % attachmentPath)
             self.redirect("/")

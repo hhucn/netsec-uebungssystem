@@ -1,14 +1,16 @@
 from __future__ import unicode_literals
 
+from ..database import Database
 from .NetsecHandler import NetsecHandler
 
 class TableHandler(NetsecHandler):
     def get(self):
-        sheets = database.getSheets(self.application.config)
+        database = Database(self.application.config)
+        sheets = database.getSheets()
 
         # Count submissions for a sheet
         for sheet in sheets:
-            sheetSubmissions = database.getSubmissionForSheet(self.application.config, sheet.id)
+            sheetSubmissions = database.getSubmissionForSheet(sheet.id)
             sheet.submissions = len(sheetSubmissions)
 
             sheetSubmissionsFinished = 0

@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from ..database import Database
 from .NetsecHandler import NetsecHandler
 
 class PointsHandler(NetsecHandler):
@@ -9,10 +10,11 @@ class PointsHandler(NetsecHandler):
         taskNumber = self.get_argument("taskNumber")
         oldPoints = self.get_argument("oldPoints")
         newPoints = self.get_argument("newPoints")
-        reachedPoints = database.getReachedPoints(self.application.config, sheetNumber, taskNumber, identifier)
+        database = Database(self.application.config)
+        reachedPoints = database.getReachedPoints(sheetNumber, taskNumber, identifier)
         maxPoints = 0
 
-        task = database.getTaskFromSheet(self.application.config, sheetNumber, taskNumber)
+        task = database.getTaskFromSheet(sheetNumber, taskNumber)
         if task:
             maxPoints = task.maxPoints
 
@@ -26,6 +28,6 @@ class PointsHandler(NetsecHandler):
                                    "reachedPoints": reachedPoints, "taskNumber": taskNumber, "sheetNumber": sheetNumber,
                                    "identifier": identifier})
         else:
-            database.setReachedPoints(self.application.config, sheetNumber, taskNumber, identifier, newPoints)
+            database.setReachedPoints(sheetNumber, taskNumber, identifier, newPoints)
             self.render("points", {"redirect": 1, "error": "", "oldPoints": oldPoints, "reachedPoints": newPoints,
                         "taskNumber": taskNumber, "sheetNumber": sheetNumber, "identifier": identifier})

@@ -8,176 +8,130 @@ from .submission import Submission
 from .task import Task
 
 
-def getTable(config, tableName):
-    if not hasattr(config, "database"):
+class Database(object):
+    def __init__(self, config):
         databasePath = config("database_path")
-        config.database = sqlite3.connect(databasePath)
+        self.database = sqlite3.connect(databasePath)
+        self.cursor = self.database.cursor()
+        self.createTables()
 
-    tableStructure = config("tableStructures.%s" % tableName)
-    createStatement = "CREATE TABLE IF NOT EXISTS %s (%s);" % (tableName, tableStructure)
+    def createTables(self):
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `sheetID` (`sheetID` Integer PRIMARY KEY
+                            AUTOINCREMENT, `editable` boolean, `name` text, `start` date, `end` date)""")
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `taskID` (`taskID` Integer PRIMARY KEY
+                            AUTOINCREMENT, `sheetID` Integer, `name` text, `description` text, `maxPoints` float)""")
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissionID` (`submissionID` Integer PRIMARY KEY
+                            AUTOINCREMENT, `taskID` Integer, `identifier` text, `points` text)""")
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `fileID` (`fileID` Integer PRIMARY KEY
+                            AUTOINCREMENT, `submissionID` Integer, `sha` text, `filename` text)""")
 
-    cursor = config.database.cursor()
-    cursor.execute(createStatement)
+    def getSheets(self):
+        self.cursor.execute("SELECT sheetID, name, editable, start, end FROM sheets")
+        rows = self.cursor.fetchall()
+        result = []
 
-    return config.database
+        for row in rows:
+            sheetID, sheetName, editable, sheetStartDate, sheetEndDate = row
+            tasks = self.getTasksForSheet(sheetID)
+            result.append(Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate))
 
+        return result
 
-# Object getter methods
+    def getSubmissionForSheet(self, id):
+        self.cursor.execute("SELECT submissionID, taskID, identifier, points FROM submissions")
+        rows = self.cursor.fetchall()
+        result = []
 
-def getSheets(config):
-    sheetTable = getTable(config, "sheets")
-    sheetCursor = sheetTable.cursor()
+        for row in rows:
+            submissionID, taskID, identifier, points = row
+            result.append(Submission(submissionID, taskID, identifier, points))
 
-    sheetCursor.execute("SELECT sheetID, name, editable, start, end FROM sheets")
-    rows = sheetCursor.fetchall()
-    result = []
+        return result
 
-    for row in rows:
-        sheetID, sheetName, editable, sheetStartDate, sheetEndDate = row
-        tasks = getTasksForSheet(config, sheetID)
-        result.append(Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate))
+    def getSheetFromID(self, id):
+        self.cursor.execute("SELECT sheetID, editable, name, start, end FROM sheets WHERE sheetID = ?", (id, ))
+        sheet = self.cursor.fetchone()
 
-    return result
+        if sheet:
+            sheetID, editable, sheetName, sheetStartDate, sheetEndDate = sheet
+            tasks = self.getTasksForSheet(id)
+            return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
 
+    def getTaskFromID(self, id):
+        self.cursor.execute("SELECT sheetID, name, description, maxPoints FROM tasks WHERE taskID = ?", (id, ))
+        task = self.cursor.fetchone()
 
-def getSubmissionForSheet(config, id):
-    submissionTable = getTable(config, "submissions")
-    submissionCursor = submissionTable.cursor()
+        if task:
+            sheetID, name, description, maxPoints = task
+            return Task(id, sheetID, name, description, maxPoints)
 
-    submissionCursor.execute("SELECT submissionID, taskID, identifier, points FROM submissions")
-    rows = submissionCursor.fetchall()
-    result = []
+    def getTasksForSheet(self, id):
+        self.cursor.execute("SELECT taskID, name, description, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
+        tasks = self.cursor.fetchall()
 
-    for row in rows:
-        submissionID, taskID, identifier, points = row
-        result.append(Submission(submissionID, taskID, identifier, points))
+        result = []
 
-    return result
+        for task in tasks:
+            taskID, name, description, maxPoints = task
+            result.append(Task(taskID, id, name, description, maxPoints))
 
+        return result
 
-def getSheetFromID(config, id):
-    sheetTable = getTable(config, "sheets")
-    sheetCursor = sheetTable.cursor()
+    def setSheet(self, name):
+        self.cursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
+        self.database.commit()
 
-    sheetCursor.execute("SELECT sheetID, editable, name, start, end FROM sheets WHERE sheetID = ?", (id, ))
-    sheet = sheetCursor.fetchone()
+    def setNewTaskForSheet(self, sheetID, name, description, maxPoints):
+        self.cursor.execute("INSERT INTO tasks (sheetID, name, description, maxPoints) VALUES(?,?,?,?)",
+                            (sheetID, name, description, maxPoints))
+        self.database.commit()
 
-    if sheet:
-        sheetID, editable, sheetName, sheetStartDate, sheetEndDate = sheet
-        tasks = getTasksForSheet(config, id)
-        return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
+    def replaceTask(self, id, task):
+        name = task.name
+        desc = task.description
+        maxPoints = task.maxPoints
 
+        self.cursor.execute("UPDATE tasks SET name=? AND description=? and maxPoints=? WHERE taskID=?",
+                            (name, desc, maxPoints, id))
+        self.database.commit()
 
-def getTaskFromID(config, id):
-    taskTable = getTable(config, "tasks")
-    taskCursor = taskTable.cursor()
+    def deleteTask(self, id):
+        self.cursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
+        self.database.commit()
 
-    taskCursor.execute("SELECT sheetID, name, description, maxPoints FROM tasks WHERE taskID = ?", (id, ))
-    task = taskCursor.fetchone()
+    def addFileToSubmission(self, submissionID, identifier, sha, name):
+        # Add a file to the specified submission and identifier (student)
+        self.cursor.execute("""SELECT fileID FROM files
+                            WHERE submissionID = ?
+                            AND identifier = ?
+                            AND sha = ?""",
+                            (submissionID, identifier, sha))
 
-    if task:
-        sheetID, name, description, maxPoints = task
-        return Task(id, sheetID, name, description, maxPoints)
+        if self.cursor.fetchone():
+            # File is sent twice in one mail (realistic) OR the SHA of two different
+            # files collided (not that realistic...)
+            logging.debug("Two files with the same checksum submitted by %s"
+                          % identifier)
+        else:
+            self.cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
+                              VALUES(?, ?, ?)""", (submissionID, identifier, sha))
+            self.database.submit()
 
+    def submissionForTaskAndIdentifier(self, taskID, identifier, points):
+        # Get the submission ID for the specified task and identifier (student)
+        # if it does not exist, create it.
+        self.cursor.execute("""SELECT submissionID FROM submissions
+                            WHERE taskID = ? AND identifier = ? AND points = ?""",
+                            (taskID, identifier, points))
 
-def getTasksForSheet(config, id):
-    taskTable = getTable(config, "tasks")
-    taskCursor = taskTable.cursor()
+        existingSubmissionID = self.cursor.fetchone()
 
-    taskCursor.execute("SELECT taskID, name, description, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
-    tasks = taskCursor.fetchall()
-
-    result = []
-
-    for task in tasks:
-        taskID, name, description, maxPoints = task
-        result.append(Task(taskID, id, name, description, maxPoints))
-
-    return result
-
-
-# Object setter/misc. functions
-
-def setSheet(config, name):
-    sheetTable = getTable(config, "sheets")
-    sheetCursor = sheetTable.cursor()
-
-    sheetCursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
-    sheetTable.commit()
-
-
-def setNewTaskForSheet(config, sheetID, name, description, maxPoints):
-    taskTable = getTable(config, "tasks")
-    taskCursor = taskTable.cursor()
-
-    taskCursor.execute("INSERT INTO tasks (sheetID, name, description, maxPoints) VALUES(?,?,?,?)",
-                       (sheetID, name, description, maxPoints))
-    taskTable.commit()
-
-
-def replaceTask(config, id, task):
-    taskTable = getTable(config, "tasks")
-    taskCursor = taskTable.cursor()
-
-    name = task.name
-    desc = task.description
-    maxPoints = task.maxPoints
-
-    taskCursor.execute("UPDATE tasks SET name=? AND description=? and maxPoints=? WHERE taskID=?",
-                       (name, desc, maxPoints, id))
-    taskTable.commit()
-
-
-def deleteTask(config, id):
-    taskTable = getTable(config, "tasks")
-    taskCursor = taskTable.cursor()
-
-    taskCursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
-    taskTable.commit()
-
-
-def addFileToSubmission(config, submissionID, identifier, sha, name):
-    # Add a file to the specified submission and identifier (student)
-
-    fileDatabase = getTable(config, "files")
-    cursor = fileDatabase.cursor()
-
-    cursor.execute("""SELECT fileID FROM files
-                      WHERE submissionID = ?
-                      AND identifier = ?
-                      AND sha = ?""",
-                   (submissionID, identifier, sha))
-
-    if cursor.fetchone():
-        # File is sent twice in one mail (realistic) OR the SHA of two different
-        # files collided (not that realistic...)
-        logging.debug("Two files with the same checksum submitted by %s"
-                      % identifier)
-    else:
-        cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
-                          VALUES(?, ?, ?)""", (submissionID, identifier, sha))
-        fileDatabase.submit()
-
-
-def submissionForTaskAndIdentifier(config, taskID, identifier, points):
-    # Get the submission ID for the specified task and identifier (student)
-    # if it does not exist, create it.
-
-    submissionDatabase = getTable(config, "submissions")
-    cursor = submissionDatabase.cursor()
-
-    cursor.execute("""SELECT submissionID FROM submissions
-                      WHERE taskID = ? AND identifier = ? AND points = ?""",
-                   (taskID, identifier, points))
-
-    existingSubmissionID = cursor.fetchone()
-
-    if existingSubmissionID:
-        return existingSubmissionID[0]  # just return submissionID
-    else:
-        # No submission for this task exists from this identifier
-        cursor.execute("""INSERT INTO
-                          submissions(taskID, identifier, points)
-                          VALUES(?, ?, ?)""", (taskID, identifier,
-                       points))
-        return cursor.lastrowid
+        if existingSubmissionID:
+            return existingSubmissionID[0]  # just return submissionID
+        else:
+            # No submission for this task exists from this identifier
+            self.cursor.execute("""INSERT INTO
+                                submissions(taskID, identifier, points)
+                                VALUES(?, ?, ?)""", (taskID, identifier,
+                                points))
+            return self.cursor.lastrowid

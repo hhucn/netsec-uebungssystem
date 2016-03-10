@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import argparse
 import getpass
 import logging
+import os
 import threading
 
 from passlib.hash import pbkdf2_sha256
@@ -37,6 +38,8 @@ def main():
     args = parser.parse_args()
 
     config = Config.read(args.config_default_path, args.config_path)
+
+    config.module_path = os.path.dirname(os.path.dirname(__file__))
 
     if config("loglevel").upper() == "ERROR":
         logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)

@@ -42,8 +42,7 @@ Aktueller Status: <b>{{ korrekturstatus }}</b>
 							<input type="hidden" name="identifier" value="{{ identifier }}">
 							<input type="hidden" name="sheetNumber" value="{{ sheet.number }}">
 							<input type="hidden" name="taskNumber" value="{{ task.number }}">
-							<input type="hidden" name="oldPoints" value="{{ task.reachedPoints }}">
-							<input type="number" name="newPoints" value="{{ task.reachedPoints }}" min="0" max="{{ task.maxPoints }}" step="any">
+							<input type="number" name="points" value="{{ task.reachedPoints }}" min="0" max="{{ task.maxPoints }}" step="any">
 							<input type="submit" value="Speichern">
 						</form>
 					{% else %}

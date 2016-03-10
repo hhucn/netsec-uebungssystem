@@ -3,11 +3,10 @@
 	<h1>{{ sheet.name }}</h1>
 	<form method="post" action="/sheetmanager">
 		<input type="hidden" name="type" value="renameSheet">
-		<input type="hidden" name="oldName" value="{{ sheet.name }}">
 		<input type="hidden" name="sheetID" value="{{ sheet.id }}">
 		<label>
 			Blattname:
-			<input type="text" name="newName" value="{{ sheet.name }}">
+			<input type="text" name="name" value="{{ sheet.name }}">
 		</label>
 		<input type="submit" value="Speichern">
 	</form>
@@ -25,16 +24,13 @@
                     <input type="hidden" name="sheetID" value="{{ sheet.id }}">
                     <input type="hidden" name="taskID" value="{{ task.id }}">
 					<td>
-						<input type="hidden" name="oldName" value="{{ task.name }}">
-						<input type="text" name="newName" value="{{ task.name }}" style="width:100%">
+						<input type="text" name="name" value="{{ task.name }}" style="width:100%">
 					</td>
 					<td>
-						<input type="hidden" name="oldDescription" value="{{ task.description }}">
-						<input type="text" name="newDescription" value="{{ task.description }}" style="width:100%">
+						<input type="text" name="description" value="{{ task.description }}" style="width:100%">
 					</td>
 					<td>
-						<input type="hidden" name="oldPoints" value="{{ task.maxPoints }}">
-						<input type="number" name="newPoints" min="0" step="any" value="{{ task.maxPoints }}">
+						<input type="number" name="points" min="0" step="any" value="{{ task.maxPoints }}">
 					</td>
                     <td>
                         <input type="submit" value="Speichern">

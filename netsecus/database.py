@@ -77,7 +77,7 @@ class Database(object):
 
         return result
 
-    def setSheet(self, name):
+    def createSheet(self, name):
         self.cursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
         self.database.commit()
 

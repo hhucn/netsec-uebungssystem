@@ -1,9 +1,14 @@
 {%include ../../htmldocs/header.html %}
 
+
+<form method="post" action="/sheet/create">
+	{% module xsrf_form_html() %}
+	<input type="submit" value="Neues Blatt erstellen">
+</form>
+
 <table>
 	<tr>
 		<th>Blatt-ID</th>
-		<th>Blatt</th>
 		<th>Aufgaben</th>
 		<th>Editierbarkeit</th>
 		<th>Zeitraum</th>
@@ -12,7 +17,6 @@
 	{% for sheet in sheets %}
 		<tr>
 			<td>{{ sheet.id }}</td>
-			<td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
 			<td>
 				<ul>
 					{% for task in sheet.tasks %}
@@ -37,11 +41,5 @@
 		</tr>
 	{% end %}
 </table>
-<br>
-<form method="post" action="/sheet/create">
-	{% module xsrf_form_html() %}
-	<input type="text" name="name" placeholder="Blatt-Name" width="200px">
-	<input type="submit" value="Hinzufügen">
-</form>
 
 {%include ../../htmldocs/footer.html %}

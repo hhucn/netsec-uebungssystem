@@ -17,7 +17,7 @@ class Database(object):
 
     def createTables(self):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `sheetID` (`sheetID` Integer PRIMARY KEY
-                            AUTOINCREMENT, `editable` boolean, `name` text, `start` date, `end` date)""")
+                            AUTOINCREMENT, `editable` boolean, `start` date, `end` date)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `taskID` (`taskID` Integer PRIMARY KEY
                             AUTOINCREMENT, `sheetID` Integer, `name` text, `maxPoints` float)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissionID` (`submissionID` Integer PRIMARY KEY
@@ -26,14 +26,14 @@ class Database(object):
                             AUTOINCREMENT, `submissionID` Integer, `sha` text, `filename` text)""")
 
     def getSheets(self):
-        self.cursor.execute("SELECT sheetID, name, editable, start, end FROM sheets")
+        self.cursor.execute("SELECT sheetID, editable, start, end FROM sheets")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            sheetID, sheetName, editable, sheetStartDate, sheetEndDate = row
+            sheetID, editable, sheetStartDate, sheetEndDate = row
             tasks = self.getTasksForSheet(sheetID)
-            result.append(Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate))
+            result.append(Sheet(sheetID, tasks, editable, sheetStartDate, sheetEndDate))
 
         return result
 
@@ -49,13 +49,13 @@ class Database(object):
         return result
 
     def getSheetFromID(self, id):
-        self.cursor.execute("SELECT sheetID, editable, name, start, end FROM sheets WHERE sheetID = ?", (id, ))
+        self.cursor.execute("SELECT sheetID, editable, start, end FROM sheets WHERE sheetID = ?", (id, ))
         sheet = self.cursor.fetchone()
 
         if sheet:
-            sheetID, editable, sheetName, sheetStartDate, sheetEndDate = sheet
+            sheetID, editable, sheetStartDate, sheetEndDate = sheet
             tasks = self.getTasksForSheet(id)
-            return Sheet(sheetID, sheetName, tasks, editable, sheetStartDate, sheetEndDate)
+            return Sheet(sheetID, tasks, editable, sheetStartDate, sheetEndDate)
 
     def getTaskFromID(self, id):
         self.cursor.execute("SELECT sheetID, name, maxPoints FROM tasks WHERE taskID = ?", (id, ))
@@ -77,8 +77,8 @@ class Database(object):
 
         return result
 
-    def createSheet(self, name):
-        self.cursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
+    def createSheet(self):
+        self.cursor.execute("INSERT INTO sheets DEFAULT VALUES")
         self.database.commit()
 
     def deleteSheet(self, sheetID):

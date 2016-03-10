@@ -8,7 +8,7 @@
     </tr>
     {% for sheet in sheets %}
         <tr>
-            <td><a href="/sheet/{{ sheet.id }}">{{ sheet.name }}</a></td>
+            <td><a href="/sheet/{{ sheet.id }}">Blatt {{ sheet.id }}</a></td>
             <td>{{ sheet.submissionsFinished }} von {{ sheet.submissions }} bearbeitet.</td>
             <td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
         </tr>

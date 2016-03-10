@@ -6,7 +6,6 @@ from .ProtectedPostHandler import ProtectedPostHandler
 
 class SheetCreateHandler(ProtectedPostHandler):
     def postPassedCSRF(self):
-        name = self.get_argument("name")
         database = Database(self.application.config)
-        database.createSheet(name)
+        database.createSheet()
         self.redirect("/sheets")

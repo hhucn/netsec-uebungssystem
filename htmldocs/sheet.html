@@ -1,15 +1,6 @@
 {%include ../../htmldocs/header.html %}
 
-	<h1>{{ sheet.name }}</h1>
-	<form method="post" action="/sheetmanager">
-		<input type="hidden" name="type" value="renameSheet">
-		<input type="hidden" name="sheetID" value="{{ sheet.id }}">
-		<label>
-			Blattname:
-			<input type="text" name="name" value="{{ sheet.name }}">
-		</label>
-		<input type="submit" value="Speichern">
-	</form>
+	<h1>Blatt {{ sheet.id }}</h1>
 	<table class="table">
 		<tr>
 			<th>Aufgabe</th>

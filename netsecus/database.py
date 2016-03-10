@@ -95,6 +95,12 @@ class Database(object):
     def deleteTask(self, id):
         self.cursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
         self.database.commit()
+        self.database.commit()
+
+    def createTask(self, sheetID, name, maxPoints):
+        self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?)",
+                            (sheetID, name, maxPoints))
+        self.database.commit()
 
     def addFileToSubmission(self, submissionID, identifier, sha, name):
         # Add a file to the specified submission and identifier (student)

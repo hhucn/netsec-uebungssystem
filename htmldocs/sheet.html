@@ -45,9 +45,7 @@
 			</td>
 		</tr>
 		<tr>
-			<form method="post" action="/sheetmanager">
-				<input type="hidden" name="type" value="newTask">
-				<input type="hidden" name="sheetID" value="{{ sheet.id }}">
+			<form method="post" action="/sheet/{{sheet.id}}/task/create">
 				<td>
 					<input type="text" name="name" style="width:100%">
 				</td>

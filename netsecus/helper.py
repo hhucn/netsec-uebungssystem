@@ -96,7 +96,7 @@ def checkResult(imapmail, expected):
     assert isinstance(expected, bytes)
 
     line = imapmail.readline()
-    if not re.match(rb"^(?:[A-Z0-9]{5,9}|[*])\s+" + expected, line):
+    if not re.match(b"^(?:[A-Z0-9]{5,9}|[*])\s+" + expected, line):
         raise MailError("Invalid response: '%s' expected, but got '%s'" % (expected, line))
 
 

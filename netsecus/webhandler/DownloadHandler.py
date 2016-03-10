@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
 
+import os
+
 from ..database import Database
 from .NetsecHandler import NetsecHandler
+
 
 class DownloadHandler(NetsecHandler):
     def get(self):

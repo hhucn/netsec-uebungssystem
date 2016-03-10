@@ -2,13 +2,10 @@ from __future__ import unicode_literals
 
 import logging
 import os
-from datetime import datetime
 
 import tornado.ioloop
 import tornado.web
 
-from . import helper
-from .task import Task
 from .webhandler.TableHandler import TableHandler
 from .webhandler.SheetsHandler import SheetsHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
@@ -17,6 +14,7 @@ from .webhandler.DownloadHandler import DownloadHandler
 from .webhandler.StatusHandler import StatusHandler
 from .webhandler.DetailHandler import DetailHandler
 from .webhandler.PointsHandler import PointsHandler
+
 
 class KorrekturApp(tornado.web.Application):
     realm = 'netsec Uebungsabgabesystem'
@@ -43,7 +41,7 @@ def mainloop(config):
         (r"/detail/.*", DetailHandler),
         (r"/points", PointsHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
-            "path": os.path.join(self.config.module_path, "static")
+            "path": os.path.join(config.module_path, "static")
         }),
     ])
 

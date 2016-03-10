@@ -16,7 +16,7 @@
 	</tr>
 	{% for sheet in sheets %}
 		<tr>
-			<td>{{ sheet.id }}</td>
+			<td><a href="/sheets/{{ sheet.id }}">{{ sheet.id }}</a></td>
 			<td>
 				<ul>
 					{% for task in sheet.tasks %}

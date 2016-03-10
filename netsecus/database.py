@@ -81,6 +81,11 @@ class Database(object):
         self.cursor.execute("INSERT INTO sheets (name) VALUES (?)", (name, ))
         self.database.commit()
 
+    def deleteSheet(self, sheetID):
+        self.cursor.execute("DELETE FROM tasks WHERE sheetID = ?", (sheetID, ))
+        self.cursor.execute("DELETE FROM sheets WHERE sheetID = ?", (sheetID, ))
+        self.database.commit()
+
     def setNewTaskForSheet(self, sheetID, name, maxPoints):
         self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?,?)", (sheetID, name, maxPoints))
         self.database.commit()
@@ -94,7 +99,6 @@ class Database(object):
 
     def deleteTask(self, id):
         self.cursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
-        self.database.commit()
         self.database.commit()
 
     def createTask(self, sheetID, name, maxPoints):

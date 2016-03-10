@@ -7,6 +7,7 @@
 		<th>Aufgaben</th>
 		<th>Editierbarkeit</th>
 		<th>Zeitraum</th>
+		<th>Bearbeiten</th>
 	</tr>
 	{% for sheet in sheets %}
 		<tr>
@@ -27,6 +28,11 @@
 				{% end %}
 			</td>
 			<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
+			<td>
+				<form method="post" action="/sheet/{{ sheet.id }}/delete">
+					<input type="submit" value="Löschen">
+				</form>
+			</td>
 		</tr>
 	{% end %}
 </table>

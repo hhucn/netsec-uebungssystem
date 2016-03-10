@@ -9,6 +9,7 @@ import tornado.web
 from .webhandler.TableHandler import TableHandler
 from .webhandler.SheetsHandler import SheetsHandler
 from .webhandler.SheetCreateHandler import SheetCreateHandler
+from .webhandler.SheetDeleteHandler import SheetDeleteHandler
 from .webhandler.TaskCreateHandler import TaskCreateHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.SheetHandler import SheetHandler
@@ -37,6 +38,7 @@ def mainloop(config):
         (r"/", TableHandler),
         (r"/sheets", SheetsHandler),
         (r"/sheet/create", SheetCreateHandler),
+        (r"/sheet/([0-9]+)/delete", SheetDeleteHandler),
         (r"/sheet/([0-9]+)/task/create", TaskCreateHandler),
         (r"/sheet/([0-9]+)/task/([0-9]+)/delete", TaskDeleteHandler),
         (r"/sheet/.*", SheetHandler),

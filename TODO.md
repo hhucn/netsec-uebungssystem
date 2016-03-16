@@ -1,6 +1,5 @@
 edittask als REST
 Übersicht über alle Abgaben
-Löschen mit booleschem Flag (Wiederherstellen)
 Ende-Datum mit Zeit für Blatt einstellen
 Anfangsdatum für Blatt weg
 Übersicht über alle Abgaben eines Blatts

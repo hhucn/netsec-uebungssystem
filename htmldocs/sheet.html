@@ -1,6 +1,9 @@
 {%include ../../htmldocs/header.html %}
 
 	<h1>Blatt {{ sheet.id }}</h1>
+	{% if sheet.deleted %}
+	<b>Dieses Blatt ist als gelöscht markiert.</b>
+	{% end %}
 	<table class="table">
 		<tr>
 			<th>Aufgabe</th>

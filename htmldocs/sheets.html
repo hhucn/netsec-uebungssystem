@@ -15,7 +15,11 @@
 		<th>Bearbeiten</th>
 	</tr>
 	{% for sheet in sheets %}
+		{% if sheet.deleted %}
+		<tr style="color:#AAA">
+		{% else %}
 		<tr>
+		{% end %}
 			<td><a href="/sheets/{{ sheet.id }}">{{ sheet.id }}</a></td>
 			<td>
 				<ul>
@@ -33,10 +37,17 @@
 			</td>
 			<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
 			<td>
+				{% if sheet.deleted %}
+				<form method="post" action="/sheet/{{ sheet.id }}/restore">
+					{% module xsrf_form_html() %}
+					<input type="submit" value="Wiederherstellen">
+				</form>
+				{% else %}
 				<form method="post" action="/sheet/{{ sheet.id }}/delete">
 					{% module xsrf_form_html() %}
 					<input type="submit" value="Löschen">
 				</form>
+				{% end %}
 			</td>
 		</tr>
 	{% end %}

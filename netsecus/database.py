@@ -16,13 +16,13 @@ class Database(object):
         self.createTables()
 
     def createTables(self):
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `sheetID` (`sheetID` Integer PRIMARY KEY
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `sheets` (`sheetID` Integer PRIMARY KEY
                             AUTOINCREMENT, `editable` boolean, `start` date, `end` date, `deleted` boolean)""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `taskID` (`taskID` Integer PRIMARY KEY
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `tasks` (`taskID` Integer PRIMARY KEY
                             AUTOINCREMENT, `sheetID` Integer, `name` text, `maxPoints` float)""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissionID` (`submissionID` Integer PRIMARY KEY
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissions` (`submissionID` Integer PRIMARY KEY
                             AUTOINCREMENT, `taskID` Integer, `identifier` text, `points` text)""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `fileID` (`fileID` Integer PRIMARY KEY
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `files` (`fileID` Integer PRIMARY KEY
                             AUTOINCREMENT, `submissionID` Integer, `sha` text, `filename` text)""")
 
     def getSheets(self):

@@ -12,6 +12,7 @@ from .webhandler.SheetCreateHandler import SheetCreateHandler
 from .webhandler.SheetDeleteHandler import SheetDeleteHandler
 from .webhandler.SheetRestoreHandler import SheetRestoreHandler
 from .webhandler.TaskCreateHandler import TaskCreateHandler
+from .webhandler.TaskEditHandler import TaskEditHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.SheetHandler import SheetHandler
 from .webhandler.DownloadHandler import DownloadHandler
@@ -42,6 +43,7 @@ def mainloop(config):
         (r"/sheet/([0-9]+)/delete", SheetDeleteHandler),
         (r"/sheet/([0-9]+)/restore", SheetRestoreHandler),
         (r"/sheet/([0-9]+)/task/create", TaskCreateHandler),
+        (r"/sheet/([0-9]+)/task/([0-9]+)/edit", TaskEditHandler),
         (r"/sheet/([0-9]+)/task/([0-9]+)/delete", TaskDeleteHandler),
         (r"/sheet/.*", SheetHandler),
         (r"/download/.*", DownloadHandler),

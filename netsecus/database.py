@@ -93,11 +93,12 @@ class Database(object):
         self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?,?)", (sheetID, name, maxPoints))
         self.database.commit()
 
-    def replaceTask(self, id, task):
-        name = task.name
-        maxPoints = task.maxPoints
+    def setNameForTask(self, id, name):
+        self.cursor.execute("UPDATE tasks SET name=? WHERE taskID=?", (name, id))
+        self.database.commit()
 
-        self.cursor.execute("UPDATE tasks SET name=? AND maxPoints=? WHERE taskID=?", (name, maxPoints, id))
+    def setPointsForTask(self, id, points):
+        self.cursor.execute("UPDATE tasks SET maxPoints=? WHERE taskID=?", (points, id))
         self.database.commit()
 
     def deleteTask(self, id):

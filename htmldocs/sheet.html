@@ -12,10 +12,8 @@
 		</tr>
 		{% for task in sheet.tasks %}
 			<tr>
-				<form method="post" action="/sheetmanager">
-					<input type="hidden" name="type" value="editTask">
-          <input type="hidden" name="sheetID" value="{{ sheet.id }}">
-          <input type="hidden" name="taskID" value="{{ task.id }}">
+				<form method="post" action="/sheet/{{sheet.id}}/task/{{task.id}}/edit">
+					{% module xsrf_form_html() %}
 					<td>
 						<input type="text" name="name" value="{{ task.name }}" style="width:100%">
 					</td>

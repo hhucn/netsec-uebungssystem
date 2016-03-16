@@ -1,4 +1,3 @@
-edittask als REST
 Übersicht über alle Abgaben
 Ende-Datum mit Zeit für Blatt einstellen
 Anfangsdatum für Blatt weg

@@ -45,11 +45,10 @@ def mainloop(config):
         helper.checkResult(imapmail, b"OK")
         logging.debug("Server supports UTF8")
 
-    imapmail._command("IDLE")
-
+    imapmail._command("IDLE")  # Check whether server supports IDLE
     if "idling" in imapmail.readline().decode("utf-8"):
         def idle_loop():
-            imapmail._command("DONE")
+            imapmail.send(b"DONE\r\n")
             imapmail.readline()
             mailProcessing(config, imapmail)
             imapmail._command("IDLE")

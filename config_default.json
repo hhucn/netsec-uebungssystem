@@ -4,8 +4,8 @@
 	"database_path":"databases.sqlite",
 	"script_path":"scripts",
 	"mail": {
-		"smtp_server": "smtp.gmail.com",
-		"imap_server": "imap.gmail.com",
+		"smtp_server": "mail.uni-duesseldorf.de",
+		"imap_server": "mail.uni-duesseldorf.de",
 		"delay": 3,
 		"ssl": true
 	},

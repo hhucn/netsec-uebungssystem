@@ -2,7 +2,7 @@ INSTALL_PACKAGE=pip3 install --user
 
 test:
 	flake8 .
-	python -m unittest discover test/
+	python3 -m unittest discover test/
 
 install:
 	${INSTALL_PACKAGE} passlib

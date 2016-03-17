@@ -79,9 +79,9 @@ def mailProcessing(config, imapmail):
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
         commands.save(config, imapmail, message)
-        print('TODO move mail')
 
-    #commands.move(config, imapmail, mails, "Abgaben")
+        print('TODO move mail')
+        # commands.move(config, imapmail, mails, "Abgaben")
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

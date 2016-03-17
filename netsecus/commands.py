@@ -1,16 +1,14 @@
 from __future__ import unicode_literals
 
-import datetime
 import dateutil.parser
 import email
 import hashlib
-import io
+import itertools
 import logging
 import os
 import re
 
 from . import helper
-
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
@@ -116,7 +114,7 @@ def save(config, imapmail, message):
     if os.path.exists(files_path):
         orig_files_path = files_path
         for i in itertools.count(2):
-            files_path = '%s_%s' % (orig_files_path, i)
+            files_path = '%s___%s' % (orig_files_path, i)
             if not os.path.exists(files_path):
                 break
 

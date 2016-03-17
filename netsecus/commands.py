@@ -104,21 +104,16 @@ def save(config, imapmail, mails):
             os.makedirs(attachPath)
 
         for payloadPart in mail.text.walk():
-            if payloadPart.get_filename():
-                payload = str(payloadPart.get_payload(decode="True"))
-                payloadName = helper.escape_filename(payloadPart.get_filename())
-                hashObject = hashlib.sha256()
-                hashObject.update(payload.encode("utf-8"))
-                payloadHash = hashObject.hexdigest()
+            fn = payloadPart.get_filename()
+            if fn:
+                payload = payloadPart.get_payload(decode="True")
+                payload_name = helper.escape_filename(fn)
+
+                # TODO determine path
                 payloadPath = os.path.join(attachPath, payloadHash + " " + payloadName)
-                attachFile = open(payloadPath, "w")
-
-                if payload:
+                with open(payloadPath, "wb") as attach_file:
                     attachFile.write(payload)
-                attachFile.close()
                 os.utime(payloadPath, mailCreationModificationTuple)
-
-                database.setFile(config, identifier, currentSheet, payloadHash, payloadName)
     return mails
 
 

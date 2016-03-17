@@ -1,3 +1,4 @@
+Neue Pfad-Struktur für Abgaben submissions/<student>/<Blatt>/<timestamp>/{mail, alle dateien}
 Übersicht über alle Abgaben eines Blatts
 Übersicht über alle Studenten
 Übersicht über alle Abgaben eines Studenten

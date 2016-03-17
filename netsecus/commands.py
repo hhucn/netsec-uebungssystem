@@ -19,19 +19,18 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
     # and http://tools.ietf.org/html/rfc3501#section-6.4.5 (for fetch)
     imapmail.select(mailbox)
 
-    response = helper.imapCommand(imapmail, "UID", "SEARCH", filterCriteria)
+    response = helper.uidCommand(imapmail, "SEARCH", filterCriteria)
     mails = []
 
-    if response:
-        response_ids = response.encode("utf-8").split(" ")
-        for uid in response_ids:
-            mailInfo, mailText = helper.imapCommand(imapmail, "UID", "FETCH", uid, "(rfc822)")
-            data = email.message_from_string(mailText)
+    response_ids = response.decode("utf-8").split(" ")
+    for uid in response_ids:
+        mailInfo, mailText = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
+        data = email.message_from_string(mailText)
 
-            clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", data["From"])
-            clientIdentifier = clientMailAddress.group(1)
-            clientHost = clientMailAddress.group(2)
-            mails.append(Mail(uid, config("variables"), {"identifier": clientIdentifier, "host": clientHost}, data))
+        clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", data["From"])
+        clientIdentifier = clientMailAddress.group(1)
+        clientHost = clientMailAddress.group(2)
+        mails.append(Mail(uid, config("variables"), {"identifier": clientIdentifier, "host": clientHost}, data))
     return mails
 
 

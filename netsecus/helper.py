@@ -38,6 +38,21 @@ def imapCommand(imapmail, command, *args):
         raise MailError(err)
 
 
+def uidCommand(imapmail, command, *args):
+    logging.debug("\tUID %s %s" % (command, " ".join(args)))
+
+    args = [a.encode('utf-8') for a in args]
+
+    code, response = imapmail.uid(command, *args)
+
+    if code == 'OK':
+        return response[0]
+    else:
+        err = "Server responded with Code '%s' for '%s %s'." % (code, command, args)
+        raise MailError(err)
+
+
+
 def smtpMail(config, to, what):
     try:
         username = config('mail.username')

@@ -14,5 +14,6 @@ class TestHelper(unittest.TestCase):
         self.assertEqual(netsecus.helper.escape_filename('..'), '_.')
         self.assertEqual(netsecus.helper.escape_filename('../a/b/c'), '_._a_b_c')
         self.assertEqual(netsecus.helper.escape_filename('C:ö'), 'C__')
+        self.assertEqual(netsecus.helper.escape_filename('foo bar.json'), 'foo bar.json')
 
 tutils.main(__name__)

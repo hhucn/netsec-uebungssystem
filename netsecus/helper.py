@@ -92,12 +92,12 @@ def imaplibSendPatch(self, data):
 
 def escape_filename(fn):
     assert isinstance(fn, str)
-    fn = re.sub(r'[^a-zA-Z0-9._-]', '_', fn)
+    fn = re.sub(r'[^a-zA-Z 0-9._-]', '_', fn)
     fn = re.sub(r'^\.', '_', fn)
     if not fn:
         fn = '_'
 
-    assert re.match(r'^[a-zA-Z0-9_-][a-zA-Z0-9._-]*$', fn)
+    assert re.match(r'^[a-zA-Z 0-9_-][a-zA-Z 0-9._-]*$', fn)
     return fn
 
 

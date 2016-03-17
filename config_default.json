@@ -1,6 +1,6 @@
 {
 	"loglevel":"debug",
-	"attachment_path":"attachments",
+	"attachment_path":"submissions",
 	"database_path":"databases.sqlite",
 	"script_path":"scripts",
 	"mail": {

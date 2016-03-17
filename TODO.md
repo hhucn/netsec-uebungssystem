@@ -6,7 +6,11 @@ Neue Pfad-Struktur für Abgaben submissions/<student>/<Blatt>/<timestamp>/{mail,
 
 require mails to start with "Abgabe [Nr]"
 make sure to never use floats for points (use INTEGER tenths of a point instead)
+tag mail if exception occurs
+reimplement answer
 
+move submission handling out of commands into a better-named module (how about submission?)
+test with subject "AbgabeFoo"
 fix travis
 test with deliberately valid/invalid UTF8
 PGP (students / system)

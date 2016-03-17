@@ -76,9 +76,12 @@ def mainloop(config):
 
 def mailProcessing(config, imapmail):
     filterCriteria = "SUBJECT \"Abgabe\""
-    uids = commands.filter(config, imapmail, [], filterCriteria)
-    uids = commands.save(config, imapmail, uids)
-    uids = commands.move(config, imapmail, uids, "Abgaben")
+    mails = commands.filter(config, imapmail, [], filterCriteria)
+    for uid, message in mails:
+        commands.save(config, imapmail, message)
+        print('TODO move mail')
+
+    #commands.move(config, imapmail, mails, "Abgaben")
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

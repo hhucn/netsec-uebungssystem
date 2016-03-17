@@ -1,17 +1,16 @@
 from __future__ import unicode_literals
 
-import hashlib
-import logging
+import datetime
+import dateutil.parser
 import email
+import hashlib
+import io
+import logging
 import os
 import re
-import imp
-import dateutil.parser
-import calendar
 
 from . import helper
-from .mail import Mail
-from . import database
+
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
@@ -25,12 +24,8 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
     response_ids = response.decode("utf-8").split(" ")
     for uid in response_ids:
         _mail_info, mail_bytes = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
-        data = email.message_from_bytes(mail_bytes)
-
-        clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", data["From"])
-        clientIdentifier = clientMailAddress.group(1)
-        clientHost = clientMailAddress.group(2)
-        mails.append(Mail(uid, config("variables"), {"identifier": clientIdentifier, "host": clientHost}, data))
+        message = email.message_from_bytes(mail_bytes)
+        mails.append((uid, message))
     return mails
 
 
@@ -89,39 +84,55 @@ def delete(config, imapmail, mails):
     imapmail.expunge()
 
 
-def save(config, imapmail, mails):
-    for mail in mails:
-        identifier = helper.escape_filename(mail.address["identifier"]).lower()
-        attachPath = os.path.join(config("attachment_path"), identifier)
-
-        mailDateTime = dateutil.parser.parse(mail.text["Date"])
-        mailDateTimeStamp = calendar.timegm(mailDateTime.utctimetuple())
-        mailCreationModificationTuple = (mailDateTimeStamp, mailDateTimeStamp)
-
-        currentSheet = config("currentSheet")
-
-        if not os.path.exists(attachPath):
-            os.makedirs(attachPath)
-
-        for payloadPart in mail.text.walk():
-            fn = payloadPart.get_filename()
-            if fn:
-                payload = payloadPart.get_payload(decode="True")
-                payload_name = helper.escape_filename(fn)
-
-                # TODO determine path
-                payloadPath = os.path.join(attachPath, payloadHash + " " + payloadName)
-                with open(payloadPath, "wb") as attach_file:
-                    attachFile.write(payload)
-                os.utime(payloadPath, mailCreationModificationTuple)
-    return mails
+# TODO do name resolution etc. here
+def user_identifier(message):
+    user_id = message.get('From', 'anonymous')
+    return user_id
 
 
-def script(config, imapmail, mails, name, *args):
-    try:
-        loadedScript = imp.load_source(name, os.path.join(config("script_path"), "%s.py" % name))
-    except ImportError:
-        logging.error("Exception thrown while loading script '%s.py'." % name)
-        return mails
+def submission_identifier(message):
+    subject = message.get('Subject', '')
+    subm_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
+    if not subm_m:
+        raise helper.MailError('Invalid subject line')
+    subm_id = subm_m.group('id')
+    assert re.match(r'^[0-9]+$', subm_id)
+    return subm_id
 
-    return loadedScript.run(config, imapmail, mails, *args)
+
+def save(config, imapmail, message):
+    user_id = user_identifier(message)
+    submission_id = submission_identifier(message)
+    mail_dt = dateutil.parser.parse(message["Date"])
+    timestamp_str = mail_dt.isoformat()
+
+    files_path = os.path.join(
+        config("attachment_path"),
+        helper.escape_filename(user_id),
+        helper.escape_filename(submission_id),
+        helper.escape_filename(timestamp_str)
+    )
+
+    if os.path.exists(files_path):
+        orig_files_path = files_path
+        for i in itertools.count(2):
+            files_path = '%s_%s' % (orig_files_path, i)
+            if not os.path.exists(files_path):
+                break
+
+    os.makedirs(files_path)
+
+    for subpart in message.walk():
+        fn = subpart.get_filename()
+        payload = subpart.get_payload(decode=True)
+
+        if not payload:
+            continue
+
+        if not fn:
+            fn = 'mail'
+
+        payload_name = helper.escape_filename(fn)
+        payload_path = os.path.join(files_path, payload_name)
+        with open(payload_path, "wb") as payload_file:
+            payload_file.write(payload)

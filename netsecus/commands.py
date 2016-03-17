@@ -24,8 +24,8 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
 
     response_ids = response.decode("utf-8").split(" ")
     for uid in response_ids:
-        mailInfo, mailText = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
-        data = email.message_from_string(mailText)
+        _mail_info, mail_bytes = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
+        data = email.message_from_bytes(mail_bytes)
 
         clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", data["From"])
         clientIdentifier = clientMailAddress.group(1)
@@ -91,7 +91,7 @@ def delete(config, imapmail, mails):
 
 def save(config, imapmail, mails):
     for mail in mails:
-        identifier = helper.escapePath(mail.address["identifier"]).lower()
+        identifier = helper.escape_filename(mail.address["identifier"]).lower()
         attachPath = os.path.join(config("attachment_path"), identifier)
 
         mailDateTime = dateutil.parser.parse(mail.text["Date"])
@@ -106,7 +106,7 @@ def save(config, imapmail, mails):
         for payloadPart in mail.text.walk():
             if payloadPart.get_filename():
                 payload = str(payloadPart.get_payload(decode="True"))
-                payloadName = helper.escapePath(payloadPart.get_filename())
+                payloadName = helper.escape_filename(payloadPart.get_filename())
                 hashObject = hashlib.sha256()
                 hashObject.update(payload)
                 payloadHash = hashObject.hexdigest()

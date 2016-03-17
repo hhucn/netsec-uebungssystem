@@ -3,7 +3,6 @@ from __future__ import unicode_literals, print_function
 import base64
 import imaplib
 import logging
-import os
 import re
 import smtplib
 import sys
@@ -91,17 +90,15 @@ def imaplibSendPatch(self, data):
         bytes = bytes - sent
 
 
-def escapePath(path):
-    if os.sep in path:
-        logging.error("Found '%s' in '%s', possible attack." % (os.sep, path))
-        path.replace(os.sep, "_")
+def escape_filename(fn):
+    assert isinstance(fn, str)
+    fn = re.sub(r'[^a-zA-Z0-9._-]', '_', fn)
+    fn = re.sub(r'^\.', '_', fn)
+    if not fn:
+        fn = '_'
 
-    for pathElement in path.split(os.sep):
-        if pathElement[0] == ".":
-            logging.error("Found dot at beginning of filename, possible attack.")
-            pathElement[0] = "_"
-
-    return path
+    assert re.match(r'^[a-zA-Z0-9_-][a-zA-Z0-9._-]*$', fn)
+    return fn
 
 
 def checkResult(imapmail, expected):

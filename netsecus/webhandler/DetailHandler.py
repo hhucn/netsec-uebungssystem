@@ -16,7 +16,7 @@ class DetailHandler(NetsecHandler):
 
         files = []
 
-        attachmentPath = os.path.join(self.application.config("attachment_path"), helper.escapePath(identifier))
+        attachmentPath = os.path.join(self.application.config("attachment_path"), helper.escape_filename(identifier))
         if os.path.exists(attachmentPath):
             for entry in os.listdir(attachmentPath):
                 if entry[0] != ".":

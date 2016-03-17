@@ -28,7 +28,7 @@ class TestSourceQuality(unittest.TestCase):
     def _test_unicode_literals(self, fn, code):
         if "'" not in code and '"' not in code:
             return
-        self.assertRegexpMatches(
+        self.assertRegex(
             code,
             r'''(?x)
             (?:(?:\#.*?|\s*)\n)*

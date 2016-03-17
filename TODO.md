@@ -1,7 +1,8 @@
 Neue Pfad-Struktur für Abgaben submissions/<student>/<Blatt>/<timestamp>/{mail, alle dateien}
-Übersicht über alle Abgaben eines Blatts
+Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über alle Studenten
 Übersicht über alle Abgaben eines Studenten
+Übersicht über die Korrekturen
 
 require mails to start with "Abgabe [Nr]"
 make sure to never use floats for points (use INTEGER tenths of a point instead)

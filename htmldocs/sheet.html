@@ -4,6 +4,12 @@
 	{% if sheet.deleted %}
 	<b>Dieses Blatt ist als gelöscht markiert.</b>
 	{% end %}
+
+	<form method="post" action="/sheet/{{sheet.id}}/editend">
+		{% module xsrf_form_html() %}
+		Abgabefrist: <input type="text" name="date" value="{{ sheet.timeEnd }}">
+		<input type="submit" value="Speichern">
+	</form>
 	<table class="table">
 		<tr>
 			<th>Aufgabe</th>

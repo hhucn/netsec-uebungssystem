@@ -10,6 +10,7 @@ from .webhandler.TableHandler import TableHandler
 from .webhandler.SheetsHandler import SheetsHandler
 from .webhandler.SheetCreateHandler import SheetCreateHandler
 from .webhandler.SheetDeleteHandler import SheetDeleteHandler
+from .webhandler.SheetEditEndHandler import SheetEditEndHandler
 from .webhandler.SheetRestoreHandler import SheetRestoreHandler
 from .webhandler.TaskCreateHandler import TaskCreateHandler
 from .webhandler.TaskEditHandler import TaskEditHandler
@@ -41,6 +42,7 @@ def mainloop(config):
         (r"/sheets", SheetsHandler),
         (r"/sheet/create", SheetCreateHandler),
         (r"/sheet/([0-9]+)/delete", SheetDeleteHandler),
+        (r"/sheet/([0-9]+)/editend", SheetEditEndHandler),
         (r"/sheet/([0-9]+)/restore", SheetRestoreHandler),
         (r"/sheet/([0-9]+)/task/create", TaskCreateHandler),
         (r"/sheet/([0-9]+)/task/([0-9]+)/edit", TaskEditHandler),

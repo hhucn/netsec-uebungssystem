@@ -89,6 +89,10 @@ class Database(object):
         self.cursor.execute("UPDATE sheets SET deleted = 0 WHERE sheetID = ?", (sheetID, ))
         self.database.commit()
 
+    def editEnd(self, sheetID, end):
+        self.cursor.execute("UPDATE sheets SET end=? WHERE sheetID = ?", (end, sheetID, ))
+        self.database.commit()
+
     def setNewTaskForSheet(self, sheetID, name, maxPoints):
         self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?,?)", (sheetID, name, maxPoints))
         self.database.commit()

@@ -25,7 +25,7 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
     response_ids = response.decode("utf-8").split(" ")
     for uid in response_ids:
         mailInfo, mailText = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
-        data = email.message_from_string(mailText)
+        data = email.message_from_string(mailText.decode("utf-8"))
 
         clientMailAddress = re.search(r"([^\@\<]*)\@([^\@\>]*)", data["From"])
         clientIdentifier = clientMailAddress.group(1)
@@ -108,7 +108,7 @@ def save(config, imapmail, mails):
                 payload = str(payloadPart.get_payload(decode="True"))
                 payloadName = helper.escapePath(payloadPart.get_filename())
                 hashObject = hashlib.sha256()
-                hashObject.update(payload)
+                hashObject.update(payload.encode("utf-8"))
                 payloadHash = hashObject.hexdigest()
                 payloadPath = os.path.join(attachPath, payloadHash + " " + payloadName)
                 attachFile = open(payloadPath, "w")

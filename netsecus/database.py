@@ -72,36 +72,6 @@ class Database(object):
 
         return result
 
-    def getSubmissionForSheet(self, id):
-        self.cursor.execute("SELECT submissionID, sheetID, identifier, points FROM submissions WHERE sheetID=?", (id, ))
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            submissionID, sheetID, identifier, points = row
-            result.append(Submission(submissionID, taskID, identifier, points))
-
-        return result
-
-    def getSubmissionForSheetAndIdentifier(self, sheetID, identifier, points):
-        # Get the submission ID for the specified task and identifier (student)
-        # if it does not exist, create it.
-        self.cursor.execute("""SELECT submissionID FROM submissions
-                            WHERE sheetID = ? AND identifier = ? AND points = ?""",
-                            (sheetID, identifier, points))
-
-        existingSubmissionID = self.cursor.fetchone()
-
-        if existingSubmissionID:
-            return existingSubmissionID[0]  # just return submissionID
-        else:
-            # No submission for this task exists from this identifier
-            self.cursor.execute("""INSERT INTO
-                                submissions(taskID, identifier, points)
-                                VALUES(?, ?, ?)""", (taskID, identifier,
-                                points))
-            return self.cursor.lastrowid
-
     def getSheetFromID(self, id):
         self.cursor.execute("SELECT sheetID, editable, end, deleted FROM sheets WHERE sheetID = ?", (id, ))
         sheet = self.cursor.fetchone()

@@ -10,7 +10,7 @@
 	<tr>
 		<th>Blatt-ID</th>
 		<th>Aufgaben</th>
-		<th>Editierbarkeit</th>
+		<th>Abgabefrist</th>
 		<th>Zeitraum</th>
 		<th>Bearbeiten</th>
 	</tr>
@@ -35,7 +35,7 @@
 					Nicht editierbar
 				{% end %}
 			</td>
-			<td>{{ sheet.timeStart }} - {{ sheet.timeEnd }}</td>
+			<td>{{ sheet.timeEnd }}</td>
 			<td>
 				{% if sheet.deleted %}
 				<form method="post" action="/sheet/{{ sheet.id }}/restore">

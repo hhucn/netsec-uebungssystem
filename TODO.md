@@ -1,6 +1,5 @@
 Übersicht über alle Abgaben
 Ende-Datum mit Zeit für Blatt einstellen
-Anfangsdatum für Blatt weg
 Übersicht über alle Abgaben eines Blatts
 Übersicht über alle Studenten
 Übersicht über alle Abgaben eines Studenten

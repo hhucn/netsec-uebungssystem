@@ -52,7 +52,6 @@ def uidCommand(imapmail, command, *args):
         raise MailError(err)
 
 
-
 def smtpMail(config, to, what):
     try:
         username = config('mail.username')

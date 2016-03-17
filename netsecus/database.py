@@ -16,18 +16,34 @@ class Database(object):
         self.createTables()
 
     def createTables(self):
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS `sheets` (
-                `sheetID` Integer PRIMARY KEY,
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `sheets` (
+                `sheetID` INTEGER PRIMARY KEY,
                 `editable` boolean,
                 `end` date,
-                `deleted` boolean)""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `tasks` (`taskID` Integer PRIMARY KEY
-                            AUTOINCREMENT, `sheetID` Integer, `name` text, `maxPoints` float)""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissions` (`submissionID` Integer PRIMARY KEY
-                            AUTOINCREMENT, `sheetID` Integer, `identifier` text, `points` text)""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS `files` (`fileID` Integer PRIMARY KEY
-                            AUTOINCREMENT, `submissionID` Integer, `sha` text, `filename` text)""")
+                `deleted` boolean
+            )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `tasks` (
+                `taskID` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `sheetID` INTEGER,
+                `name` text,
+                `maxPoints` float
+            )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `submissions` (
+                `submissionID` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `sheetID` INTEGER,
+                `identifier` text,
+                `points` text
+            )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `files` (
+                `fileID` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `submissionID` INTEGER,
+                `sha` text,
+                `filename` text
+            )""")
 
     def getSheets(self):
         self.cursor.execute("SELECT sheetID, editable, end, deleted FROM sheets")

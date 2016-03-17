@@ -5,6 +5,7 @@
 require mails to start with "Abgabe [Nr]"
 make sure to never use floats for points (use INTEGER tenths of a point instead)
 
+fix travis
 test with deliberately invalid UTF8
 PGP (students / system)
 Do away with html_path configuration option

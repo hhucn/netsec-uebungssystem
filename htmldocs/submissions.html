@@ -1,0 +1,20 @@
+{%include ../../htmldocs/header.html %}
+
+<table>
+	<tr>
+		<th>Blatt-ID</th>
+		<th>Abgabe-ID</th>
+		<th>Student</th>
+		<th>Punkte</th>
+	</tr>
+	{% for submission in submissions %}
+		<tr>
+			<td>{{ submission.sheetID }}</td>
+			<td><a href="/submission/{{ submission.id }}">{{ submission.id }}</a></td>
+			<td>{{ submission.identifier }}</td>
+			<td>{{ submission.points }}</td>
+		</tr>
+	{% end %}
+</table>
+
+{%include ../../htmldocs/footer.html %}

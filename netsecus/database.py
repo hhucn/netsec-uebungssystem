@@ -21,7 +21,7 @@ class Database(object):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `tasks` (`taskID` Integer PRIMARY KEY
                             AUTOINCREMENT, `sheetID` Integer, `name` text, `maxPoints` float)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `submissions` (`submissionID` Integer PRIMARY KEY
-                            AUTOINCREMENT, `taskID` Integer, `identifier` text, `points` text)""")
+                            AUTOINCREMENT, `sheetID` Integer, `identifier` text, `points` text)""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS `files` (`fileID` Integer PRIMARY KEY
                             AUTOINCREMENT, `submissionID` Integer, `sha` text, `filename` text)""")
 
@@ -37,16 +37,50 @@ class Database(object):
 
         return result
 
-    def getSubmissionForSheet(self, id):
-        self.cursor.execute("SELECT submissionID, taskID, identifier, points FROM submissions")
+    def createSubmission(self, sheetID, identifier):
+        self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))
+        self.database.commit()
+
+    def getAllSubmissions(self):
+        self.cursor.execute("SELECT submissionID, sheetID, identifier, points FROM submissions")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            submissionID, taskID, identifier, points = row
+            submissionID, sheetID, identifier, points = row
+            result.append(Submission(submissionID, sheetID, identifier, points))
+
+        return result
+
+    def getSubmissionForSheet(self, id):
+        self.cursor.execute("SELECT submissionID, sheetID, identifier, points FROM submissions WHERE sheetID=?", (id, ))
+        rows = self.cursor.fetchall()
+        result = []
+
+        for row in rows:
+            submissionID, sheetID, identifier, points = row
             result.append(Submission(submissionID, taskID, identifier, points))
 
         return result
+
+    def getSubmissionForSheetAndIdentifier(self, sheetID, identifier, points):
+        # Get the submission ID for the specified task and identifier (student)
+        # if it does not exist, create it.
+        self.cursor.execute("""SELECT submissionID FROM submissions
+                            WHERE sheetID = ? AND identifier = ? AND points = ?""",
+                            (sheetID, identifier, points))
+
+        existingSubmissionID = self.cursor.fetchone()
+
+        if existingSubmissionID:
+            return existingSubmissionID[0]  # just return submissionID
+        else:
+            # No submission for this task exists from this identifier
+            self.cursor.execute("""INSERT INTO
+                                submissions(taskID, identifier, points)
+                                VALUES(?, ?, ?)""", (taskID, identifier,
+                                points))
+            return self.cursor.lastrowid
 
     def getSheetFromID(self, id):
         self.cursor.execute("SELECT sheetID, editable, end, deleted FROM sheets WHERE sheetID = ?", (id, ))
@@ -131,22 +165,3 @@ class Database(object):
             self.cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
                               VALUES(?, ?, ?)""", (submissionID, identifier, sha))
             self.database.submit()
-
-    def submissionForTaskAndIdentifier(self, taskID, identifier, points):
-        # Get the submission ID for the specified task and identifier (student)
-        # if it does not exist, create it.
-        self.cursor.execute("""SELECT submissionID FROM submissions
-                            WHERE taskID = ? AND identifier = ? AND points = ?""",
-                            (taskID, identifier, points))
-
-        existingSubmissionID = self.cursor.fetchone()
-
-        if existingSubmissionID:
-            return existingSubmissionID[0]  # just return submissionID
-        else:
-            # No submission for this task exists from this identifier
-            self.cursor.execute("""INSERT INTO
-                                submissions(taskID, identifier, points)
-                                VALUES(?, ?, ?)""", (taskID, identifier,
-                                points))
-            return self.cursor.lastrowid

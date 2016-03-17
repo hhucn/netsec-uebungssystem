@@ -1,4 +1,3 @@
-Übersicht über alle Abgaben
 Ende-Datum mit Zeit für Blatt einstellen
 Übersicht über alle Abgaben eines Blatts
 Übersicht über alle Studenten

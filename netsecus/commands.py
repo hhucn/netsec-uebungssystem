@@ -23,8 +23,8 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
     mails = []
 
     if response:
-        response = response.encode("utf-8").split(" ")
-        for uid in response:
+        response_ids = response.encode("utf-8").split(" ")
+        for uid in response_ids:
             mailInfo, mailText = helper.imapCommand(imapmail, "UID", "FETCH", uid, "(rfc822)")
             data = email.message_from_string(mailText)
 

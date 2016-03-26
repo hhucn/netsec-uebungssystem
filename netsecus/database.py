@@ -5,6 +5,7 @@ import sqlite3
 
 from .sheet import Sheet
 from .submission import Submission
+from .student import Student
 from .task import Task
 
 
@@ -63,14 +64,20 @@ class Database(object):
         return result
 
     def getStudents(self):
-        self.cursor.execute("SELECT identifier FROM alias")
+        self.cursor.execute("SELECT identifier, alias FROM alias")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            identifier = *row
-            if identifier not in result:
-                result.append(identifier)
+            identifier, alias = row
+            exists = False
+            for student in result:
+                if student.identifier == identifier:
+                    student.alias.append(alias)
+                    exists = True
+                    break
+            if not exists:
+                result.append(Student(identifier, alias))
 
         return result
 

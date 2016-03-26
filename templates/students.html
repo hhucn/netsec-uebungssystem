@@ -1,0 +1,20 @@
+{%include ../../templates/header.html %}
+
+<table>
+	<tr>
+		<th>Student-ID</th>
+		<th>Alias</th>
+	</tr>
+	{% for student in students %}
+		<tr>
+			<td><a href="/student/{{ student.identifier }}">{{ student.identifier }}</a></td>
+			<td>
+				{% for alias in student.alias %}
+					{{ alias }} 
+				{% end %}
+			</td>
+		</tr>
+	{% end %}
+</table>
+
+{%include ../../templates/footer.html %}

@@ -44,6 +44,11 @@ class Database(object):
                 `sha` text,
                 `filename` text
             )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `alias` (
+                `alias` text,
+                `identifier` text
+            )""")
 
     def getSheets(self):
         self.cursor.execute("SELECT sheetID, editable, end, deleted FROM sheets")
@@ -56,6 +61,22 @@ class Database(object):
             result.append(Sheet(sheetID, tasks, editable, sheetEndDate, deleted))
 
         return result
+
+    def getStudents(self):
+        self.cursor.execute("SELECT identifier FROM alias")
+        rows = self.cursor.fetchall()
+        result = []
+
+        for row in rows:
+            identifier = *row
+            if identifier not in result:
+                result.append(identifier)
+
+        return result
+
+    def resolveAlias(self, alias):
+        self.cursor.execute("SELECT identifier FROM alias WHERE alias = ?", (alias,))
+        return self.cursor.fetchone()
 
     def createSubmission(self, sheetID, identifier):
         self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))

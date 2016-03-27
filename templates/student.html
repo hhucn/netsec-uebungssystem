@@ -1,0 +1,19 @@
+{%include ../../templates/header.html %}
+
+	<h1>Student {{ student.identifier }}</h1>
+	<table class="table">
+		<tr>
+			<th>Abgabe-ID</th>
+			<th>Blatt</th>
+			<th>Punkte</th>
+		</tr>
+		{% for submission in submissions %}
+		<tr>
+			<td><a href="/submission/{{ submission.id }}">{{ submission.id }}</a></td>
+			<td><a href="/sheet/{{ submission.sheetID }}">Blatt {{ submission.sheetID }}</a></td>
+			<td>{{ submission.points }}</td>
+		</tr>
+		{% end %}
+	</table>
+
+{%include ../../templates/footer.html %}

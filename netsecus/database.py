@@ -63,6 +63,12 @@ class Database(object):
 
         return result
 
+    def getStudent(self, id):
+        self.cursor.execute("SELECT identifier, alias FROM alias WHERE identifier = ?", (id, ))
+        identifier, alias = self.cursor.fetchone()
+
+        return Student(identifier, alias)
+
     def getStudents(self):
         self.cursor.execute("SELECT identifier, alias FROM alias")
         rows = self.cursor.fetchall()
@@ -88,6 +94,17 @@ class Database(object):
     def createSubmission(self, sheetID, identifier):
         self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))
         self.database.commit()
+
+    def getSubmissionsForStudent(self, identifier):
+        self.cursor.execute("SELECT submissionID, sheetID, points FROM submissions WHERE identifier = ?", (identifier,))
+        rows = self.cursor.fetchall()
+        result = []
+
+        for row in rows:
+            submissionID, sheetID, points = row
+            result.append(Submission(submissionID, sheetID, identifier, points))
+
+        return result
 
     def getAllSubmissions(self):
         self.cursor.execute("SELECT submissionID, sheetID, identifier, points FROM submissions")

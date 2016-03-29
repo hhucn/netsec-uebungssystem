@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import logging
 import sqlite3
 
+from .file import File
 from .sheet import Sheet
 from .submission import Submission
 from .student import Student
@@ -116,6 +117,12 @@ class Database(object):
 
         return result
 
+    def getSubmissionFromID(self, submissionID):
+        self.cursor.execute("SELECT sheetID, identifier, points FROM submissions")
+        sheetID, identifier, points = self.cursor.fetchone()
+
+        return Submission(submissionID, sheetID, identifier, points)
+
     def getSheetFromID(self, id):
         self.cursor.execute("SELECT sheetID, end, deleted FROM sheets WHERE sheetID = ?", (id, ))
         sheet = self.cursor.fetchone()
@@ -199,3 +206,14 @@ class Database(object):
             self.cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
                               VALUES(?, ?, ?)""", (submissionID, identifier, sha))
             self.database.submit()
+
+    def getFilesForSubmission(self, submissionID):
+        self.cursor.execute("SELECT fileID, sha, filename FROM files WHERE submissionID = ?", (submissionID, ))
+        rows = self.cursor.fetchall()
+        result = []
+
+        for row in rows:
+            fileID, sha, filename = row
+            result.append(File(fileID, submissionID, sha, filename))
+
+        return result

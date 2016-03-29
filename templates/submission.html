@@ -1,0 +1,22 @@
+{%include ../../templates/header.html %}
+
+	<h1>Abgabe {{ submission.id }}</h1>
+	Von <a href="/student/{{ submission.identifier }}">Student {{ submission.identifier }}</a>
+	für <a href="/sheet/{{ submission.sheetID }}">Blatt {{ submission.sheetID}}</a>
+
+	<table class="table">
+		<tr>
+			<th>Datei-ID</th>
+			<th>Prüfsumme</th>
+			<th>Dateiname</th>
+		</tr>
+		{% for file in files %}
+		<tr>
+			<td>{{ file.id }}</td>
+			<td>{{ file.sha }}</td>
+			<td>{{ file.filename }}</td>
+		</tr>
+		{% end %}
+	</table>
+
+{%include ../../templates/footer.html %}

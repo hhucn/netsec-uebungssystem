@@ -19,6 +19,7 @@ from .webhandler.SheetHandler import SheetHandler
 from .webhandler.StudentsHandler import StudentsHandler
 from .webhandler.StudentHandler import StudentHandler
 from .webhandler.SubmissionsHandler import SubmissionsHandler
+from .webhandler.SubmissionHandler import SubmissionHandler
 from .webhandler.DownloadHandler import DownloadHandler
 from .webhandler.StatusHandler import StatusHandler
 from .webhandler.DetailHandler import DetailHandler
@@ -54,6 +55,7 @@ def mainloop(config):
         (r"/students", StudentsHandler),
         (r"/student/(.*)", StudentHandler),
         (r"/submissions", SubmissionsHandler),
+        (r"/submission/([0-9]+)", SubmissionHandler),
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
         (r"/detail/.*", DetailHandler),

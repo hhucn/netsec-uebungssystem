@@ -11,7 +11,6 @@
 		<th>Blatt-ID</th>
 		<th>Aufgaben</th>
 		<th>Abgabefrist</th>
-		<th>Zeitraum</th>
 		<th>Bearbeiten</th>
 	</tr>
 	{% for sheet in sheets %}
@@ -22,18 +21,9 @@
 		{% end %}
 			<td><a href="/sheet/{{ sheet.id }}">Blatt {{ sheet.id }}</a></td>
 			<td>
-				<ul>
 					{% for task in sheet.tasks %}
-						<li>{{ task.name }} ({{task.maxPoints}})</li>
+						{{ task.name }} ({{task.maxPoints}})<br>
 					{% end %}
-				</ul>
-			</td>
-			<td>
-				{% if sheet.editable %}
-					<i>Editierbar</i>
-				{% else %}
-					Nicht editierbar
-				{% end %}
 			</td>
 			<td>{{ sheet.timeEnd }}</td>
 			<td>

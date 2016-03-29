@@ -9,9 +9,9 @@
 	</tr>
 	{% for submission in submissions %}
 		<tr>
-			<td>{{ submission.sheetID }}</td>
-			<td><a href="/submission/{{ submission.id }}">{{ submission.id }}</a></td>
-			<td>{{ submission.identifier }}</td>
+			<td><a href="/sheet/{{ submission.sheetID }}">Blatt {{ submission.sheetID }}</a></td>
+			<td><a href="/submission/{{ submission.id }}">Abgabe {{ submission.id }}</a></td>
+			<td><a href="/student/{{ submission.identifier }}">{{ submission.identifier }}</a></td>
 			<td>{{ submission.points }}</td>
 		</tr>
 	{% end %}

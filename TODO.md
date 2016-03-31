@@ -1,4 +1,12 @@
+Workflow Abgabe per E-Mail
+	Speichern
+	Verschieben in Unterordner
+	Anzeigen in der Oberfläche
+	Download der Dateien
+Workflow Korrektur
 Neue Pfad-Struktur für Abgaben submissions/<student>/<Blatt>/<timestamp>/{mail, alle dateien}
+
+
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 

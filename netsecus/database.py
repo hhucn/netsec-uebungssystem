@@ -46,9 +46,10 @@ class Database(object):
                 `filename` text
             )""")
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `alias` (
+            """CREATE TABLE IF NOT EXISTS `students` (
+                `identifier` text,
                 `alias` text,
-                `identifier` text
+                `deleted` boolean
             )""")
 
     def getSheets(self):
@@ -64,31 +65,40 @@ class Database(object):
         return result
 
     def getStudent(self, id):
-        self.cursor.execute("SELECT identifier, alias FROM alias WHERE identifier = ?", (id, ))
-        identifier, alias = self.cursor.fetchone()
-
-        return Student(identifier, alias)
+        self.cursor.execute("SELECT identifier, alias, deleted FROM students WHERE identifier = ?", (id, ))
+        identifier, alias, deleted = self.cursor.fetchone()
+        if identifier:
+            return Student(identifier, alias, deleted)
 
     def getStudents(self):
-        self.cursor.execute("SELECT identifier, alias FROM alias")
+        self.cursor.execute("SELECT identifier, alias, deleted FROM students")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            identifier, alias = row
-            exists = False
-            for student in result:
-                if student.identifier == identifier:
-                    student.alias.append(alias)
-                    exists = True
-                    break
-            if not exists:
-                result.append(Student(identifier, alias))
+            identifier, alias, deleted = row
+            result.append(Student(identifier, alias, deleted))
 
         return result
 
+    def createStudent(self, id):
+        self.cursor.execute("INSERT INTO students (identifier, deleted) VALUES (?, 0)", (id, ))
+        self.database.commit()
+
+    def deleteStudent(self, id):
+        self.cursor.execute("UPDATE students SET deleted = 1 WHERE identifier = ?", (id, ))
+        self.database.commit()
+
+    def restoreStudent(self, id):
+        self.cursor.execute("UPDATE students SET deleted = 0 WHERE identifier = ?", (id, ))
+        self.database.commit()
+
+    def setAliasForStudent(self, id, alias):
+        self.cursor.execute("UPDATE students SET alias = ? WHERE identifier = ?", (alias, id))
+        self.database.commit()
+
     def resolveAlias(self, alias):
-        self.cursor.execute("SELECT identifier FROM alias WHERE alias = ?", (alias,))
+        self.cursor.execute("SELECT identifier FROM students WHERE alias = ?", (alias,))
         return self.cursor.fetchone()
 
     def createSubmission(self, sheetID, identifier):

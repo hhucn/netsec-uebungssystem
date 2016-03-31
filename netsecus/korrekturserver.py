@@ -17,6 +17,7 @@ from .webhandler.TaskEditHandler import TaskEditHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.SheetHandler import SheetHandler
 from .webhandler.StudentsHandler import StudentsHandler
+from .webhandler.StudentsCreateHandler import StudentsCreateHandler
 from .webhandler.StudentHandler import StudentHandler
 from .webhandler.SubmissionsHandler import SubmissionsHandler
 from .webhandler.SubmissionHandler import SubmissionHandler
@@ -53,6 +54,7 @@ def mainloop(config):
         (r"/sheet/([0-9]+)/task/([0-9]+)/delete", TaskDeleteHandler),
         (r"/sheet/.*", SheetHandler),
         (r"/students", StudentsHandler),
+        (r"/students/create", StudentsCreateHandler),
         (r"/student/(.*)", StudentHandler),
         (r"/submissions", SubmissionsHandler),
         (r"/submission/([0-9]+)", SubmissionHandler),

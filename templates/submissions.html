@@ -1,20 +1,8 @@
 {%include ../../templates/header.html %}
 
-<table>
-	<tr>
-		<th>Blatt-ID</th>
-		<th>Abgabe-ID</th>
-		<th>Student</th>
-		<th>Punkte</th>
-	</tr>
-	{% for submission in submissions %}
-		<tr>
-			<td><a href="/sheet/{{ submission.sheetID }}">Blatt {{ submission.sheetID }}</a></td>
-			<td><a href="/submission/{{ submission.id }}">Abgabe {{ submission.id }}</a></td>
-			<td><a href="/student/{{ submission.identifier }}">{{ submission.identifier }}</a></td>
-			<td>{{ submission.points }}</td>
-		</tr>
-	{% end %}
-</table>
+{% for student in students %}
+	Alle <a href="/submission/{{ student.identifier }}">Abgaben</a> von
+	Student <a href="/student/{{ student.identifier }}">{{ student.identifier }}</a></br>
+{% end %}
 
 {%include ../../templates/footer.html %}

@@ -1,0 +1,23 @@
+{%include ../../templates/header.html %}
+
+<h1>Abgaben von <a href="/student/{{ student }}">{{ student }}</a> für <a href="/sheet/{{ sheet }}">Blatt {{ sheet }}</a></h1>
+<table class="table">
+	<tr>
+		<th>Abgabe</th>
+		<th>Datei-ID</th>
+		<th>Prüfsumme</th>
+		<th>Dateiname</th>
+	</tr>
+{% for single_submission in files %}
+	{% for file in single_submission %}
+		<tr>
+			<td>{{ file.submissionID }}</td>
+			<td>{{ file.id }}</td>
+			<td>{{ file.sha }}</td>
+			<td>{{ file.filename }}</td>
+		</tr>
+	{% end %}
+{% end %}
+</table>
+
+{%include ../../templates/footer.html %}

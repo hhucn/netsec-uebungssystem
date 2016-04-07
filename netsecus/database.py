@@ -19,42 +19,50 @@ class Database(object):
 
     def createTables(self):
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `sheets` (
-                `sheetID` INTEGER PRIMARY KEY,
-                `end` date,
+            """CREATE TABLE IF NOT EXISTS `sheet` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `end` BIGINT,
                 `deleted` boolean
             )""")
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `tasks` (
-                `taskID` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `sheetID` INTEGER,
+            """CREATE TABLE IF NOT EXISTS `task` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `sheet_id` INTEGER REFERENCES sheet(id),
                 `name` text,
-                `maxPoints` float
+                `decipoints` INTEGER
             )""")
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `submissions` (
-                `submissionID` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `sheetID` INTEGER,
-                `identifier` text,
-                `points` text
+            """CREATE TABLE IF NOT EXISTS `submission` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `sheet_id` INTEGER REFERENCES sheet(id),
+                `student_id` INTEGER REFERENCES student(id),
+                `time` BIGINT
             )""")
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `files` (
-                `fileID` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `submissionID` INTEGER,
-                `sha` text,
-                `filename` text,
-                `path` text
+            """CREATE TABLE IF NOT EXISTS `grading` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `submission_id` INTEGER REFERENCES submission(id),
+                `comment` TEXT,
+                `time` BIGINT,
+                `decipoints` INTEGER
             )""")
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `students` (
-                `identifier` text,
+            """CREATE TABLE IF NOT EXISTS `file` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `submission_id` INTEGER REFERENCES submission(id),
+                `hash` text,
+                `filename` text
+            )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `student` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `deleted` boolean
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `alias` (
-                `alias` text,
-                `destination` text
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `student_id` INTEGER REFERENCES student(id),
+                `alias` text UNIQUE
             )""")
 
     def getSheets(self):

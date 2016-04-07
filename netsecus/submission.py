@@ -98,6 +98,7 @@ def handle_mail(config, db, imapmail, uid, message):
 
     commands.move(config, imapmail, uid, "Abgaben")
 
+
 def get_for_student(db, student_id):
     db.cursor.execute("SELECT id, sheet_id, time, files_path FROM submission WHERE student_id = ?", (student_id,))
     rows = db.cursor.fetchall()

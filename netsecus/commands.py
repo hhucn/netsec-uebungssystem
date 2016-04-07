@@ -86,9 +86,11 @@ def delete(config, imapmail, mails):
 
 
 # TODO do name resolution etc. here
-def user_identifier(message):
+def user_identifier(config, message):
     user_id = message.get('From', 'anonymous')
-    return user_id
+    database = Database(config)
+    alias = database.resolveAlias(user_id)
+    return alias
 
 
 def sheet_identifier(message):
@@ -102,7 +104,7 @@ def sheet_identifier(message):
 
 
 def save(config, imapmail, message):
-    user_id = user_identifier(message)
+    user_id = user_identifier(config, message)
     sheet_id = sheet_identifier(message)
     mail_dt = dateutil.parser.parse(message["Date"])
     timestamp_str = mail_dt.isoformat()

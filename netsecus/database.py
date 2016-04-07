@@ -1,13 +1,11 @@
 from __future__ import unicode_literals
 
-import logging
 import sqlite3
 
 from .file import File
 from .sheet import Sheet
 from .submission import Submission
 from .student import Student
-from .task import Task
 
 
 class Database(object):
@@ -76,7 +74,7 @@ class Database(object):
 
         return result
 
-    def getStudent(self, id):
+    def getStudent(self, identifier):
         aliases = self.getAliasesForStudent(identifier)
         return Student(identifier, aliases)
 
@@ -119,11 +117,6 @@ class Database(object):
         sheetID, identifier, points = self.cursor.fetchone()
 
         return Submission(submissionID, sheetID, identifier, points)
-
-    def addFileToSubmission(self, submission_id, hash, filename):
-        self.cursor.execute("""INSERT INTO file (submission_id, hash, filename)
-                               VALUES(?, ?, ?)""", (submission_id, hash, filename))
-        self.database.commit()
 
     def getFilesForSubmission(self, submission_id):
         self.cursor.execute("SELECT id, hash, filename FROM file WHERE submission_id = ?", (submission_id, ))

@@ -9,7 +9,6 @@ import threading
 from passlib.hash import pbkdf2_sha256
 
 from .config import Config
-from .database import Database
 
 from . import mail_handler
 from . import korrekturserver
@@ -64,7 +63,6 @@ def main():
     if args.only_web:
         korrekturserver.mainloop(config)
         assert False, 'mainloop should never terminate'
-
 
     mail_thread = threading.Thread(
         target=mail_handler.mail_main, args=(config,))

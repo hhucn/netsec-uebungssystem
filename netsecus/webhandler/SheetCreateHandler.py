@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-from ..database import Database
 from .. import sheet
 
 from .ProtectedPostHandler import ProtectedPostHandler

@@ -1,15 +1,10 @@
 from __future__ import unicode_literals
 
-import dateutil.parser
 import email
 import hashlib
-import itertools
 import logging
-import os
-import re
 
 from . import helper
-from .database import Database
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
@@ -56,17 +51,16 @@ def answer(config, imapmail, mails, subject, text, address="(back)"):
     return mails
 
 
-def move(config, imapmail, mails, destination):
+def move(config, imapmail, uid, destination):
     imapmail.create("\"%s\"" % destination)
 
-    for mail in mails:
-        # https://tools.ietf.org/html/rfc6851
-        uid = mail[0]
-        # helper.imapCommand(imapmail, "UID", "MOVE", uid, "\"%s\"" % destination)
-        helper.imapCommand(imapmail, "UID", "COPY", uid, "\"%s\"" % destination)
-        helper.imapCommand(imapmail, "UID", "STORE", uid, "+FLAGS", "(\DELETED)")
-        helper.imapCommand(imapmail, "UID", "EXPUNGE", uid)
-    return mails
+    # https://tools.ietf.org/html/rfc6851
+    # UID MOVE is not supported everywhere (works on gmail, but not hhu)
+    # helper.imapCommand(imapmail, "UID", "MOVE", uid, "\"%s\"" % destination)
+
+    helper.imapCommand(imapmail, "UID", "COPY", uid, "\"%s\"" % destination)
+    helper.imapCommand(imapmail, "UID", "STORE", uid, "+FLAGS", "(\DELETED)")
+    helper.imapCommand(imapmail, "UID", "EXPUNGE", uid)
 
 
 def flag(config, imapmail, mails, flag):

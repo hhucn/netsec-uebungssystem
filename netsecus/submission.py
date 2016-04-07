@@ -2,11 +2,14 @@ from __future__ import unicode_literals
 
 import collections
 import datetime
+import hashlib
+import itertools
 import os.path
 import re
 import time
 
 from . import (
+    commands,
     helper,
     sheet,
     student,
@@ -17,7 +20,7 @@ Submission = collections.namedtuple(
     ['id', 'sheet_id', 'student_id', 'time', 'files_path'])
 
 
-def sheet_by_mail(database, message):
+def sheet_by_mail(db, message):
     subject = message.get('Subject', '')
     sheet_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
     if not sheet_m:
@@ -26,25 +29,32 @@ def sheet_by_mail(database, message):
     assert re.match(r'^[0-9]+$', sheet_id_str)
     sheet_id = int(sheet_id_str)
 
-    return sheet.get_by_id(database, sheet_id)
+    return sheet.get_by_id(db, sheet_id)
 
 
-def create(database, sheet_id, student_id, timestamp, files_path):
-    database.cursor.execute(
+def create(db, sheet_id, student_id, timestamp, files_path):
+    db.cursor.execute(
         """INSERT INTO submission
             (sheet_id, student_id, time, files_path)
-            VALUES (?, ?, ?)""",
-            (sheet_id, student_id, timestamp, files_path)
+            VALUES (?, ?, ?, ?)""",
+        (sheet_id, student_id, timestamp, files_path)
     )
-    submission_id = database.cursor.lastrowid
-    database.database.commit()
+    submission_id = db.cursor.lastrowid
+    db.database.commit()
     return Submission(submission_id, sheet_id, student_id, timestamp, files_path)
 
 
-def handle_mail(config, database, imapmail, message):
+def add_file(self, submission_id, hash, filename):
+    self.cursor.execute(
+        """INSERT INTO file (submission_id, hash, filename)
+           VALUES(?, ?, ?)""", (submission_id, hash, filename))
+    self.database.commit()
+
+
+def handle_mail(config, db, imapmail, uid, message):
     alias = message.get('From', 'anonymous')
-    stu = student.resolve_alias(database, alias)
-    sheet = sheet_by_mail(database, message)
+    stu = student.resolve_alias(db, alias)
+    sheet = sheet_by_mail(db, message)
     if not sheet:
         raise ValueError('Cannot find sheet')
 
@@ -65,7 +75,7 @@ def handle_mail(config, database, imapmail, message):
             if not os.path.exists(files_path):
                 break
 
-    subm = create(database, sheet.id, stu.id, now_ts, files_path)
+    subm = create(db, sheet.id, stu.id, int(now_ts), files_path)
 
     os.makedirs(files_path)
     for subpart in message.walk():
@@ -80,10 +90,10 @@ def handle_mail(config, database, imapmail, message):
 
         payload_name = helper.escape_filename(fn)
         payload_path = os.path.join(files_path, payload_name)
+        hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()
         with open(payload_path, "wb") as payload_file:
             payload_file.write(payload)
 
-        #database.addFileToSubmission(submission_id, "sha", payload_name, payload_path)
+        add_file(db, subm.id, hash_str, payload_name)
 
-    raise ValueError('would save now - disabled for now')
-    commands.move(config, imapmail, mails, "Abgaben")
+    commands.move(config, imapmail, uid, "Abgaben")

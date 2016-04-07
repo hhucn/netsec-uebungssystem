@@ -22,7 +22,6 @@ from .webhandler.StudentHandler import StudentHandler
 from .webhandler.SubmissionsHandler import SubmissionsHandler
 from .webhandler.SubmissionStudentHandler import SubmissionStudentHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
-from .webhandler.PointsHandler import PointsHandler
 
 
 class KorrekturApp(tornado.web.Application):
@@ -57,8 +56,6 @@ def mainloop(config, database):
         (r"/submissions", SubmissionsHandler),
         (r"/submission/([0-9]+)", SubmissionStudentHandler),
         (r"/submission/([0-9]+)/([0-9]+)", SubmissionStudentSheetHandler),
-        (r"/download/.*", DownloadHandler),
-        (r"/status", StatusHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")
         }),

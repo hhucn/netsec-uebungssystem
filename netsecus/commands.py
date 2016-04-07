@@ -60,7 +60,8 @@ def move(config, imapmail, mails, destination):
 
     for mail in mails:
         # https://tools.ietf.org/html/rfc6851
-        helper.imapCommand(imapmail, "UID", "MOVE", mail.uid, "\"%s\"" % destination)
+        uid = mail[0]
+        helper.imapCommand(imapmail, "UID", "MOVE", uid, "\"%s\"" % destination)
     return mails
 
 

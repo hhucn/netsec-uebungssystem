@@ -77,38 +77,38 @@ class Database(object):
         return result
 
     def getStudent(self, id):
-        self.cursor.execute("SELECT identifier, deleted FROM students WHERE identifier = ?", (id, ))
-        identifier, deleted = self.cursor.fetchone()
+        self.cursor.execute("SELECT id FROM student WHERE id = ?", (id, ))
+        identifier = self.cursor.fetchone()[0]
         if identifier:
             aliases = self.getAliasesForStudent(identifier)
             return Student(identifier, aliases, deleted)
 
     def getStudents(self):
-        self.cursor.execute("SELECT identifier, deleted FROM students")
+        self.cursor.execute("SELECT id FROM student")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            identifier, deleted = row
-            aliases = self.getAliasesForStudent(identifier)
-            result.append(Student(identifier, aliases, deleted))
+            student_id = row[0]
+            aliases = self.getAliasesForStudent(student_id)
+            result.append(Student(student_id, aliases))
 
         return result
 
-    def createStudent(self, id):
-        self.cursor.execute("INSERT INTO students (identifier, deleted) VALUES (?, 0)", (id, ))
+    def createStudent(self, student_id):
+        self.cursor.execute("INSERT INTO student VALUES (?)", (student_id, ))
         self.database.commit()
 
-    def addAliasForStudent(self, id, alias):
-        self.cursor.execute("INSERT INTO alias VALUES(?,?)", (alias, id))
+    def addAliasForStudent(self, student_id, alias):
+        self.cursor.execute("INSERT INTO alias VALUES(?,?)", (student_id, alias))
         self.database.commit()
 
     def deleteAliasForStudent(self, id, alias):
-        self.cursor.execute("DELETE FROM alias WHERE identifier = ? AND alias = ?", (id, alias))
+        self.cursor.execute("DELETE FROM alias WHERE student_id = ? AND alias = ?", (id, alias))
         self.database.commit()
 
-    def getAliasesForStudent(self, id):
-        self.cursor.execute("SELECT alias FROM alias WHERE destination = ?", (id, ))
+    def getAliasesForStudent(self, student_id):
+        self.cursor.execute("SELECT alias FROM alias WHERE student_id = ?", (student_id, ))
         rows = self.cursor.fetchall()
         result = []
 
@@ -118,7 +118,7 @@ class Database(object):
         return result
 
     def resolveAlias(self, alias):
-        self.cursor.execute("SELECT destination FROM alias WHERE alias = ?", (alias,))
+        self.cursor.execute("SELECT student_id FROM alias WHERE alias = ?", (alias,))
         foundAlias = self.cursor.fetchone()
 
         if not foundAlias:

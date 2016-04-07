@@ -43,7 +43,8 @@ class Database(object):
                 `fileID` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `submissionID` INTEGER,
                 `sha` text,
-                `filename` text
+                `filename` text,
+                `path` text
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `students` (
@@ -220,12 +221,12 @@ class Database(object):
             self.database.submit()
 
     def getFilesForSubmission(self, submissionID):
-        self.cursor.execute("SELECT fileID, sha, filename FROM files WHERE submissionID = ?", (submissionID, ))
+        self.cursor.execute("SELECT fileID, sha, filename, path FROM files WHERE submissionID = ?", (submissionID, ))
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            fileID, sha, filename = row
-            result.append(File(fileID, submissionID, sha, filename))
+            fileID, sha, filename, path = row
+            result.append(File(fileID, submissionID, sha, filename, path))
 
         return result

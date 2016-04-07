@@ -58,32 +58,5 @@ class Database(object):
                 `alias` text UNIQUE
             )""")
 
-    def getSheets(self):
-        self.cursor.execute("SELECT id, end, deleted FROM sheet")
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            id, end, deleted = row
-            result.append(Sheet(id, end, deleted))
-
-        return result
-
-    def getStudent(self, identifier):
-        aliases = self.getAliasesForStudent(identifier)
-        return Student(identifier, aliases)
-
-    def getStudents(self):
-        self.cursor.execute("SELECT id FROM student")
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            student_id = row[0]
-            aliases = self.getAliasesForStudent(student_id)
-            result.append(Student(student_id, aliases))
-
-        return result
-
     def commit(self):
         return self.database.commit()

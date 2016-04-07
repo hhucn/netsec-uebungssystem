@@ -126,18 +126,6 @@ class Database(object):
 
         return Submission(submissionID, sheetID, identifier, points)
 
-<<<<<<< HEAD
-=======
-    def getSheetFromID(self, sheet_id):
-        self.cursor.execute("SELECT end, deleted FROM sheet WHERE id = ?", (sheet_id, ))
-        sheet = self.cursor.fetchone()
-
-        if sheet:
-            end, deleted = sheet
-            tasks = self.getTasksForSheet(sheet_id)
-            return Sheet(sheet_id, tasks, end, deleted)
-
->>>>>>> origin/master
     def getTaskFromID(self, id):
         self.cursor.execute("SELECT sheetID, name, maxPoints FROM tasks WHERE taskID = ?", (id, ))
         task = self.cursor.fetchone()

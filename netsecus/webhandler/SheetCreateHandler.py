@@ -8,5 +8,5 @@ from .ProtectedPostHandler import ProtectedPostHandler
 
 class SheetCreateHandler(ProtectedPostHandler):
     def postPassedCSRF(self):
-        sheet.create(self.application.database)
+        sheet.create(self.application.db)
         self.redirect("/sheets")

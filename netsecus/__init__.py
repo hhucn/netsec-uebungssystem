@@ -58,22 +58,20 @@ def main():
         print(pbkdf2_sha256.encrypt(pw))
         return 0
 
-    database = Database(config)
-
     if args.only_mail:
-        mail_handler.mail_main(config, database)
+        mail_handler.mail_main(config)
         assert False, 'mail_main should never terminate'
     if args.only_web:
-        korrekturserver.mainloop(config, database)
+        korrekturserver.mainloop(config)
         assert False, 'mainloop should never terminate'
 
 
     mail_thread = threading.Thread(
-        target=mail_handler.mail_main, args=(config, database))
+        target=mail_handler.mail_main, args=(config,))
     mail_thread.daemon = True
     mail_thread.start()
     web_thread = threading.Thread(
-        target=korrekturserver.mainloop, args=(config, database))
+        target=korrekturserver.mainloop, args=(config,))
     web_thread.daemon = True
     web_thread.start()
 

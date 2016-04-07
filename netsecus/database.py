@@ -36,7 +36,8 @@ class Database(object):
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `sheet_id` INTEGER REFERENCES sheet(id),
                 `student_id` INTEGER REFERENCES student(id),
-                `time` BIGINT
+                `time` BIGINT,
+                `files_path` text
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `grading` (
@@ -91,12 +92,6 @@ class Database(object):
             result.append(Student(student_id, aliases))
 
         return result
-
-    def createSubmission(self, sheetID, identifier):
-        self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))
-        self.database.commit()
-        self.cursor.execute("SELECT last_insert_rowid()")
-        return self.cursor.fetchone()[0]  # just return id, not (id, )
 
     def getSubmissionsForStudent(self, student_id):
         self.cursor.execute("SELECT id, sheet_id, time FROM submission WHERE student_id = ?", (student_id,))

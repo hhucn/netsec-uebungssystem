@@ -23,6 +23,8 @@ from .webhandler.SubmissionsHandler import SubmissionsHandler
 from .webhandler.SubmissionStudentHandler import SubmissionStudentHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
 
+from . import database
+
 
 class KorrekturApp(tornado.web.Application):
     realm = 'netsec Uebungsabgabesystem'
@@ -38,7 +40,7 @@ class KorrekturApp(tornado.web.Application):
         return self.config('korrektoren')
 
 
-def mainloop(config, database):
+def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
         (r"/sheets", SheetsHandler),
@@ -60,7 +62,7 @@ def mainloop(config, database):
             "path": os.path.join(config.module_path, "static")
         }),
     ])
-    application.database = database
+    application.db = database.Database(config)
 
     port = config('httpd.port')
     application.listen(port)

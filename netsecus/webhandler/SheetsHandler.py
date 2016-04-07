@@ -1,18 +1,17 @@
 from __future__ import unicode_literals
 
-from ..database import Database
 from .NetsecHandler import NetsecHandler
 from .. import task
+from .. import sheet
 
 
 class SheetsHandler(NetsecHandler):
     def get(self):
-        database = Database(self.application.config)
-        sheets = database.getSheets()
+        sheets = sheet.get_all(self.application.db)
         sheets_tasks = []
 
-        for sheet in sheets:
-            tasks_for_sheet = task.get_for_sheet(database, sheet.id)
+        for single_sheet in sheets:
+            tasks_for_sheet = task.get_for_sheet(self.application.db, single_sheet.id)
             if tasks_for_sheet:
                 sheets_tasks.append(tasks_for_sheet)
 

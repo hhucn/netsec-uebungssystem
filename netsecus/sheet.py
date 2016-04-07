@@ -33,7 +33,7 @@ def delete(database, sheet_id):
     database.database.commit()
 
 
-def restore_sheet(database, sheet_id):
+def restore(database, sheet_id):
     database.cursor.execute(
         """UPDATE sheet SET deleted = 0 WHERE id = ?""",
         (sheet_id,))

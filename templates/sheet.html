@@ -7,7 +7,7 @@
 
 	<form method="post" action="/sheet/{{sheet.id}}/editend">
 		{% module xsrf_form_html() %}
-		Abgabefrist: <input type="text" name="date" value="{{ sheet.timeEnd }}">
+		Abgabefrist: <input type="text" name="date" value="{{ sheet.end }}">
 		<input type="submit" value="Speichern">
 	</form>
 	<table class="table">
@@ -16,7 +16,7 @@
 			<th>max. Punkte</th>
 			<th colspan="2"></th>
 		</tr>
-		{% for task in sheet.tasks %}
+		{% for task in sheet_tasks %}
 			<tr>
 				<form method="post" action="/sheet/{{sheet.id}}/task/{{task.id}}/edit">
 					{% module xsrf_form_html() %}

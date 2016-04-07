@@ -21,14 +21,9 @@ Dependencies
 
 * tornado
 * passlib
-* dateutil
 
 Using pip, these can be installed via:
 
 ```
-$ pip install tornado passlib python-dateutil
+$ pip install tornado passlib
 ```
-
-Server Internal ID management
-======
-![ID Management](idmanagement.png)

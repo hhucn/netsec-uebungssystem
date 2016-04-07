@@ -49,8 +49,12 @@ class Database(object):
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `students` (
                 `identifier` text,
-                `alias` text,
                 `deleted` boolean
+            )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `alias` (
+                `alias` text,
+                `destination` text
             )""")
 
     def getSheets(self):
@@ -66,19 +70,21 @@ class Database(object):
         return result
 
     def getStudent(self, id):
-        self.cursor.execute("SELECT identifier, alias, deleted FROM students WHERE identifier = ?", (id, ))
-        identifier, alias, deleted = self.cursor.fetchone()
+        self.cursor.execute("SELECT identifier, deleted FROM students WHERE identifier = ?", (id, ))
+        identifier, deleted = self.cursor.fetchone()
         if identifier:
-            return Student(identifier, alias, deleted)
+            aliases = self.getAliasesForStudent(identifier)
+            return Student(identifier, aliases, deleted)
 
     def getStudents(self):
-        self.cursor.execute("SELECT identifier, alias, deleted FROM students")
+        self.cursor.execute("SELECT identifier, deleted FROM students")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            identifier, alias, deleted = row
-            result.append(Student(identifier, alias, deleted))
+            identifier, deleted = row
+            aliases = self.getAliasesForStudent(identifier)
+            result.append(Student(identifier, aliases, deleted))
 
         return result
 
@@ -94,13 +100,32 @@ class Database(object):
         self.cursor.execute("UPDATE students SET deleted = 0 WHERE identifier = ?", (id, ))
         self.database.commit()
 
-    def setAliasForStudent(self, id, alias):
-        self.cursor.execute("UPDATE students SET alias = ? WHERE identifier = ?", (alias, id))
+    def addAliasForStudent(self, id, alias):
+        self.cursor.execute("INSERT INTO alias VALUES(?,?)", (alias, id))
         self.database.commit()
 
+    def deleteAliasForStudent(self, id, alias):
+        self.cursor.execute("DELETE FROM alias WHERE identifier = ? AND alias = ?", (id, alias))
+        self.database.commit()
+
+    def getAliasesForStudent(self, id):
+        self.cursor.execute("SELECT alias FROM alias WHERE destination = ?", (id, ))
+        rows = self.cursor.fetchall()
+        result = []
+
+        for row in rows:
+            result.append(row[0])  # get alias
+
+        return result
+
     def resolveAlias(self, alias):
-        self.cursor.execute("SELECT identifier FROM students WHERE alias = ?", (alias,))
-        return self.cursor.fetchone()
+        self.cursor.execute("SELECT destination FROM alias WHERE alias = ?", (alias,))
+        foundAlias = self.cursor.fetchone()
+
+        if not foundAlias:
+            logging.debug("Couldn't resolve alias '%s'" % alias)
+            return alias
+        return foundAlias[0]  # if the line exists, "foundAlias" contains a tuple
 
     def createSubmission(self, sheetID, identifier):
         self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))

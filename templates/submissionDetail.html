@@ -5,4 +5,18 @@ Von <a href="/student/{{ submission.student_id }}">Student {{ submission.student
 für <a href="/sheet/{{ submission.sheet_id }}">Blatt {{ submission.sheet_id }}</a>,
 abgegeben {{ submission.time }}
 
+<table>
+  <tr>
+    <th>Datei-ID</th>
+    <th>Hash</th>
+    <th>Name</th>
+  </tr>
+  {% for file in files %}
+  <tr>
+    <td>{{ file.id }}</td>
+    <td>{{ file.hash }}</td>
+    <td>{{ file.name }}</td>
+  </tr>
+  {% end %}
+
 {%include ../../templates/footer.html %}

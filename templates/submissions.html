@@ -1,8 +1,20 @@
 {%include ../../templates/header.html %}
 
-{% for student in students %}
-	Alle <a href="/submission/{{ student.identifier }}">Abgaben</a> von
-	Student <a href="/student/{{ student.identifier }}">{{ student.identifier }}</a></br>
+<table class="table">
+	<tr>
+		<th>Abgabe</th>
+		<th>Blatt</th>
+		<th>Student</th>
+		<th>Abgabezeitpunkt</th>
+	</tr>
+{% for submission in submissions %}
+	<tr>
+		<td>{{ submission.id }}</td>
+		<td>{{ submission.sheet_id }}</td>
+		<td>{{ submission.student_id }}</td>
+		<td>{{ submission.time }}</td>
+	</tr>
 {% end %}
+</table>
 
 {%include ../../templates/footer.html %}

@@ -64,13 +64,13 @@ def move(config, imapmail, mails, destination):
         uid = mail[0]
         # helper.imapCommand(imapmail, "UID", "MOVE", uid, "\"%s\"" % destination)
         helper.imapCommand(imapmail, "UID", "COPY", uid, "\"%s\"" % destination)
-        helper.imapCommand(imapmail, "UID", "DELETE", uid)
+        flag(config, imapmail, mail, "(\DELETED)")
     return mails
 
 
 def flag(config, imapmail, mails, flag):
     for mail in mails:
-        helper.imapCommand(imapmail, "UID", "STORE", mail.uid, "+FLAGS", flag)
+        helper.imapCommand(imapmail, "UID", "STORE", mail, "+FLAGS", flag)
     return mails
 
 

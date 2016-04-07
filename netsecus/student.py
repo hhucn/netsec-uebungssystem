@@ -4,9 +4,11 @@ import collections
 
 Student = collections.namedtuple('Student', ['id'])
 
+
 def get_student_aliases(db, student_id):
     db.cursor.execute("SELECT alias FROM alias WHERE student_id = ?", (student_id, ))
     return [row[0] for row in db.cursor.fetchall()]
+
 
 def resolve_alias(db, alias):
     """ Fetches or creates the student """

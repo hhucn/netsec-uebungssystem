@@ -1,13 +1,11 @@
 from __future__ import unicode_literals
 
-import logging
 import sqlite3
 
 from .file import File
 from .sheet import Sheet
 from .submission import Submission
 from .student import Student
-from .task import Task
 
 
 class Database(object):
@@ -76,7 +74,7 @@ class Database(object):
 
         return result
 
-    def getStudent(self, id):
+    def getStudent(self, identifier):
         aliases = self.getAliasesForStudent(identifier)
         return Student(identifier, aliases)
 

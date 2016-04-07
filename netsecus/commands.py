@@ -1,12 +1,8 @@
 from __future__ import unicode_literals
 
-import dateutil.parser
 import email
 import hashlib
-import itertools
 import logging
-import os
-import re
 
 from . import helper
 

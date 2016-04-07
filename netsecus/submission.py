@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import collections
 import datetime
 import hashlib
+import itertools
 import os.path
 import re
 import time
@@ -36,17 +37,19 @@ def create(db, sheet_id, student_id, timestamp, files_path):
         """INSERT INTO submission
             (sheet_id, student_id, time, files_path)
             VALUES (?, ?, ?, ?)""",
-            (sheet_id, student_id, timestamp, files_path)
+        (sheet_id, student_id, timestamp, files_path)
     )
     submission_id = db.cursor.lastrowid
     db.database.commit()
     return Submission(submission_id, sheet_id, student_id, timestamp, files_path)
+
 
 def add_file(self, submission_id, hash, filename):
     self.cursor.execute(
         """INSERT INTO file (submission_id, hash, filename)
            VALUES(?, ?, ?)""", (submission_id, hash, filename))
     self.database.commit()
+
 
 def handle_mail(config, db, imapmail, uid, message):
     alias = message.get('From', 'anonymous')

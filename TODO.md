@@ -1,5 +1,3 @@
-submissions (Martin)
-
 Until Monday:
 Korrekturen (Martin)
 send simple confirmation mail (Martin)

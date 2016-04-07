@@ -24,7 +24,6 @@ from .webhandler.SubmissionStudentHandler import SubmissionStudentHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
 from .webhandler.DownloadHandler import DownloadHandler
 from .webhandler.StatusHandler import StatusHandler
-from .webhandler.DetailHandler import DetailHandler
 from .webhandler.PointsHandler import PointsHandler
 
 
@@ -62,7 +61,6 @@ def mainloop(config):
         (r"/submission/([0-9]+)/([0-9]+)", SubmissionStudentSheetHandler),
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
-        (r"/detail/.*", DetailHandler),
         (r"/points", PointsHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")

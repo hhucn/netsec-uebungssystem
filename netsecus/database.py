@@ -71,8 +71,7 @@ class Database(object):
 
         for row in rows:
             id, end, deleted = row
-            tasks = self.getTasksForSheet(id)
-            result.append(Sheet(id, tasks, end, deleted))
+            result.append(Sheet(id, end, deleted))
 
         return result
 
@@ -126,26 +125,6 @@ class Database(object):
 
         return Submission(submissionID, sheetID, identifier, points)
 
-    def getTaskFromID(self, id):
-        self.cursor.execute("SELECT sheetID, name, maxPoints FROM tasks WHERE taskID = ?", (id, ))
-        task = self.cursor.fetchone()
-
-        if task:
-            sheetID, name, maxPoints = task
-            return Task(id, sheetID, name, maxPoints)
-
-    def getTasksForSheet(self, sheet_id):
-        self.cursor.execute("SELECT id, name, decipoints FROM task WHERE sheet_id = ?", (sheet_id, ))
-        tasks = self.cursor.fetchall()
-
-        result = []
-
-        for task in tasks:
-            id, name, decipoints = task
-            result.append(Task(id, sheet_id, name, decipoints))
-
-        return result
-
     def deleteSheet(self, sheet_id):
         self.cursor.execute("UPDATE sheet SET deleted = 1 WHERE id = ?", (sheet_id, ))
         self.database.commit()
@@ -156,27 +135,6 @@ class Database(object):
 
     def editEnd(self, sheet_id, end):
         self.cursor.execute("UPDATE sheet SET end=? WHERE id = ?", (end, sheet_id))
-        self.database.commit()
-
-    def setNewTaskForSheet(self, sheet_id, name, decipoints):
-        self.cursor.execute("INSERT INTO task (sheet_id, name, decipoints) VALUES(?,?,?)", (sheet_id, name, decipoints))
-        self.database.commit()
-
-    def setNameForTask(self, task_id, name):
-        self.cursor.execute("UPDATE task SET name=? WHERE id=?", (name, task_id))
-        self.database.commit()
-
-    def setPointsForTask(self, task_id, decipoints):
-        self.cursor.execute("UPDATE task SET decipoints=? WHERE id=?", (decipoints, task_id))
-        self.database.commit()
-
-    def deleteTask(self, task_id):
-        self.cursor.execute("DELETE FROM task WHERE id = ?", (task_id, ))
-        self.database.commit()
-
-    def createTask(self, sheet_id, name, decipoints):
-        self.cursor.execute("INSERT INTO tasks (sheet_id, name, decipoints) VALUES(?,?,?)",
-                            (sheet_id, name, decipoints))
         self.database.commit()
 
     def addFileToSubmission(self, submission_id, hash, filename):

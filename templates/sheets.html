@@ -21,7 +21,7 @@
 		{% end %}
 			<td><a href="/sheet/{{ sheet.id }}">Blatt {{ sheet.id }}</a></td>
 			<td>
-					{% for task in sheet.tasks %}
+					{% for task in Task.getTasksForSheet(sheet) %}
 						{{ task.name }} ({{task.maxPoints}})<br>
 					{% end %}
 			</td>

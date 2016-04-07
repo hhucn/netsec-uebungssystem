@@ -8,8 +8,8 @@ Student = collections.namedtuple('Student', ['id'])
 FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])
 
 
-def get_full_students(db):
-    db.cursor.execute('SELECT id FROM student')
+def get_full_students(db, where_sql='', filter_params=tuple()):
+    db.cursor.execute('SELECT id FROM student WHERE 1' + where_sql, filter_params)
     res = [FullStudent(Student(*row), [], []) for row in db.cursor.fetchall()]
     res_dict = {
         fs.student.id: fs for fs in res
@@ -18,7 +18,7 @@ def get_full_students(db):
     # Aliases
     db.cursor.execute(
         '''SELECT student.id, alias.alias FROM student, alias
-           WHERE student.id = alias.student_id''')
+           WHERE student.id = alias.student_id''' + where_sql, filter_params)
     for student_id, alias in db.cursor.fetchall():
         res_dict[student_id].aliases.append(alias)
 
@@ -32,7 +32,7 @@ def get_full_students(db):
                 submission.time,
                 submission.files_path
             FROM student, submission
-           WHERE student.id = submission.student_id''')
+           WHERE student.id = submission.student_id''' + where_sql, filter_params)
     for row in db.cursor.fetchall():
         student_id = row[0]
         subm = submission.Submission(*row[1:])
@@ -41,9 +41,11 @@ def get_full_students(db):
     return res
 
 
-def get_student_aliases(db, student_id):
-    db.cursor.execute("SELECT alias FROM alias WHERE student_id = ?", (student_id, ))
-    return [row[0] for row in db.cursor.fetchall()]
+def get_full_student(db, student_id):
+    fss = get_full_students(db, ' AND student.id = ?', (student_id,))
+    if len(fss) != 1:
+        raise ValueError('Expected exactly one student')
+    return fss[0]
 
 
 def resolve_alias(db, alias):

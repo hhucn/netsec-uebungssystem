@@ -1,20 +1,15 @@
-students (Philipp)
 submissions (Martin)
-tasks (Philipp)
 
+Until Monday:
+Korrekturen (Martin)
+send simple confirmation mail (Martin)
 set up server (Philipp)
 
-
-Workflow Korrektur
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 merge students; actually use alias as intended
-
-
 require mails to start with "Abgabe [Nr]"
-make sure to never use floats for points (use INTEGER tenths of a point instead)
 tag mail if exception occurs
-reimplement answer
 
 move submission handling out of commands into a better-named module (how about submission?)
 test with subject "AbgabeFoo"

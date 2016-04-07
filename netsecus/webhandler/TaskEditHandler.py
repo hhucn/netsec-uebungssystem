@@ -1,14 +1,17 @@
 from __future__ import unicode_literals
 
-from ..database import Database
+from .. import task
 from .ProtectedPostHandler import ProtectedPostHandler
 
 
 class TaskEditHandler(ProtectedPostHandler):
-    def postPassedCSRF(self, sheet_id, task_id):
-        database = Database(self.application.config)
-        name = self.get_argument("name")
-        points = self.get_argument("points")
-        database.setNameForTask(task_id, name)
-        database.setPointsForTask(task_id, points)
-        self.redirect("/sheet/%s" % sheet_id)
+    def postPassedCSRF(self, task_id):
+        t = task.get_by_id(self.application.db, int(task_id))
+        decipoints = int(float(self.get_argument("points")) * 10)
+        tnew = t._replace(
+            name=self.get_argument("name"),
+            decipoints=decipoints,
+        )
+        task.save(self.application.db, tnew)
+
+        self.redirect("/sheet/%s" % tnew.sheet_id)

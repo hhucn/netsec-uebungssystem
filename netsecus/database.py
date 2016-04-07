@@ -77,11 +77,8 @@ class Database(object):
         return result
 
     def getStudent(self, id):
-        self.cursor.execute("SELECT id FROM student WHERE id = ?", (id, ))
-        identifier = self.cursor.fetchone()[0]
-        if identifier:
-            aliases = self.getAliasesForStudent(identifier)
-            return Student(identifier, aliases, deleted)
+        aliases = self.getAliasesForStudent(identifier)
+        return Student(identifier, aliases)
 
     def getStudents(self):
         self.cursor.execute("SELECT id FROM student")

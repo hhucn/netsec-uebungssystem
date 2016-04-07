@@ -42,6 +42,7 @@ def save(database, task):
         (task.name, task.decipoints, task.id))
     database.database.commit()
 
+
 def delete(database, task_id):
     database.cursor.execute("DELETE FROM task WHERE id = ?", (task_id, ))
     database.database.commit()

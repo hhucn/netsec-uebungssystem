@@ -109,6 +109,7 @@ def get_for_student(db, student_id):
 
     return result
 
+
 def get_all(db):
     db.cursor.execute("SELECT id, sheet_id, student_id, time, files_path FROM submission")
     rows = db.cursor.fetchall()
@@ -118,6 +119,7 @@ def get_all(db):
         result.append(Submission(*row))
 
     return result
+
 
 def get_from_id(db, submission_id):
     db.cursor.execute("""SELECT id, sheet_id, student_id, time, files_path FROM submission

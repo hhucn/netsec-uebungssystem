@@ -2,10 +2,6 @@ from __future__ import unicode_literals
 
 import sqlite3
 
-from .file import File
-from .sheet import Sheet
-from .student import Student
-
 
 class Database(object):
     def __init__(self, config):

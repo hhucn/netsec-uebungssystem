@@ -30,6 +30,7 @@ input[type=number] {
 
 .alias_list, .submission_list {
 	margin: 0;
+	padding: 0;
 }
 .alias_list>li, .submission_list>li {
 	list-style-type: none;

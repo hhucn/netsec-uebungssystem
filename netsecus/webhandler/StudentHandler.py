@@ -1,12 +1,14 @@
 from __future__ import unicode_literals
 
-from ..database import Database
+from .. import student
 from .NetsecHandler import NetsecHandler
 
 
 class StudentHandler(NetsecHandler):
-    def get(self, studentID):
-        database = Database(self.application.config)
-        student = database.getStudent(studentID)
-        submissions = database.getSubmissionsForStudent(studentID)
-        self.render('student', {'student': student, 'submissions': submissions})
+    def get(self, student_id):
+        fs = student.get_full_student(self.application.db, student_id)
+        self.render('student', {
+            'student': fs.student,
+            'aliases': fs.aliases,
+            'submissions': fs.submissions,
+        })

@@ -60,7 +60,6 @@ def mainloop(config, database):
         (r"/submission/([0-9]+)/([0-9]+)", SubmissionStudentSheetHandler),
         (r"/download/.*", DownloadHandler),
         (r"/status", StatusHandler),
-        (r"/points", PointsHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")
         }),

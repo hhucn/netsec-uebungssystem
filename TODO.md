@@ -1,6 +1,6 @@
 students (Philipp)
-submissions
-sheets various functions (Martin)
+submissions (Martin)
+tasks (Philipp)
 
 set up server (Philipp)
 

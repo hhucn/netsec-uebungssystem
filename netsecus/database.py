@@ -146,10 +146,6 @@ class Database(object):
 
         return result
 
-    def createSheet(self):
-        self.cursor.execute("INSERT INTO sheet DEFAULT VALUES")
-        self.database.commit()
-
     def deleteSheet(self, sheet_id):
         self.cursor.execute("UPDATE sheet SET deleted = 1 WHERE id = ?", (sheet_id, ))
         self.database.commit()
@@ -198,3 +194,6 @@ class Database(object):
             result.append(File(id, hash, filename))
 
         return result
+
+    def commit(self):
+        return self.database.commit()

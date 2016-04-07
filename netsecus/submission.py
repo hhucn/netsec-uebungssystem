@@ -27,7 +27,8 @@ def handle_mail(config, database, message):
     s = student.resolve_alias(database, alias)
     sheet = sheet_by_mail(database, message)
     if not sheet:
-        raise ValueError('Unsupported sheet')
+        raise ValueError('Cannot find sheet')
+
 
     raise ValueError('would save now - disabled for now')
 

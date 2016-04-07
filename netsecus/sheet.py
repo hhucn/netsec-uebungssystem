@@ -13,3 +13,7 @@ def get_by_id(database, sheet_id):
         return Sheet(*row)
     else:
         return None
+
+def create(database):
+    database.cursor.execute("INSERT INTO sheet (end, deleted) VALUES (NULL, 0)")
+    database.commit()

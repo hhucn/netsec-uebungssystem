@@ -65,39 +65,32 @@ class Database(object):
             )""")
 
     def getSheets(self):
-        self.cursor.execute("SELECT sheetID, end, deleted FROM sheets")
+        self.cursor.execute("SELECT id, end, deleted FROM sheet")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            sheetID, sheetEndDate, deleted = row
-            tasks = self.getTasksForSheet(sheetID)
-            result.append(Sheet(sheetID, tasks, sheetEndDate, deleted))
+            id, end, deleted = row
+            tasks = self.getTasksForSheet(id)
+            result.append(Sheet(id, tasks, end, deleted))
 
         return result
 
     def getStudent(self, id):
-        self.cursor.execute("SELECT identifier, deleted FROM students WHERE identifier = ?", (id, ))
-        identifier, deleted = self.cursor.fetchone()
-        if identifier:
-            aliases = self.getAliasesForStudent(identifier)
-            return Student(identifier, aliases, deleted)
+        aliases = self.getAliasesForStudent(identifier)
+        return Student(identifier, aliases)
 
     def getStudents(self):
-        self.cursor.execute("SELECT identifier, deleted FROM students")
+        self.cursor.execute("SELECT id FROM student")
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            identifier, deleted = row
-            aliases = self.getAliasesForStudent(identifier)
-            result.append(Student(identifier, aliases, deleted))
+            student_id = row[0]
+            aliases = self.getAliasesForStudent(student_id)
+            result.append(Student(student_id, aliases))
 
         return result
-
-    def get_student_aliases(self, student_id):
-        self.cursor.execute("SELECT alias FROM alias WHERE student_id = ?", (student_id, ))
-        return [row[0] for row in self.cursor.fetchall()]
 
     def createSubmission(self, sheetID, identifier):
         self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))
@@ -105,14 +98,14 @@ class Database(object):
         self.cursor.execute("SELECT last_insert_rowid()")
         return self.cursor.fetchone()[0]  # just return id, not (id, )
 
-    def getSubmissionsForStudent(self, identifier):
-        self.cursor.execute("SELECT submissionID, sheetID, points FROM submissions WHERE identifier = ?", (identifier,))
+    def getSubmissionsForStudent(self, student_id):
+        self.cursor.execute("SELECT id, sheet_id, time FROM submission WHERE student_id = ?", (student_id,))
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            submissionID, sheetID, points = row
-            result.append(Submission(submissionID, sheetID, identifier, points))
+            id, sheet_id, time = row
+            result.append(Submission(id, sheet_id, student_id, time))
 
         return result
 
@@ -133,6 +126,18 @@ class Database(object):
 
         return Submission(submissionID, sheetID, identifier, points)
 
+<<<<<<< HEAD
+=======
+    def getSheetFromID(self, sheet_id):
+        self.cursor.execute("SELECT end, deleted FROM sheet WHERE id = ?", (sheet_id, ))
+        sheet = self.cursor.fetchone()
+
+        if sheet:
+            end, deleted = sheet
+            tasks = self.getTasksForSheet(sheet_id)
+            return Sheet(sheet_id, tasks, end, deleted)
+
+>>>>>>> origin/master
     def getTaskFromID(self, id):
         self.cursor.execute("SELECT sheetID, name, maxPoints FROM tasks WHERE taskID = ?", (id, ))
         task = self.cursor.fetchone()
@@ -141,67 +146,67 @@ class Database(object):
             sheetID, name, maxPoints = task
             return Task(id, sheetID, name, maxPoints)
 
-    def getTasksForSheet(self, id):
-        self.cursor.execute("SELECT taskID, name, maxPoints FROM tasks WHERE sheetID = ?", (id, ))
+    def getTasksForSheet(self, sheet_id):
+        self.cursor.execute("SELECT id, name, decipoints FROM task WHERE sheet_id = ?", (sheet_id, ))
         tasks = self.cursor.fetchall()
 
         result = []
 
         for task in tasks:
-            taskID, name, maxPoints = task
-            result.append(Task(taskID, id, name, maxPoints))
+            id, name, decipoints = task
+            result.append(Task(id, sheet_id, name, decipoints))
 
         return result
 
     def createSheet(self):
-        self.cursor.execute("INSERT INTO sheets DEFAULT VALUES")
+        self.cursor.execute("INSERT INTO sheet DEFAULT VALUES")
         self.database.commit()
 
-    def deleteSheet(self, sheetID):
-        self.cursor.execute("UPDATE sheets SET deleted = 1 WHERE sheetID = ?", (sheetID, ))
+    def deleteSheet(self, sheet_id):
+        self.cursor.execute("UPDATE sheet SET deleted = 1 WHERE id = ?", (sheet_id, ))
         self.database.commit()
 
-    def restoreSheet(self, sheetID):
-        self.cursor.execute("UPDATE sheets SET deleted = 0 WHERE sheetID = ?", (sheetID, ))
+    def restoreSheet(self, sheet_id):
+        self.cursor.execute("UPDATE sheet SET deleted = 0 WHERE id = ?", (sheet_id, ))
         self.database.commit()
 
-    def editEnd(self, sheetID, end):
-        self.cursor.execute("UPDATE sheets SET end=? WHERE sheetID = ?", (end, sheetID, ))
+    def editEnd(self, sheet_id, end):
+        self.cursor.execute("UPDATE sheet SET end=? WHERE id = ?", (end, sheet_id))
         self.database.commit()
 
-    def setNewTaskForSheet(self, sheetID, name, maxPoints):
-        self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?,?)", (sheetID, name, maxPoints))
+    def setNewTaskForSheet(self, sheet_id, name, decipoints):
+        self.cursor.execute("INSERT INTO task (sheet_id, name, decipoints) VALUES(?,?,?)", (sheet_id, name, decipoints))
         self.database.commit()
 
-    def setNameForTask(self, id, name):
-        self.cursor.execute("UPDATE tasks SET name=? WHERE taskID=?", (name, id))
+    def setNameForTask(self, task_id, name):
+        self.cursor.execute("UPDATE task SET name=? WHERE id=?", (name, task_id))
         self.database.commit()
 
-    def setPointsForTask(self, id, points):
-        self.cursor.execute("UPDATE tasks SET maxPoints=? WHERE taskID=?", (points, id))
+    def setPointsForTask(self, task_id, decipoints):
+        self.cursor.execute("UPDATE task SET decipoints=? WHERE id=?", (decipoints, task_id))
         self.database.commit()
 
-    def deleteTask(self, id):
-        self.cursor.execute("DELETE FROM tasks WHERE taskID = ?", (id, ))
+    def deleteTask(self, task_id):
+        self.cursor.execute("DELETE FROM task WHERE id = ?", (task_id, ))
         self.database.commit()
 
-    def createTask(self, sheetID, name, maxPoints):
-        self.cursor.execute("INSERT INTO tasks (sheetID, name, maxPoints) VALUES(?,?,?)",
-                            (sheetID, name, maxPoints))
+    def createTask(self, sheet_id, name, decipoints):
+        self.cursor.execute("INSERT INTO tasks (sheet_id, name, decipoints) VALUES(?,?,?)",
+                            (sheet_id, name, decipoints))
         self.database.commit()
 
-    def addFileToSubmission(self, submissionID, sha, name, path):
-        self.cursor.execute("""INSERT INTO files(submissionID, sha, filename, path)
-                               VALUES(?, ?, ?, ?)""", (submissionID, sha, name, path))
+    def addFileToSubmission(self, submission_id, hash, filename):
+        self.cursor.execute("""INSERT INTO file (submission_id, hash, filename)
+                               VALUES(?, ?, ?)""", (submission_id, hash, filename))
         self.database.commit()
 
-    def getFilesForSubmission(self, submissionID):
-        self.cursor.execute("SELECT fileID, sha, filename, path FROM files WHERE submissionID = ?", (submissionID, ))
+    def getFilesForSubmission(self, submission_id):
+        self.cursor.execute("SELECT id, hash, filename FROM file WHERE submission_id = ?", (submission_id, ))
         rows = self.cursor.fetchall()
         result = []
 
         for row in rows:
-            fileID, sha, filename, path = row
-            result.append(File(fileID, submissionID, sha, filename, path))
+            id, hash, filename = row
+            result.append(File(id, hash, filename))
 
         return result

@@ -3,20 +3,24 @@
 <table>
 	<tr>
 		<th>Student-ID</th>
-		<th>Alias</th>
-	</tr>
-	{% for student in students %}
+		<th>Namen</th>
+		<th>Abgaben</th>
+	</tr></thead>
+	<tbody>
+	{% for fs in full_students %}
 		<tr>
-			<td><a href="/student/{{ student.identifier }}">{{ student.identifier }}</a></td>
-			<td>{{ student.alias }}</td>
+			<td><a href="/student/{{ fs.student.id }}">{{ fs.student.id }}</a></td>
+			<td><ul class="alias_list">{% for alias in fs.aliases%}
+				<li>{{ alias }}</li>
+			{% end %}
+			</ul></td>
+			<td><ul class="submission_list">{% for subm in fs.submissions%}
+				<li>{{ subm.id }}</li>
+			{% end %}
+			</ul></td>
 		</tr>
 	{% end %}
+	</tbody>
 </table>
-
-<form method="post" action="/students/create">
-	{% module xsrf_form_html() %}
-	<input type="text" name="id" placeholder="Student-ID">
-	<input type="submit" value="Hinzufügen">
-</form>
 
 {%include ../../templates/footer.html %}

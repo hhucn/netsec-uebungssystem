@@ -22,7 +22,6 @@ from .webhandler.StudentHandler import StudentHandler
 from .webhandler.SubmissionsHandler import SubmissionsHandler
 from .webhandler.SubmissionStudentHandler import SubmissionStudentHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
-from .webhandler.DownloadHandler import DownloadHandler
 from .webhandler.StatusHandler import StatusHandler
 from .webhandler.PointsHandler import PointsHandler
 

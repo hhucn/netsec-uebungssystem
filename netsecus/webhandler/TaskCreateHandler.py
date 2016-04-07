@@ -1,13 +1,15 @@
 from __future__ import unicode_literals
 
-from ..database import Database
+from .. import task
+
 from .ProtectedPostHandler import ProtectedPostHandler
 
 
 class TaskCreateHandler(ProtectedPostHandler):
-    def postPassedCSRF(self, sheet_id):
+    def postPassedCSRF(self, sheet_id_str):
+        sheet_id = int(sheet_id_str)
         name = self.get_argument("name")
         points = self.get_argument("points")
-        database = Database(self.application.config)
-        database.createTask(sheet_id, name, points)
+        decipoints = int(float(points) * 10)
+        task.create(self.application.db, sheet_id, name, decipoints)
         self.redirect("/sheet/%s" % sheet_id)

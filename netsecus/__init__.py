@@ -6,8 +6,6 @@ import logging
 import os
 import threading
 
-from passlib.hash import pbkdf2_sha256
-
 from .config import Config
 
 from . import mail_handler
@@ -54,6 +52,7 @@ def main():
         pw2 = getpass.getpass('Repeat password: ')
         if pw != pw2:
             raise ValueError('Passwords are not equal!')
+        from passlib.hash import pbkdf2_sha256
         print(pbkdf2_sha256.encrypt(pw))
         return 0
 

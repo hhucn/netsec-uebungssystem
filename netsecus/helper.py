@@ -8,7 +8,6 @@ import smtplib
 import sys
 
 import tornado.web
-from passlib.hash import pbkdf2_sha256
 
 
 def processVariable(variables, text):
@@ -125,6 +124,8 @@ class RequestHandlerWithAuth(tornado.web.RequestHandler):
                 username = username_b.decode('utf-8')
                 password = password_b.decode('utf-8')
                 users = self.application.users
+
+                from passlib.hash import pbkdf2_sha256
                 if username not in users:
                     logging.debug("Received nonexistent user '%s'." % username)
                 elif not pbkdf2_sha256.verify(password, users[username]):

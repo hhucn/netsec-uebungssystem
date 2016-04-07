@@ -55,8 +55,7 @@ class Database(object):
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `student` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `deleted` boolean
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `alias` (
@@ -98,14 +97,6 @@ class Database(object):
 
     def createStudent(self, id):
         self.cursor.execute("INSERT INTO students (identifier, deleted) VALUES (?, 0)", (id, ))
-        self.database.commit()
-
-    def deleteStudent(self, id):
-        self.cursor.execute("UPDATE students SET deleted = 1 WHERE identifier = ?", (id, ))
-        self.database.commit()
-
-    def restoreStudent(self, id):
-        self.cursor.execute("UPDATE students SET deleted = 0 WHERE identifier = ?", (id, ))
         self.database.commit()
 
     def addAliasForStudent(self, id, alias):

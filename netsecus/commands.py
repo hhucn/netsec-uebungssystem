@@ -21,9 +21,10 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
 
     response_ids = response.decode("utf-8").split(" ")
     for uid in response_ids:
-        _mail_info, mail_bytes = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
-        message = email.message_from_bytes(mail_bytes)
-        mails.append((uid, message))
+        if uid:  # if inbox is empty, "uid" contains an empty string
+            _mail_info, mail_bytes = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
+            message = email.message_from_bytes(mail_bytes)
+            mails.append((uid, message))
     return mails
 
 

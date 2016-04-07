@@ -21,11 +21,11 @@
 		{% end %}
 			<td><a href="/sheet/{{ sheet.id }}">Blatt {{ sheet.id }}</a></td>
 			<td>
-					{% for task in Task.getTasksForSheet(sheet) %}
+					{% for task in sheets_tasks %}
 						{{ task.name }} ({{task.maxPoints}})<br>
 					{% end %}
 			</td>
-			<td>{{ sheet.timeEnd }}</td>
+			<td>{{ sheet.end }}</td>
 			<td>
 				{% if sheet.deleted %}
 				<form method="post" action="/sheet/{{ sheet.id }}/restore">

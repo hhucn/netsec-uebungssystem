@@ -120,18 +120,6 @@ class Database(object):
 
         return Submission(submissionID, sheetID, identifier, points)
 
-    def deleteSheet(self, sheet_id):
-        self.cursor.execute("UPDATE sheet SET deleted = 1 WHERE id = ?", (sheet_id, ))
-        self.database.commit()
-
-    def restoreSheet(self, sheet_id):
-        self.cursor.execute("UPDATE sheet SET deleted = 0 WHERE id = ?", (sheet_id, ))
-        self.database.commit()
-
-    def editEnd(self, sheet_id, end):
-        self.cursor.execute("UPDATE sheet SET end=? WHERE id = ?", (end, sheet_id))
-        self.database.commit()
-
     def getFilesForSubmission(self, submission_id):
         self.cursor.execute("SELECT id, hash, filename FROM file WHERE submission_id = ?", (submission_id, ))
         rows = self.cursor.fetchall()

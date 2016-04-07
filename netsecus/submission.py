@@ -119,6 +119,6 @@ def get_all(db):
     return result
 
 def get_from_id(db, submission_id):
-    db.cursor.execute("""SELECT sheet_id, student_id, time, files_path FROM submission
-                         WHERE submission_id = ?""", (submission_id, ))
+    db.cursor.execute("""SELECT id, sheet_id, student_id, time, files_path FROM submission
+                         WHERE id = ?""", (submission_id, ))
     return Submission(*db.cursor.fetchone())

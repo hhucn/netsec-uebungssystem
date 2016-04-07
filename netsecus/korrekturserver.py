@@ -19,7 +19,7 @@ from .webhandler.SheetHandler import SheetHandler
 from .webhandler.StudentsHandler import StudentsHandler
 from .webhandler.StudentHandler import StudentHandler
 from .webhandler.SubmissionsHandler import SubmissionsHandler
-from .webhandler.SubmissionStudentHandler import SubmissionStudentHandler
+from .webhandler.SubmissionDetailHandler import SubmissionDetailHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
 
 from . import database
@@ -54,7 +54,7 @@ def mainloop(config):
         (r"/students", StudentsHandler),
         (r"/student/(.*)", StudentHandler),
         (r"/submissions", SubmissionsHandler),
-        (r"/submission/([0-9]+)", SubmissionStudentHandler),
+        (r"/submission/([0-9]+)", SubmissionDetailHandler),
         (r"/submission/([0-9]+)/([0-9]+)", SubmissionStudentSheetHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")

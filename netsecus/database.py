@@ -106,7 +106,7 @@ class Database(object):
         self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))
         self.database.commit()
         self.cursor.execute("SELECT last_insert_rowid()")
-        return self.cursor.fetchone()
+        return self.cursor.fetchone()[0]  # just return id, not (id, )
 
     def getSubmissionsForStudent(self, identifier):
         self.cursor.execute("SELECT submissionID, sheetID, points FROM submissions WHERE identifier = ?", (identifier,))

@@ -27,3 +27,10 @@ table {
 input[type=number] {
 	width:50px;
 }
+
+.alias_list, .submission_list {
+	margin: 0;
+}
+.alias_list>li, .submission_list>li {
+	list-style-type: none;
+}

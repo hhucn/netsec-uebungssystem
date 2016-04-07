@@ -7,6 +7,7 @@ from . import submission
 Student = collections.namedtuple('Student', ['id'])
 FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])
 
+
 def get_full_students(db):
     db.cursor.execute('SELECT id FROM student')
     res = [FullStudent(Student(*row), [], []) for row in db.cursor.fetchall()]
@@ -38,6 +39,7 @@ def get_full_students(db):
         res_dict[student_id].submissions.append(subm)
 
     return res
+
 
 def get_student_aliases(db, student_id):
     db.cursor.execute("SELECT alias FROM alias WHERE student_id = ?", (student_id, ))

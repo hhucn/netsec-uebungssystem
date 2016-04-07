@@ -14,9 +14,9 @@ class SheetHandler(NetsecHandler):
 
         requested_sheet = sheet.get_by_id(self.application.db, requested_sheet_number)
         tasks_for_sheet = task.get_for_sheet(self.application.db, requested_sheet.id)
-        
+
         if requested_sheet:
             self.render('sheet', {'sheet': requested_sheet, 'sheet_tasks': tasks_for_sheet})
         else:
-            logging.error("Specified sheet ('%s') does not exist." % requestedSheet)
+            logging.error("Specified sheet ('%s') does not exist." % requested_sheet)
             self.redirect("/sheets")

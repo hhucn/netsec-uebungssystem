@@ -11,7 +11,7 @@
 		<tr>
 			<td><a href="/student/{{ fs.student.id }}">{{ fs.student.id }}</a></td>
 			<td><ul class="alias_list">{% for alias in fs.aliases%}
-				<li>{{ alias }}</li>
+				<li><a href="/student/{{ fs.student.id }}">{{ alias }}</a></li>
 			{% end %}
 			</ul></td>
 			<td><ul class="submission_list">{% for subm in fs.submissions%}

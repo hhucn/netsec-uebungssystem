@@ -6,6 +6,7 @@ import traceback
 
 from . import helper
 from . import commands
+from . import submission
 
 
 def mail_main(config, database):
@@ -50,7 +51,7 @@ def mainloop(config, database):
         def idle_loop():
             imapmail.send(b"DONE\r\n")
             imapmail.readline()
-            mailProcessing(config, imapmail)
+            mailProcessing(config, database, imapmail)
             imapmail._command("IDLE")
             logging.debug("Entering IDLE state.")
 
@@ -67,20 +68,18 @@ def mainloop(config, database):
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:
             try:
-                mailProcessing(config, imapmail)
+                mailProcessing(config, database, imapmail)
                 time.sleep(config("mail.delay"))
             except KeyboardInterrupt:
                 logoutIMAP(imapmail)
                 raise
 
 
-def mailProcessing(config, imapmail):
+def mailProcessing(config, database, imapmail):
     filterCriteria = "SUBJECT \"Abgabe\""
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
-        submission.save_from_mail(config, message)
-        commands.move(config, imapmail, mails, "Abgaben")
-
+        submission.handle_mail(config, database, message)
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

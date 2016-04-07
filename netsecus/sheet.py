@@ -1,10 +1,15 @@
 from __future__ import unicode_literals
 
+import collections
 
-class Sheet(object):
+Sheet = collections.namedtuple('Sheet', ['id', 'end', 'deleted'])
 
-    def __init__(self, sheetID, tasks, timeEnd=0, deleted=False):
-        self.id = sheetID
-        self.tasks = tasks
-        self.timeEnd = timeEnd
-        self.deleted = deleted
+def get_by_id(database, sheet_id):
+    """ Returns the sheet or None if no sheet present """
+    database.cursor.execute("SELECT id, end, deleted FROM sheet WHERE id = ?", (sheet_id, ))
+    row = database.cursor.fetchone()
+
+    if row:
+        return Sheet(*row)
+    else:
+        return None

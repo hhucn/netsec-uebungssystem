@@ -86,13 +86,3 @@ def log(config, imapmail, mails, msg, lvl="ERROR"):
 def delete(config, imapmail, mails):
     flag(config, imapmail, mails, "\\DELETED")
     imapmail.expunge()
-
-
-def sheet_identifier(message):
-    subject = message.get('Subject', '')
-    sheet_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
-    if not sheet_m:
-        raise helper.MailError('Invalid subject line, found: %s', subject)
-    sheet_id = sheet_m.group('id')
-    assert re.match(r'^[0-9]+$', sheet_id)
-    return sheet_id

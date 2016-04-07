@@ -95,36 +95,9 @@ class Database(object):
 
         return result
 
-    def createStudent(self, id):
-        self.cursor.execute("INSERT INTO students (identifier, deleted) VALUES (?, 0)", (id, ))
-        self.database.commit()
-
-    def addAliasForStudent(self, id, alias):
-        self.cursor.execute("INSERT INTO alias VALUES(?,?)", (alias, id))
-        self.database.commit()
-
-    def deleteAliasForStudent(self, id, alias):
-        self.cursor.execute("DELETE FROM alias WHERE identifier = ? AND alias = ?", (id, alias))
-        self.database.commit()
-
-    def getAliasesForStudent(self, id):
-        self.cursor.execute("SELECT alias FROM alias WHERE destination = ?", (id, ))
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            result.append(row[0])  # get alias
-
-        return result
-
-    def resolveAlias(self, alias):
-        self.cursor.execute("SELECT destination FROM alias WHERE alias = ?", (alias,))
-        foundAlias = self.cursor.fetchone()
-
-        if not foundAlias:
-            logging.debug("Couldn't resolve alias '%s'" % alias)
-            return alias
-        return foundAlias[0]  # if the line exists, "foundAlias" contains a tuple
+    def get_student_aliases(self, student_id):
+        self.cursor.execute("SELECT alias FROM alias WHERE student_id = ?", (student_id, ))
+        return [row[0] for row in self.cursor.fetchall()]
 
     def createSubmission(self, sheetID, identifier):
         self.cursor.execute("INSERT INTO submissions (sheetID, identifier) VALUES (?, ?)", (sheetID, identifier))
@@ -159,15 +132,6 @@ class Database(object):
         sheetID, identifier, points = self.cursor.fetchone()
 
         return Submission(submissionID, sheetID, identifier, points)
-
-    def getSheetFromID(self, id):
-        self.cursor.execute("SELECT sheetID, end, deleted FROM sheets WHERE sheetID = ?", (id, ))
-        sheet = self.cursor.fetchone()
-
-        if sheet:
-            sheetID, sheetEndDate, deleted = sheet
-            tasks = self.getTasksForSheet(id)
-            return Sheet(sheetID, tasks, sheetEndDate, deleted)
 
     def getTaskFromID(self, id):
         self.cursor.execute("SELECT sheetID, name, maxPoints FROM tasks WHERE taskID = ?", (id, ))

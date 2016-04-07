@@ -1,15 +1,51 @@
 from __future__ import unicode_literals
 
 import collections
+from .student import Student
+
 
 Submission = collections.namedtuple(
     'Submission',
     ['id', 'sheet_id', 'student_id', 'time'])
 
 
-def save_from_mail(config, message):
-    user_id = user_identifier(config, message)
-    sheet_id = sheet_identifier(message)
+def resolve_alias(database, alias):
+    """ Returns the student object or None if it is not found """
+    database.cursor.execute(
+        """SELECT student.id FROM alias, student
+        WHERE alias.alias = ? AND student.id = alias.student_id""",
+        (alias, ))
+    res = database.cursor.fetchone()
+    if res:
+        return Student(res[0])
+
+    database.cursor.execute("INSERT INTO student (id) VALUES (null)")
+    student = Student(database.cursor.lastrowid)
+    database.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, alias))
+    database.database.commit()
+    return student
+
+
+def sheet_by_mail(message):
+    subject = message.get('Subject', '')
+    sheet_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
+    if not sheet_m:
+        raise helper.MailError('Invalid subject line, found: %s', subject)
+    sheet_id = sheet_m.group('id')
+    assert re.match(r'^[0-9]+$', sheet_id)
+
+    return sheet.get_by_id(sheet_id)
+
+
+def handle_mail(config, database, message):
+    alias = message.get('From', 'anonymous')
+    student = resolve_alias(alias)
+    sheet = sheet_by_mail(message)
+    if not sheet:
+        raise ValueError('Unsupported sheet')
+
+    raise ValueError('would save now - disabled for now')
+
     mail_dt = dateutil.parser.parse(message["Date"])
     timestamp_str = mail_dt.isoformat()
     database = Database(config)
@@ -48,3 +84,5 @@ def save_from_mail(config, message):
 
         submission_id
         database.addFileToSubmission(submission_id, "sha", payload_name, payload_path)
+
+    commands.move(config, imapmail, mails, "Abgaben")

@@ -90,16 +90,5 @@ class Database(object):
 
         return result
 
-    def getFilesForSubmission(self, submission_id):
-        self.cursor.execute("SELECT id, hash, filename FROM file WHERE submission_id = ?", (submission_id, ))
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            id, hash, filename = row
-            result.append(File(id, hash, filename))
-
-        return result
-
     def commit(self):
         return self.database.commit()

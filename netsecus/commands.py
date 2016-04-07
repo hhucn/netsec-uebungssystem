@@ -92,7 +92,7 @@ def submission_identifier(message):
     subject = message.get('Subject', '')
     subm_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
     if not subm_m:
-        raise helper.MailError('Invalid subject line')
+        raise helper.MailError('Invalid subject line, found: %s', subject)
     subm_id = subm_m.group('id')
     assert re.match(r'^[0-9]+$', subm_id)
     return subm_id

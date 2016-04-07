@@ -8,11 +8,11 @@ from . import helper
 from . import commands
 
 
-def mail_main(config):
+def mail_main(config, database):
     helper.patch_imaplib()
     while True:
         try:
-            mainloop(config)
+            mainloop(config, database)
         except (OSError, helper.MailError) as e:
             logging.error(e)
             if config('loglevel') == 'debug':
@@ -20,7 +20,7 @@ def mail_main(config):
         time.sleep(config("mail.delay"))
 
 
-def mainloop(config):
+def mainloop(config, database):
     try:
         username = config('mail.username')
     except KeyError:
@@ -78,7 +78,7 @@ def mailProcessing(config, imapmail):
     filterCriteria = "SUBJECT \"Abgabe\""
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
-        commands.save(config, imapmail, message)
+        submission.save_from_mail(config, message)
         commands.move(config, imapmail, mails, "Abgaben")
 
 

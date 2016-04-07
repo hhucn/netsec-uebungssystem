@@ -41,7 +41,7 @@ class KorrekturApp(tornado.web.Application):
         return self.config('korrektoren')
 
 
-def mainloop(config):
+def mainloop(config, database):
     application = KorrekturApp(config, [
         (r"/", TableHandler),
         (r"/sheets", SheetsHandler),
@@ -66,6 +66,7 @@ def mainloop(config):
             "path": os.path.join(config.module_path, "static")
         }),
     ])
+    application.database = database
 
     port = config('httpd.port')
     application.listen(port)

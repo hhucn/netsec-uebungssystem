@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
 
+import collections
 
-class Student(object):
+Student = collections.namedtuple('Student', ['id'])
 
-    def __init__(self, identifier, alias, deleted=False):
-        self.identifier = identifier
-
-        if not alias:
-            alias = ""
-
-        self.alias = alias
-        self.deleted = deleted
+# TODO do name resolution etc. here
+def resolve_by_email(config, database, message):
+    user_id = message.get('From', 'anonymous')
+    database = Database(config)
+    alias = database.resolveAlias(user_id)
+    return alias

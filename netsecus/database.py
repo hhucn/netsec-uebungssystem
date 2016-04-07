@@ -202,23 +202,10 @@ class Database(object):
                             (sheetID, name, maxPoints))
         self.database.commit()
 
-    def addFileToSubmission(self, submissionID, identifier, sha, name):
-        # Add a file to the specified submission and identifier (student)
-        self.cursor.execute("""SELECT fileID FROM files
-                            WHERE submissionID = ?
-                            AND identifier = ?
-                            AND sha = ?""",
-                            (submissionID, identifier, sha))
-
-        if self.cursor.fetchone():
-            # File is sent twice in one mail (realistic) OR the SHA of two different
-            # files collided (not that realistic...)
-            logging.debug("Two files with the same checksum submitted by %s"
-                          % identifier)
-        else:
-            self.cursor.execute("""INSERT INTO files(submissionID, identifier, sha)
-                              VALUES(?, ?, ?)""", (submissionID, identifier, sha))
-            self.database.submit()
+    def addFileToSubmission(self, submissionID, sha, name, path):
+        self.cursor.execute("""INSERT INTO files(submissionID, sha, filename, path)
+                               VALUES(?, ?, ?, ?)""", (submissionID, sha, name, path))
+        self.database.commit()
 
     def getFilesForSubmission(self, submissionID):
         self.cursor.execute("SELECT fileID, sha, filename, path FROM files WHERE submissionID = ?", (submissionID, ))

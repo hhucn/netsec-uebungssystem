@@ -9,6 +9,7 @@ import os
 import re
 
 from . import helper
+from .database import Database
 
 
 def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
@@ -90,26 +91,28 @@ def user_identifier(message):
     return user_id
 
 
-def submission_identifier(message):
+def sheet_identifier(message):
     subject = message.get('Subject', '')
-    subm_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
-    if not subm_m:
+    sheet_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
+    if not sheet_m:
         raise helper.MailError('Invalid subject line, found: %s', subject)
-    subm_id = subm_m.group('id')
-    assert re.match(r'^[0-9]+$', subm_id)
-    return subm_id
+    sheet_id = sheet_m.group('id')
+    assert re.match(r'^[0-9]+$', sheet_id)
+    return sheet_id
 
 
 def save(config, imapmail, message):
     user_id = user_identifier(message)
-    submission_id = submission_identifier(message)
+    sheet_id = sheet_identifier(message)
     mail_dt = dateutil.parser.parse(message["Date"])
     timestamp_str = mail_dt.isoformat()
+    database = Database(config)
+    submission_id = database.createSubmission(sheet_id, user_id)
 
     files_path = os.path.join(
         config("attachment_path"),
         helper.escape_filename(user_id),
-        helper.escape_filename(submission_id),
+        helper.escape_filename(sheet_id),
         helper.escape_filename(timestamp_str)
     )
 
@@ -136,3 +139,6 @@ def save(config, imapmail, message):
         payload_path = os.path.join(files_path, payload_name)
         with open(payload_path, "wb") as payload_file:
             payload_file.write(payload)
+
+        submission_id
+        database.addFileToSubmission(submission_id, "sha", payload_name, payload_path)

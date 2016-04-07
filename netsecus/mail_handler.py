@@ -81,7 +81,7 @@ def mailProcessing(config, db, imapmail):
     filterCriteria = "SUBJECT \"Abgabe\""
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
-        submission.handle_mail(config, db, imapmail, message)
+        submission.handle_mail(config, db, imapmail, uid, message)
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

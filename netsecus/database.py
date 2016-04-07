@@ -132,11 +132,6 @@ class Database(object):
         self.cursor.execute("UPDATE sheet SET end=? WHERE id = ?", (end, sheet_id))
         self.database.commit()
 
-    def addFileToSubmission(self, submission_id, hash, filename):
-        self.cursor.execute("""INSERT INTO file (submission_id, hash, filename)
-                               VALUES(?, ?, ?)""", (submission_id, hash, filename))
-        self.database.commit()
-
     def getFilesForSubmission(self, submission_id):
         self.cursor.execute("SELECT id, hash, filename FROM file WHERE submission_id = ?", (submission_id, ))
         rows = self.cursor.fetchall()

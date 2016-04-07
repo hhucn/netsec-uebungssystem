@@ -4,16 +4,18 @@ import logging
 import time
 import traceback
 
+from . import database
 from . import helper
 from . import commands
 from . import submission
 
 
-def mail_main(config, database):
+def mail_main(config):
+    db = database.Database(config)
     helper.patch_imaplib()
     while True:
         try:
-            mainloop(config, database)
+            mainloop(config, db)
         except (OSError, helper.MailError) as e:
             logging.error(e)
             if config('loglevel') == 'debug':
@@ -21,7 +23,7 @@ def mail_main(config, database):
         time.sleep(config("mail.delay"))
 
 
-def mainloop(config, database):
+def mainloop(config, db):
     try:
         username = config('mail.username')
     except KeyError:
@@ -51,7 +53,7 @@ def mainloop(config, database):
         def idle_loop():
             imapmail.send(b"DONE\r\n")
             imapmail.readline()
-            mailProcessing(config, database, imapmail)
+            mailProcessing(config, db, imapmail)
             imapmail._command("IDLE")
             logging.debug("Entering IDLE state.")
 
@@ -68,18 +70,18 @@ def mainloop(config, database):
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:
             try:
-                mailProcessing(config, database, imapmail)
+                mailProcessing(config, db, imapmail)
                 time.sleep(config("mail.delay"))
             except KeyboardInterrupt:
                 logoutIMAP(imapmail)
                 raise
 
 
-def mailProcessing(config, database, imapmail):
+def mailProcessing(config, db, imapmail):
     filterCriteria = "SUBJECT \"Abgabe\""
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
-        submission.handle_mail(config, database, message)
+        submission.handle_mail(config, db, imapmail, message)
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

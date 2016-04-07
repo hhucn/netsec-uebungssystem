@@ -12,7 +12,7 @@ Neue Pfad-Struktur für Abgaben submissions/<student>/<Blatt>/<timestamp>/{mail,
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 
-
+test 2 mails coming in at the same second
 improve error handling (mark mail before saving/doing anything, do not retry if mark present)
 
 require mails to start with "Abgabe [Nr]"

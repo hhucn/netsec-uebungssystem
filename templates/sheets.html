@@ -13,7 +13,7 @@
 		<th>Abgabefrist</th>
 		<th>Bearbeiten</th>
 	</tr>
-	{% for sheet in sheets %}
+	{% for sheet, tasks in zip(sheets, sheets_tasks) %}
 		{% if sheet.deleted %}
 		<tr style="color:#AAA">
 		{% else %}
@@ -21,8 +21,8 @@
 		{% end %}
 			<td><a href="/sheet/{{ sheet.id }}">Blatt {{ sheet.id }}</a></td>
 			<td>
-					{% for task in sheets_tasks %}
-						{{ task.name }} ({{task.maxPoints}})<br>
+					{% for task in tasks %}
+						{{ task.name }} ({{task.decipoints / 10.}})<br>
 					{% end %}
 			</td>
 			<td>{{ sheet.end }}</td>

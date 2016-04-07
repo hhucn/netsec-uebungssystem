@@ -4,6 +4,7 @@ import collections
 
 Task = collections.namedtuple("Task", ["id", "sheet_id", "name", "decipoints"])
 
+
 def get_by_id(database, task_id):
     database.cursor.execute(
         """SELECT id, sheet_id, name, decipoints FROM task
@@ -13,6 +14,7 @@ def get_by_id(database, task_id):
         return Task(*row)
     else:
         return None
+
 
 def get_for_sheet(database, sheet_id):
     database.cursor.execute("""SELECT id, name, decipoints FROM task WHERE
@@ -27,16 +29,19 @@ def get_for_sheet(database, sheet_id):
 
     return result
 
+
 def create(database, sheet_id, name, decipoints):
     database.cursor.execute("""INSERT INTO task (sheet_id, name, decipoints)
                                VALUES(?,?,?)""", (sheet_id, name, decipoints))
     database.database.commit()
+
 
 def save(database, task):
     database.cursor.execute(
         "UPDATE task SET name=?, decipoints=? WHERE id=?",
         (task.name, task.decipoints, task.id))
     database.database.commit()
+
 
 def delete(database, task_id):
     database.cursor.execute("DELETE FROM task WHERE id = ?", (task_id, ))

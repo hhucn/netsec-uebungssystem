@@ -97,3 +97,28 @@ def handle_mail(config, db, imapmail, uid, message):
         add_file(db, subm.id, hash_str, payload_name)
 
     commands.move(config, imapmail, uid, "Abgaben")
+
+def get_for_student(db, student_id):
+    db.cursor.execute("SELECT id, sheet_id, time FROM submission WHERE student_id = ?", (student_id,))
+    rows = db.cursor.fetchall()
+    result = []
+
+    for row in rows:
+        result.append(Submission(*row))
+
+    return result
+
+def get_all(db):
+    db.cursor.execute("SELECT submissionID, sheetID, identifier, points FROM submissions")
+    rows = db.cursor.fetchall()
+    result = []
+
+    for row in rows:
+        result.append(Submission(*row))
+
+    return result
+
+def get_from_id(db, submission_id):
+    db.cursor.execute("""SELECT sheet_id, student_id FROM submissions
+                         WHERE submission_id = ?""", (submission_id, ))
+    return Submission(*db.cursor.fetchone())

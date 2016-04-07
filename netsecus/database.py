@@ -90,34 +90,6 @@ class Database(object):
 
         return result
 
-    def getSubmissionsForStudent(self, student_id):
-        self.cursor.execute("SELECT id, sheet_id, time FROM submission WHERE student_id = ?", (student_id,))
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            id, sheet_id, time = row
-            result.append(Submission(id, sheet_id, student_id, time))
-
-        return result
-
-    def getAllSubmissions(self):
-        self.cursor.execute("SELECT submissionID, sheetID, identifier, points FROM submissions")
-        rows = self.cursor.fetchall()
-        result = []
-
-        for row in rows:
-            submissionID, sheetID, identifier, points = row
-            result.append(Submission(submissionID, sheetID, identifier, points))
-
-        return result
-
-    def getSubmissionFromID(self, submissionID):
-        self.cursor.execute("SELECT sheetID, identifier, points FROM submissions")
-        sheetID, identifier, points = self.cursor.fetchone()
-
-        return Submission(submissionID, sheetID, identifier, points)
-
     def getFilesForSubmission(self, submission_id):
         self.cursor.execute("SELECT id, hash, filename FROM file WHERE submission_id = ?", (submission_id, ))
         rows = self.cursor.fetchall()

@@ -65,6 +65,7 @@ def move(config, imapmail, mails, destination):
         # helper.imapCommand(imapmail, "UID", "MOVE", uid, "\"%s\"" % destination)
         helper.imapCommand(imapmail, "UID", "COPY", uid, "\"%s\"" % destination)
         helper.imapCommand(imapmail, "UID", "STORE", uid, "+FLAGS", "(\DELETED)")
+        helper.imapCommand(imapmail, "UID", "EXPUNGE", uid)
     return mails
 
 

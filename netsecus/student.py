@@ -2,13 +2,13 @@ from __future__ import unicode_literals
 
 import collections
 
-from . import submission
-
 Student = collections.namedtuple('Student', ['id'])
 FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])
 
 
 def get_full_students(db, where_sql='', filter_params=tuple()):
+    from . import submission
+
     db.cursor.execute('SELECT id FROM student WHERE 1' + where_sql, filter_params)
     res = [FullStudent(Student(*row), [], []) for row in db.cursor.fetchall()]
     res_dict = {

@@ -4,6 +4,7 @@ import collections
 
 Grading = collections.namedtuple('Grading', ['id', 'submission_id', 'comment', 'time', 'decipoints', 'grader'])
 
+
 def get_grade_for_submission(db, submission_id):
     db.cursor.execute(
         """SELECT id, comment, time, decipoints, grader FROM grading WHERE submission_id = ?""", (submission_id, ))

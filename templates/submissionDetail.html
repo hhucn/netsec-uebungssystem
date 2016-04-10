@@ -22,4 +22,15 @@ abgegeben {{ submission.time }}
   {% end %}
 </table>
 
+<h2>Korrektur</h2>
+
+<form action="/submission/{{ submission.id }}/grade" method="post">
+  {% module xsrf_form_html() %}
+  <textarea name="comment" placeholder="Kommentar" cols="40" rows="10">
+    {% if grading %}{{ grading.comment }}{% end %}
+  </textarea><br>
+  Punkte: <input type="number" name="points" value="{% if grading %}{{ grading.decipoints }}{% end %}" step="0.1"><br>
+  <input type="submit" title="Speichern">
+</form>
+
 {%include ../../templates/footer.html %}

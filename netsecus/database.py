@@ -38,7 +38,8 @@ class Database(object):
                 `submission_id` INTEGER REFERENCES submission(id),
                 `comment` TEXT,
                 `time` BIGINT,
-                `decipoints` INTEGER
+                `decipoints` INTEGER,
+                `grader` TEXT
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `file` (

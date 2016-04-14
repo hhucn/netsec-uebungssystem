@@ -1,0 +1,13 @@
+[Unit]
+Description=netsec-uebungssystem
+Documentation=https://github.com/hhucn/netsec-uebungssystem
+
+[Service]
+Type=simple
+ExecStart=python3 -m netsecus
+User=netsecus
+Group=netsecus
+WorkingDirectory=%LOCATION%
+
+[Install]
+WantedBy=multi-user.target

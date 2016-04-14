@@ -1,7 +1,19 @@
 Homework grading system for netsec
 ==================================
 
-useful for debugging:
+Installation
+============
+
+```
+sudo apt-get install -y git make python3
+git clone https://github.com/hhucn/netsec-uebungssystem.git
+make deps
+sudo make install-service # To start automatically
+```
+
+Debugging tips
+==============
+
 ```
 $ openssl s_client -crlf -connect imap.gmail.com:993
 ```
@@ -14,16 +26,4 @@ $ python -m netsecus --only-mail
 Command to start the web grading server:
 ```
 $ python -m netsecus --only-web
-```
-
-Dependencies
-======
-
-* tornado
-* passlib
-
-Using pip, these can be installed via:
-
-```
-$ pip install tornado passlib
 ```

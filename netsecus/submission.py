@@ -20,16 +20,19 @@ Submission = collections.namedtuple(
     ['id', 'sheet_id', 'student_id', 'time', 'files_path'])
 
 
-def sheet_by_mail(db, message):
+def sheet_by_mail(db, uid, message):
     subject = message.get('Subject', '')
     sheet_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
     if not sheet_m:
-        raise helper.MailError('Invalid subject line, found: %s', subject)
+        raise helper.MailError(uid, 'Invalid subject line, found: %s' % subject)
     sheet_id_str = sheet_m.group('id')
     assert re.match(r'^[0-9]+$', sheet_id_str)
     sheet_id = int(sheet_id_str)
 
-    return sheet.get_by_id(db, sheet_id)
+    res = sheet.get_by_id(db, sheet_id)
+    if not res:
+        raise helper.MailError(uid, 'Could not find a sheet with id %s' % sheet_id)
+    return res
 
 
 def create(db, sheet_id, student_id, timestamp, files_path):
@@ -54,9 +57,7 @@ def add_file(self, submission_id, hash, filename):
 def handle_mail(config, db, imapmail, uid, message):
     alias = message.get('From', 'anonymous')
     stu = student.resolve_alias(db, alias)
-    sheet = sheet_by_mail(db, message)
-    if not sheet:
-        raise ValueError('Cannot find sheet')
+    sheet = sheet_by_mail(db, uid, message)
 
     now_ts = time.time()
     now_dt = datetime.datetime.fromtimestamp(now_ts)

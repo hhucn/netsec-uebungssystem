@@ -13,17 +13,22 @@ from . import submission
 def mail_main(config):
     db = database.Database(config)
     helper.patch_imaplib()
+    ignored_uids = set()
     while True:
         try:
-            mainloop(config, db)
-        except (OSError, helper.MailError) as e:
-            logging.error(e)
-            if config('loglevel') == 'debug':
-                traceback.print_exc()
+            mainloop(config, db, ignored_uids)
+        except (OSError, helper.MailConnectionError) as e:
+            on_error(config, e)
         time.sleep(config("mail.delay"))
 
 
-def mainloop(config, db):
+def on_error(config, e):
+    logging.error(e)
+    if config('loglevel') == 'debug':
+        traceback.print_exc()
+
+
+def mainloop(config, db, ignored_uids):
     try:
         username = config('mail.username')
     except KeyError:
@@ -53,7 +58,7 @@ def mainloop(config, db):
         def idle_loop():
             imapmail.send(b"DONE\r\n")
             imapmail.readline()
-            mailProcessing(config, db, imapmail)
+            mailProcessing(config, db, imapmail, ignored_uids)
             imapmail._command("IDLE")
             logging.debug("Entering IDLE state.")
 
@@ -70,18 +75,24 @@ def mainloop(config, db):
         logging.debug("Server lacks support for IDLE... Falling back to delay.")
         while True:
             try:
-                mailProcessing(config, db, imapmail)
+                mailProcessing(config, db, imapmail, ignored_uids)
                 time.sleep(config("mail.delay"))
             except KeyboardInterrupt:
                 logoutIMAP(imapmail)
                 raise
 
 
-def mailProcessing(config, db, imapmail):
+def mailProcessing(config, db, imapmail, ignored_uids):
     filterCriteria = "SUBJECT \"Abgabe\""
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
-        submission.handle_mail(config, db, imapmail, uid, message)
+        if uid in ignored_uids:
+            continue
+        try:
+            submission.handle_mail(config, db, imapmail, uid, message)
+        except helper.MailError as me:
+            ignored_uids.add(me.uid)
+            on_error(config, me)
 
 
 def loginIMAP(server, address, password, ssl=True, debug=False):

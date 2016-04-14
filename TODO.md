@@ -1,4 +1,3 @@
-Until Monday:
 Korrekturen (Martin)
 send simple confirmation mail (Martin)
 set up server (Philipp)

@@ -33,7 +33,7 @@ def imapCommand(imapmail, command, *args):
         return response
     else:
         err = "Server responded with Code '%s' for '%s %s'." % (code, command, args)
-        raise MailError(err)
+        raise MailConnectionError(err)
 
 
 def uidCommand(imapmail, command, *args):
@@ -47,7 +47,7 @@ def uidCommand(imapmail, command, *args):
         return response[0]
     else:
         err = "Server responded with Code '%s' for '%s %s'." % (code, command, args)
-        raise MailError(err)
+        raise MailConnectionError(err)
 
 
 def smtpMail(config, to, what):
@@ -106,7 +106,7 @@ def checkResult(imapmail, expected):
 
     line = imapmail.readline()
     if not re.match(b"^(?:[A-Z0-9]{5,9}|[*])\s+" + expected, line):
-        raise MailError("Invalid response: '%s' expected, but got '%s'" % (expected, line))
+        raise MailConnectionError("Invalid response: '%s' expected, but got '%s'" % (expected, line))
 
 
 class RequestHandlerWithAuth(tornado.web.RequestHandler):
@@ -172,6 +172,13 @@ def create_imap_conn(server, ssl, debug):
     return res
 
 
-# An error in email handling, e.g. we got the wrong message back, connection interrupted etc.
-class MailError(BaseException):
+# An error with the IMAP connection (interrupted, erorr message, etc.)
+class MailConnectionError(BaseException):
     pass
+
+
+# An error in handling a specific mail
+class MailError(BaseException):
+    def __init__(self, uid, msg):
+        super().__init__(msg)
+        self.uid = uid

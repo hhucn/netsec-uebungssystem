@@ -5,7 +5,7 @@ Installation
 ============
 
 ```
-sudo apt-get install -y git make python3
+sudo apt-get install -y git make python3 python3-pip
 git clone https://github.com/hhucn/netsec-uebungssystem.git
 make deps
 sudo make install-service # To start automatically

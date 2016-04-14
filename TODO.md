@@ -1,8 +1,8 @@
-handle umlauts in subject
 Korrekturen (Martin)
 send simple confirmation mail (Martin)
 set up server (Philipp)
 
+handle umlauts in subject
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 merge students; actually use alias as intended

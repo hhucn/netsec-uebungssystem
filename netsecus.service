@@ -5,8 +5,8 @@ Documentation=https://github.com/hhucn/netsec-uebungssystem
 [Service]
 ExecStart=/usr/bin/python3 -m netsecus
 Type=simple
-User=phihag
-Group=phihag
+User=netsecus
+Group=netsecus
 WorkingDirectory=%LOCATION%
 
 [Install]

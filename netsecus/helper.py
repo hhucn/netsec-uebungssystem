@@ -186,3 +186,20 @@ class MailError(BaseException):
 class MailProcessingError(BaseException):
     def __init__(self, msg):
         super().__init__(msg)
+
+
+def setup_logging(config):
+    loglevel = getattr(logging, config("loglevel").upper())
+    logfile = config('logfile')
+
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    root_logger = logging.getLogger()
+    root_logger.setLevel(loglevel)
+
+    file_handler = logging.FileHandler(logfile)
+    file_handler.setFormatter(formatter)
+    root_logger.addHandler(file_handler)
+
+    stderr_handler = logging.StreamHandler()
+    stderr_handler.setFormatter(formatter)
+    root_logger.addHandler(stderr_handler)

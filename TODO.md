@@ -1,6 +1,5 @@
 Korrekturen (Martin)
 send simple confirmation mail (Martin)
-set up server (Philipp)
 
 handle umlauts in subject
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
@@ -26,3 +25,4 @@ send mail back with checksums of attachments
 Abgabestring in die Konfiguration
 test 2 mails coming in at the same second
 improve error handling (mark mail before saving/doing anything, do not retry if mark present)
+also send text email

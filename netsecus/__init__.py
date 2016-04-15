@@ -41,12 +41,7 @@ def main():
 
     config.module_path = os.path.dirname(os.path.dirname(__file__))
 
-    loglevel = getattr(logging, config("loglevel").upper())
-    logfile = config('logfile')
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)s %(message)s",
-        level=loglevel,
-        filename=logfile)
+    helper.setup_logging(config)
     logging.debug('Starting with command line %r' % sys.argv)
 
     if args.make_passhash:

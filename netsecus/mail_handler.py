@@ -17,6 +17,7 @@ def mail_main(config):
         on_error(config, e)
         raise
 
+
 def mail_run(config):
     db = database.Database(config)
     helper.patch_imaplib()

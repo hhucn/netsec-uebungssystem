@@ -182,6 +182,7 @@ class MailError(BaseException):
         super().__init__(msg)
         self.uid = uid
 
+
 # An error unrelated to a specific mail rather than the processing itself
 class MailProcessingError(BaseException):
     def __init__(self, msg):

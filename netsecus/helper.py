@@ -56,9 +56,8 @@ def smtpMail(config, to, what):
     except KeyError:
         username = config('mail.address')
 
-    smtpmail = smtplib.SMTP(config("mail.smtp_server"))
+    smtpmail = smtplib.SMTP_SSL(config("mail.smtp_server"))
     smtpmail.ehlo()
-    smtpmail.starttls()
     smtpmail.login(username, config("mail.password"))
     smtpmail.sendmail(config("mail.address"), to, what)
     smtpmail.quit()

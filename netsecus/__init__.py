@@ -4,6 +4,7 @@ import argparse
 import getpass
 import logging
 import os
+import sys
 import threading
 
 from .config import Config
@@ -46,6 +47,7 @@ def main():
         format="%(asctime)s %(message)s",
         level=loglevel,
         filename=logfile)
+    logging.debug('Starting with command line %r' % sys.argv)
 
     if args.make_passhash:
         pw = getpass.getpass()

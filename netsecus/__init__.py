@@ -44,7 +44,7 @@ def main():
     loglevel = getattr(logging, config("loglevel").upper())
     logfile = config('logfile')
     logging.basicConfig(
-        format="%(asctime)s %(message)s",
+        format="%(asctime)s %(levelname)s %(message)s",
         level=loglevel,
         filename=logfile)
     logging.debug('Starting with command line %r' % sys.argv)

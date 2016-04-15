@@ -11,6 +11,13 @@ from . import submission
 
 
 def mail_main(config):
+    try:
+        mail_run(config)
+    except BaseException as e:
+        on_error(config, e)
+        raise
+
+def mail_run(config):
     db = database.Database(config)
     helper.patch_imaplib()
     ignored_uids = set()

@@ -40,6 +40,14 @@ class KorrekturApp(tornado.web.Application):
         return self.config('korrektoren')
 
 
+def web_main(config):
+    try:
+        mainloop(config)
+    except BaseException as e:
+        logging.exception(e)
+        raise
+
+
 def mainloop(config):
     application = KorrekturApp(config, [
         (r"/", TableHandler),

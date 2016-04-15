@@ -36,6 +36,7 @@ class Database(object):
             """CREATE TABLE IF NOT EXISTS `grading` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `submission_id` INTEGER REFERENCES submission(id),
+                `task_id` INTEGER REFERENCES task(id),
                 `comment` TEXT,
                 `time` BIGINT,
                 `decipoints` INTEGER,

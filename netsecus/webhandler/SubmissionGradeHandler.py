@@ -9,7 +9,7 @@ import base64
 
 
 class SubmissionGradeHandler(ProtectedPostHandler):
-    def postPassedCSRF(self, submission_id):
+    def postPassedCSRF(self, submission_id, task_id):
         comment = self.get_argument("comment")
         decipoints = self.get_argument("points")
         timestamp = datetime.datetime.utcnow()
@@ -20,5 +20,5 @@ class SubmissionGradeHandler(ProtectedPostHandler):
         username_b, _, password_b = auth.partition(b":")
         grader = username_b.decode('utf-8')
 
-        grading.set_grade_for_submission(self.application.db, submission_id, comment, timestamp, decipoints, grader)
+        grading.set_grade_for_task(self.application.db, task_id, submission_id, comment, timestamp, decipoints, grader)
         self.redirect("/submission/%s" % submission_id)

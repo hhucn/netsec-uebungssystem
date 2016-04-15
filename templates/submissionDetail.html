@@ -26,13 +26,18 @@ abgegeben {{ submission.time }}
 
 <h2>Korrektur</h2>
 
-<form action="/submission/{{ submission.id }}/grade" method="post">
-  {% module xsrf_form_html() %}
-  <textarea name="comment" placeholder="Kommentar" cols="100" rows="4">
-    {% if grading %}{{ grading.comment }}{% end %}
-  </textarea><br>
-  Punkte: <input type="number" name="points" value="{% if grading %}{{ grading.decipoints }}{% end %}" step="0.1"><br>
-  <input type="submit" title="Speichern">
-</form>
+{% for grade in grading %}
+  <h3>Aufgabe {{ grade["task"].name }}</h3>
+  <form action="/submission/{{ submission.id }}/grade/{{ grade["task"].id }}" method="post">
+    {% module xsrf_form_html() %}
+    <textarea name="comment" placeholder="Kommentar" cols="100" rows="4">
+      {% if grade["grading"] %}{{ grade["grading"].comment }}{% end %}
+    </textarea><br>
+    Punkte:
+    <input type="number" name="points" value="{% if grade["grading"] %}{{ grade["grading"].decipoints }}{% end %}" step="0.1">
+     von {{ grade["task"].decipoints }}
+    <input type="submit" title="Speichern">
+  </form>
+{% end %}
 
 {%include ../../templates/footer.html %}

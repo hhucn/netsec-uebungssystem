@@ -17,7 +17,9 @@ abgegeben {{ submission.time }}
   <tr>
     <td>{{ file.id }}</td>
     <td>{{ file.hash }}</td>
-    <td>{{ file.filename }}</td>
+    <td>
+      <a href="/download/{{ file.hash }}">{{ file.filename }}</a>
+    </td>
   </tr>
   {% end %}
 </table>

@@ -56,8 +56,10 @@ def add_file(self, submission_id, hash, filename):
 
 
 def handle_mail(config, db, imapmail, uid, message):
+    alias = message.get('From', 'anonymous')
+    subject = message.get('Subject', '(None)')
+
     try:
-        alias = message.get('From', 'anonymous')
         stu = student.resolve_alias(db, alias)
         sheet = sheet_by_mail(db, uid, message)
 
@@ -101,9 +103,9 @@ def handle_mail(config, db, imapmail, uid, message):
 
         commands.move(config, imapmail, uid, "Abgaben")
 
-        respond_to_mail(config, alias, "Mail erhalten", "mail_received.html")
+        respond_to_mail(config, alias, "Mail erhalten: %s" % subject, "mail_received.html")
     except helper.MailError as me:
-        respond_to_mail(config, alias, "Mail fehlerhaft", "mail_sheet_not_found.html")
+        respond_to_mail(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
 
 
 

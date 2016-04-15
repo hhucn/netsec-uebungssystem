@@ -4,6 +4,9 @@ import errno
 import json
 
 
+raise_err = object()
+
+
 class Config(object):
     def __init__(self, default_cfg, site_cfg):
         self.default_cfg = default_cfg
@@ -15,7 +18,7 @@ class Config(object):
             res = res[p]
         return res
 
-    def __call__(self, path_str):
+    def __call__(self, path_str, default=raise_err):
         path = path_str.split('.')
         try:
             return self.resolve(self.site_cfg, path)
@@ -24,7 +27,10 @@ class Config(object):
         try:
             return self.resolve(self.default_cfg, path)
         except KeyError:
-            raise KeyError('Missing configuration %s' % path_str)
+            if default is raise_err:
+                raise KeyError('Missing configuration %s' % path_str)
+            else:
+                return default
 
     @staticmethod
     def _read_file(fn, default=None):

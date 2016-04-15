@@ -4,6 +4,7 @@ import argparse
 import getpass
 import logging
 import os
+import sys
 import threading
 
 from .config import Config
@@ -40,10 +41,13 @@ def main():
 
     config.module_path = os.path.dirname(os.path.dirname(__file__))
 
-    if config("loglevel").upper() == "ERROR":
-        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)
-    else:
-        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
+    loglevel = getattr(logging, config("loglevel").upper())
+    logfile = config('logfile')
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)s %(message)s",
+        level=loglevel,
+        filename=logfile)
+    logging.debug('Starting with command line %r' % sys.argv)
 
     if args.make_passhash:
         pw = getpass.getpass()
@@ -60,15 +64,15 @@ def main():
         mail_handler.mail_main(config)
         assert False, 'mail_main should never terminate'
     if args.only_web:
-        korrekturserver.mainloop(config)
-        assert False, 'mainloop should never terminate'
+        korrekturserver.web_main(config)
+        assert False, 'webserver should never terminate'
 
     mail_thread = threading.Thread(
         target=mail_handler.mail_main, args=(config,))
     mail_thread.daemon = True
     mail_thread.start()
     web_thread = threading.Thread(
-        target=korrekturserver.mainloop, args=(config,))
+        target=korrekturserver.web_main, args=(config,))
     web_thread.daemon = True
     web_thread.start()
 

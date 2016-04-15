@@ -1,5 +1,6 @@
 {
 	"loglevel":"debug",
+	"logfile": "log",
 	"attachment_path":"submissions",
 	"database_path":"databases.sqlite",
 	"script_path":"scripts",

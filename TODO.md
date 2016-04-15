@@ -1,7 +1,15 @@
-Korrekturen (Martin)
-send simple confirmation mail (Martin)
-
+Korrektur für jede Aufgabe separat
+	nur an Studenten absenden / in der Datenbank eintragen wenn alle Felder voll
+Abgaben runterladen
 handle umlauts in subject
+Abgaben unter detaillink (/submissions/all)
+Neue Anzeige Abgaben (/submissions): (nur einmal pro Student&Blatt)
+	Neueste nummer | Zeitpunkt | Blatt | Student | Korrektor | Korrektur
+
+Beantwortete Mails flaggen
+
+Abgaben unter Studierende verlinkt
+Abgabezeitpunkt menschenlesbar
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 merge students; actually use alias as intended
@@ -26,3 +34,4 @@ Abgabestring in die Konfiguration
 test 2 mails coming in at the same second
 improve error handling (mark mail before saving/doing anything, do not retry if mark present)
 also send text email
+

@@ -11,6 +11,7 @@ from .config import Config
 
 from . import mail_handler
 from . import korrekturserver
+from . import helper
 
 
 def main():
@@ -40,7 +41,6 @@ def main():
     config = Config.read(args.config_default_path, args.config_path)
 
     config.module_path = os.path.dirname(os.path.dirname(__file__))
-
     helper.setup_logging(config)
     logging.debug('Starting with command line %r' % sys.argv)
 

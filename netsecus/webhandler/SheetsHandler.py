@@ -11,6 +11,6 @@ class SheetsHandler(NetsecHandler):
 
         sheets_tasks = (
             task.get_for_sheet(self.application.db, single_sheet.id)
-        for single_sheet in sheets)
+            for single_sheet in sheets)
 
         self.render('sheets', {'sheets_tasks': sheets_tasks, 'sheets': sheets})

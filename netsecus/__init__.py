@@ -40,10 +40,12 @@ def main():
 
     config.module_path = os.path.dirname(os.path.dirname(__file__))
 
-    if config("loglevel").upper() == "ERROR":
-        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.ERROR)
-    else:
-        logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
+    loglevel = getattr(logging, config("loglevel").upper())
+    logfile = config('logfile')
+    logging.basicConfig(
+        format="%(asctime)s %(message)s",
+        level=loglevel,
+        filename=logfile)
 
     if args.make_passhash:
         pw = getpass.getpass()

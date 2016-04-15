@@ -23,7 +23,7 @@ def mail_main(config):
 
 
 def on_error(config, e):
-    logging.error(e)
+    logging.exception(e)
     if config('loglevel') == 'debug':
         traceback.print_exc()
 

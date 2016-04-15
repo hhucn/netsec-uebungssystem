@@ -7,6 +7,7 @@ import itertools
 import os.path
 import re
 import time
+from .helper import MailProcessingError
 
 from . import (
     commands,
@@ -55,49 +56,68 @@ def add_file(self, submission_id, hash, filename):
 
 
 def handle_mail(config, db, imapmail, uid, message):
-    alias = message.get('From', 'anonymous')
-    stu = student.resolve_alias(db, alias)
-    sheet = sheet_by_mail(db, uid, message)
+    try:
+        alias = message.get('From', 'anonymous')
+        stu = student.resolve_alias(db, alias)
+        sheet = sheet_by_mail(db, uid, message)
 
-    now_ts = time.time()
-    now_dt = datetime.datetime.fromtimestamp(now_ts)
-    now_str = now_dt.strftime('%Y-%m-%d_%H-%M-%S_%f')
+        now_ts = time.time()
+        now_dt = datetime.datetime.fromtimestamp(now_ts)
+        now_str = now_dt.strftime('%Y-%m-%d_%H-%M-%S_%f')
 
-    files_path = os.path.join(
-        config("attachment_path"),
-        helper.escape_filename(str(stu.id)),
-        helper.escape_filename(str(sheet.id)),
-        helper.escape_filename(now_str)
-    )
-    if os.path.exists(files_path):
-        orig_files_path = files_path
-        for i in itertools.count(2):
-            files_path = '%s___%s' % (orig_files_path, i)
-            if not os.path.exists(files_path):
-                break
+        files_path = os.path.join(
+            config("attachment_path"),
+            helper.escape_filename(str(stu.id)),
+            helper.escape_filename(str(sheet.id)),
+            helper.escape_filename(now_str)
+        )
+        if os.path.exists(files_path):
+            orig_files_path = files_path
+            for i in itertools.count(2):
+                files_path = '%s___%s' % (orig_files_path, i)
+                if not os.path.exists(files_path):
+                    break
 
-    subm = create(db, sheet.id, stu.id, int(now_ts), files_path)
+        subm = create(db, sheet.id, stu.id, int(now_ts), files_path)
 
-    os.makedirs(files_path)
-    for subpart in message.walk():
-        fn = subpart.get_filename()
-        payload = subpart.get_payload(decode=True)
+        os.makedirs(files_path)
+        for subpart in message.walk():
+            fn = subpart.get_filename()
+            payload = subpart.get_payload(decode=True)
 
-        if not payload:
-            continue
+            if not payload:
+                continue
 
-        if not fn:
-            fn = 'mail'
+            if not fn:
+                fn = 'mail'
 
-        payload_name = helper.escape_filename(fn)
-        payload_path = os.path.join(files_path, payload_name)
-        hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()
-        with open(payload_path, "wb") as payload_file:
-            payload_file.write(payload)
+            payload_name = helper.escape_filename(fn)
+            payload_path = os.path.join(files_path, payload_name)
+            hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()
+            with open(payload_path, "wb") as payload_file:
+                payload_file.write(payload)
 
-        add_file(db, subm.id, hash_str, payload_name)
+            add_file(db, subm.id, hash_str, payload_name)
 
-    commands.move(config, imapmail, uid, "Abgaben")
+        commands.move(config, imapmail, uid, "Abgaben")
+
+        respond_to_mail(config, alias, "Mail erhalten", "mail_received.html")
+    except helper.MailError as me:
+        respond_to_mail(config, alias, "Mail fehlerhaft", "mail_sheet_not_found.html")
+
+
+
+def respond_to_mail(config, to, subject, template):
+    template_path = os.path.join(config.module_path, "templates", template)
+
+    if not os.path.exists(template_path):
+        raise MailProcessingError("Template %s not found" % template_path)
+
+    with open(template_path) as template_file:
+        header = "Subject: %s\nTo: %s\nContent-Type: text/html" % (subject, to)
+        body = template_file.read()
+        mail = "%s\n\n%s" % (header, body)
+        helper.smtpMail(config, to, mail)
 
 
 def get_for_student(db, student_id):

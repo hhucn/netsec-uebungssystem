@@ -106,7 +106,7 @@ def handle_mail(config, db, imapmail, uid, message):
         respond_to_mail(config, alias, "Mail erhalten: %s" % subject, "mail_received.html")
     except helper.MailError as me:
         respond_to_mail(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
-
+        raise me
 
 
 def respond_to_mail(config, to, subject, template):

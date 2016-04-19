@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import collections
 import datetime
-import email.header
 import hashlib
 import itertools
 import os.path

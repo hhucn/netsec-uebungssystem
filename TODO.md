@@ -4,6 +4,8 @@ Abgaben runterladen
 Neue Anzeige Abgaben (/submissions): (nur einmal pro Student&Blatt)
 	Neueste nummer | Zeitpunkt | Blatt | Student | Korrektor | Korrektur
 
+Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
+E-Mails für Korrekturen verschicken
 Beantwortete Mails flaggen
 
 Abgaben unter Studierende verlinkt
@@ -14,6 +16,7 @@ merge students; actually use alias as intended
 require mails to start with "Abgabe [Nr]"
 tag mail if exception occurs
 
+RequestHandlerWithAuth should store user id, do not parse it twice
 move submission handling out of commands into a better-named module (how about submission?)
 test with subject "AbgabeFoo"
 fix travis

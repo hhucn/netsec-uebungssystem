@@ -29,7 +29,7 @@ abgegeben {{ submission.time }}
 <form action="/submission/{{ submission.id }}/grade_all" method="post">
 {% module xsrf_form_html() %}
 <table>
-<thead><tr><th>Aufgabe</th><th>Kommentar</th><th>Punktzahl</th></tr></thead>
+<thead><tr><th>Aufgabe</th><th>Kommentar</th><th>Punktzahl</th><th>Korrektor</th></tr></thead>
 <tbody>
 {% for grade in grading %}
 <tr>
@@ -39,8 +39,13 @@ abgegeben {{ submission.time }}
   </td>
   <td>
     <input type="number" name="points_{{ grade["task"].id }}" value="{% if grade["grading"] %}{{ grade["grading"].decipoints }}{% end %}" step="0.5">
-     von {{ grade["task"].decipoints }}
+     von {{ (float(grade["task"].decipoints) / 10) }}
   </td>
+  <td>
+    {% if grade["grading"].grader %}
+    {{ grade["grading"].grader }}
+    {% end %}
+</td>
 </tr>
 {% end %}
 </tbody></table>

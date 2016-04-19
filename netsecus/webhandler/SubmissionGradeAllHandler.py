@@ -17,11 +17,15 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
         timestamp = datetime.datetime.utcnow()
         grader = self.request.netsecus_user
         assert grader
-        print('grader: %r' % grader)
 
         for t in tasks:
             comment = self.get_argument("comment_%s" % t.id)
-            decipoints = self.get_argument("points_%s" % t.id)
+            decipoints = int(round(float(self.get_argument("points_%s" % t.id)) * 10))
+
+            g = grading.get_grade_for_task(
+                self.application.db, t.id, submission_id)
+            if (g is not None) and g.comment == comment and g.decipoints == decipoints:
+                continue
 
             grading.set_grade_for_task(
                 self.application.db, t.id, submission_id,

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, print_function
 
 import base64
+import email
 import imaplib
 import logging
 import re
@@ -204,3 +205,12 @@ def setup_logging(config):
     stderr_handler = logging.StreamHandler()
     stderr_handler.setFormatter(formatter)
     root_logger.addHandler(stderr_handler)
+
+
+def get_header(message, key, default):
+    """ Get a header value as a string from an email message """
+    raw_val = message.get(key, default)
+
+    return u''.join(
+        word.decode(encoding or 'utf-8')
+        for word, encoding in email.header.decode_header(raw_val))

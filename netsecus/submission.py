@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import collections
 import datetime
+import email.header
 import hashlib
 import itertools
 import os.path
@@ -22,7 +23,7 @@ Submission = collections.namedtuple(
 
 
 def sheet_by_mail(db, uid, message):
-    subject = message.get('Subject', '')
+    subject = helper.get_header(message, 'Subject', '')
     sheet_m = re.match(r'Abgabe\s*(?P<id>[0-9]+)', subject)
     if not sheet_m:
         raise helper.MailError(uid, 'Invalid subject line, found: %s' % subject)

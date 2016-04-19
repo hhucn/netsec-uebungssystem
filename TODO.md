@@ -3,9 +3,10 @@ Korrekturen absenden
 Studentennamen in der Übersicht
 Abgabezeitpunkt menschenlesbar
 Aliase in der Oberfläche
+Bei teilweiser Korrektur erscheint als fertig
 
-
-
+Dateigröße anzeigen
+Mailtext direkt anzeigen
 assign korrektor
 tornado nur auf localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen

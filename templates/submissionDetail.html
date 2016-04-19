@@ -38,11 +38,11 @@ abgegeben {{ submission.time }}
     <textarea name="comment_{{ grade["task"].id }}" placeholder="Kommentar" cols="100" rows="4">{% if grade["grading"] %}{{ grade["grading"].comment }}{% end %}</textarea>
   </td>
   <td>
-    <input type="number" name="points_{{ grade["task"].id }}" value="{% if grade["grading"] %}{{ grade["grading"].decipoints }}{% end %}" step="0.5">
+    <input type="number" name="points_{{ grade["task"].id }}" value="{% if grade["grading"] %}{{ float(grade["grading"].decipoints) / 10 }}{% end %}" step="0.5">
      von {{ (float(grade["task"].decipoints) / 10) }}
   </td>
   <td>
-    {% if grade["grading"].grader %}
+    {% if grade["grading"] %}
     {{ grade["grading"].grader }}
     {% end %}
 </td>

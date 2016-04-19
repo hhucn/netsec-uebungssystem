@@ -1,9 +1,5 @@
-Korrektur für jede Aufgabe separat
-	nur an Studenten absenden / in der Datenbank eintragen wenn alle Felder voll
-Abgaben runterladen
-Neue Anzeige Abgaben (/submissions): (nur einmal pro Student&Blatt)
-	Neueste nummer | Zeitpunkt | Blatt | Student | Korrektor | Korrektur
-
+Korrekturen absenden
+Studentennamen in der Übersicht
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 E-Mails für Korrekturen verschicken
 Beantwortete Mails flaggen

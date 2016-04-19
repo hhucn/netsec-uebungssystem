@@ -2,7 +2,6 @@ Korrekturen absenden
 Studentennamen in der Übersicht
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 E-Mails für Korrekturen verschicken
-Beantwortete Mails flaggen
 
 Abgaben unter Studierende verlinkt
 Abgabezeitpunkt menschenlesbar

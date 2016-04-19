@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import collections
+import hashlib
 
 from . import task
 
@@ -61,3 +62,12 @@ def get_submission_grade_status(db, submission_id):
         return "Angefangen"
 
     return "Fertig"
+
+
+def assign_grader(config, submission_id):
+    all_graders = list(config('korrektoren').keys())
+    rnd = int(
+        hashlib.sha512(('%s' % submission_id).encode('ascii')).hexdigest(),
+        base=16)
+    g_idx = rnd % len(all_graders)
+    return all_graders[g_idx]

@@ -9,13 +9,17 @@ from .. import grading
 class SubmissionsListCurrentHandler(NetsecHandler):
     def get(self):
         # TODO only list newest submission
-        # TODO include correction status
         submissions = submission.get_all(self.application.db)
 
-        subms = [ {"submission": a_submission,
-                   "grader": ", ".join(grading.get_all_graders(self.application.db, a_submission.id)),
-                   "status": grading.get_submission_grade_status(self.application.db, a_submission.id)}
-                 for a_submission in submissions ]
+        subms = [{
+            "submission": a_submission,
+            "grader": ", ".join(grading.get_all_graders(self.application.db, a_submission.id)),
+            "status": grading.get_submission_grade_status(self.application.db, a_submission.id),
+        } for a_submission in submissions]
 
+        for subm in subms:
+            if not subm['grader']:
+                subm['assigned_grader'] = grading.assign_grader(
+                    self.application.config, subm['submission'].id)
 
         self.render('submissions_list_current', {'submissions': subms})

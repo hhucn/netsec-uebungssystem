@@ -1,10 +1,10 @@
 Korrekturen absenden
 Studentennamen in der Übersicht
-Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
-E-Mails für Korrekturen verschicken
-
-Abgaben unter Studierende verlinkt
 Abgabezeitpunkt menschenlesbar
+Aliase in der Oberfläche
+
+Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
+Abgaben unter Studierende verlinkt
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 merge students; actually use alias as intended

@@ -7,6 +7,7 @@ import tornado.web
 from .. import file
 from .. import submission
 
+
 class DownloadHandler(tornado.web.StaticFileHandler):
     def initialize(self):
         super(DownloadHandler, self).initialize(self.application.config.module_path)

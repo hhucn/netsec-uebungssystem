@@ -16,8 +16,9 @@ class SubmissionDetailHandler(NetsecHandler):
         graded_tasks = []
 
         for a_task in tasks:
-            graded_tasks.append({"task":a_task,
-                                 "grading":grading.get_grade_for_task(self.application.db, a_task.id, requested_submission.id)})
+            graded_tasks.append({"task": a_task,
+                                 "grading": grading.get_grade_for_task(self.application.db, a_task.id,
+                                                                       requested_submission.id)})
 
         self.render('submissionDetail', {'submission': requested_submission, 'files': submission_files,
                                          'grading': graded_tasks})

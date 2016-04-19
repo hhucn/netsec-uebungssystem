@@ -1,0 +1,23 @@
+{%include ../../templates/header.html %}
+
+<table class="table">
+	<tr>
+		<th>Abgabe</th>
+		<th>Blatt</th>
+		<th>Student</th>
+		<th>Abgabezeitpunkt</th>
+	</tr>
+{% for submission in submissions %}
+	<tr>
+		<td><a href="/submission/{{ submission.id }}">{{ submission.id }}</a></td>
+		<td><a href="/sheet/{{ submission.sheet_id }}">{{ submission.sheet_id }}</a></td>
+		<td><a href="/student/{{ submission.student_id }}">{{ submission.student_id }}</a></td>
+		<td>{{ submission.time }}</td>
+	</tr>
+{% end %}
+</table>
+
+<p><a href="/submissions/all">Alle Abgaben</a></p>
+
+
+{%include ../../templates/footer.html %}

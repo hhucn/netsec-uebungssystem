@@ -91,7 +91,7 @@ def mainloop(config, db, ignored_uids):
 
 
 def mailProcessing(config, db, imapmail, ignored_uids):
-    filterCriteria = "SUBJECT \"Abgabe\""
+    filterCriteria = "SUBJECT \"Abgabe\" UNDELETED"
     mails = commands.filter(config, imapmail, [], filterCriteria)
     for uid, message in mails:
         if uid in ignored_uids:

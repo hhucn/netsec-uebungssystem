@@ -6,13 +6,17 @@
 		<th>Blatt</th>
 		<th>Student</th>
 		<th>Abgabezeitpunkt</th>
+		<th>Korrektor</th>
+		<th>Status</th>
 	</tr>
 {% for submission in submissions %}
 	<tr>
-		<td><a href="/submission/{{ submission.id }}">{{ submission.id }}</a></td>
-		<td><a href="/sheet/{{ submission.sheet_id }}">{{ submission.sheet_id }}</a></td>
-		<td><a href="/student/{{ submission.student_id }}">{{ submission.student_id }}</a></td>
-		<td>{{ submission.time }}</td>
+		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["submission"].id }}</a></td>
+		<td><a href="/sheet/{{ submission["submission"].sheet_id }}">{{ submission["submission"].sheet_id }}</a></td>
+		<td><a href="/student/{{ submission["submission"].student_id }}">{{ submission["submission"].student_id }}</a></td>
+		<td>{{ submission["submission"].time }}</td>
+		<td>{{ submission["grader"] }}</td>
+		<td>{{ submission["status"] }}</td>
 	</tr>
 {% end %}
 </table>

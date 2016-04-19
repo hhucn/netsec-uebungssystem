@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from .NetsecHandler import NetsecHandler
 
 from .. import submission
+from .. import grading
 
 
 class SubmissionsListCurrentHandler(NetsecHandler):

@@ -1,9 +1,13 @@
-abgesendete Mails in den Sent-Ordner schieben
 Korrekturen absenden
+	abgesendete Mails in den Sent-Ordner schieben
 Studentennamen in der Übersicht
 Abgabezeitpunkt menschenlesbar
 Aliase in der Oberfläche
 
+
+
+assign korrektor
+tornado nur auf localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Abgaben unter Studierende verlinkt
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur

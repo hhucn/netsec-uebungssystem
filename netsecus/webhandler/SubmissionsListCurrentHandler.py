@@ -10,7 +10,7 @@ class SubmissionsListCurrentHandler(NetsecHandler):
     def get(self):
         # TODO only list newest submission
         # TODO include correction status
-        submissions = submission.get_all(self.application.db)
+        submissions = submission.get_all_newest(self.application.db)
 
         subms = [ {"submission": a_submission,
                    "grader": ", ".join(grading.get_all_graders(self.application.db, a_submission.id)),

@@ -1,8 +1,6 @@
 Korrektur für jede Aufgabe separat
 	nur an Studenten absenden / in der Datenbank eintragen wenn alle Felder voll
 Abgaben runterladen
-handle umlauts in subject
-Abgaben unter detaillink (/submissions/all)
 Neue Anzeige Abgaben (/submissions): (nur einmal pro Student&Blatt)
 	Neueste nummer | Zeitpunkt | Blatt | Student | Korrektor | Korrektur
 

@@ -207,10 +207,10 @@ def setup_logging(config):
     root_logger.addHandler(stderr_handler)
 
 
-def get_header(message, key, default):
+def get_header(message, key, default=''):
     """ Get a header value as a string from an email message """
     raw_val = message.get(key, default)
 
-    return u''.join(
-        word.decode(encoding or 'utf-8')
+    return ''.join(
+        word.decode(encoding or 'utf8') if isinstance(word, bytes) else word
         for word, encoding in email.header.decode_header(raw_val))

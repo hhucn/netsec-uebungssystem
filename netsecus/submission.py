@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import collections
 import datetime
-import email.header
 import hashlib
 import itertools
 import os.path
@@ -137,15 +136,13 @@ def get_for_student(db, student_id):
 def get_all(db):
     db.cursor.execute("SELECT id, sheet_id, student_id, time, files_path FROM submission")
     rows = db.cursor.fetchall()
-    result = []
-
-    for row in rows:
-        result.append(Submission(*row))
-
-    return result
+    return [Submission(*row) for row in rows]
 
 
 def get_from_id(db, submission_id):
     db.cursor.execute("""SELECT id, sheet_id, student_id, time, files_path FROM submission
                          WHERE id = ?""", (submission_id, ))
-    return Submission(*db.cursor.fetchone())
+    row = db.cursor.fetchone()
+    if not row:
+        raise ValueError('Cannot find submission')
+    return Submission(*row)

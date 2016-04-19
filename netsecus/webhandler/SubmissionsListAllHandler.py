@@ -5,7 +5,7 @@ from .NetsecHandler import NetsecHandler
 from .. import submission
 
 
-class SubmissionsHandler(NetsecHandler):
+class SubmissionsListAllHandler(NetsecHandler):
     def get(self):
         submissions = submission.get_all(self.application.db)
-        self.render('submissions', {'submissions': submissions})
+        self.render('submissions_list_all', {'submissions': submissions})

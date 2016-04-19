@@ -16,7 +16,7 @@
 		<td><a href="/student/{{ submission["submission"].student_id }}">{{ submission["submission"].student_id }}</a></td>
 		<td>{{ submission["submission"].time }}</td>
 		<td>{{ submission["grader"] }}</td>
-		<td>{{ submission["status"] }}</td>
+		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["status"] }}</a></td>
 	</tr>
 {% end %}
 </table>

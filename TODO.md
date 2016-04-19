@@ -1,3 +1,4 @@
+abgesendete Mails in den Sent-Ordner schieben
 Korrekturen absenden
 Studentennamen in der Übersicht
 Abgabezeitpunkt menschenlesbar

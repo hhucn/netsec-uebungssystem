@@ -20,7 +20,7 @@
 		{%else %}
 			<em>{{submission["assigned_grader"]}}</em>
 		{% end %}</td>
-		<td>{{ submission["status"] }}</td>
+		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["status"] }}</a></td>
 	</tr>
 {% end %}
 </table>

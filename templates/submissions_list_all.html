@@ -11,10 +11,18 @@
 	</tr>
 {% for submission in submissions %}
 	<tr>
-		<td><a href="/submission/{{ submission.id }}">{{ submission.id }}</a></td>
-		<td><a href="/sheet/{{ submission.sheet_id }}">{{ submission.sheet_id }}</a></td>
-		<td><a href="/student/{{ submission.student_id }}">{{ submission.student_id }}</a></td>
-		<td>{{ submission.time }}</td>
+		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["submission"].id }}</a></td>
+		<td><a href="/sheet/{{ submission["submission"].sheet_id }}">{{ submission["submission"].sheet_id }}</a></td>
+		<td>
+			<a href="/student/{{ submission["submission"].student_id }}">
+				{% if submission["student"].aliases %}
+					{{ submission["student"].aliases[0] }}
+				{% else %}
+					{{ submission["submission"].student_id }}
+				{% end %}
+			</a>
+		</td>
+		<td>{{ submission["readable_time"] }}</td>
 	</tr>
 {% end %}
 </table>

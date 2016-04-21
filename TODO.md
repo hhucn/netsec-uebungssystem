@@ -1,8 +1,5 @@
 Korrekturen absenden
 	abgesendete Mails in den Sent-Ordner schieben
-Studentennamen in der Übersicht
-Abgabezeitpunkt menschenlesbar
-Aliase in der Oberfläche
 Bei teilweiser Korrektur erscheint als fertig
 assign korrektor
 
@@ -37,4 +34,3 @@ Abgabestring in die Konfiguration
 test 2 mails coming in at the same second
 improve error handling (mark mail before saving/doing anything, do not retry if mark present)
 also send text email
-

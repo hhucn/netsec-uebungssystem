@@ -47,7 +47,8 @@ class Database(object):
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `submission_id` INTEGER REFERENCES submission(id),
                 `hash` text,
-                `filename` text
+                `filename` text,
+                `size` BIGINT
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `student` (

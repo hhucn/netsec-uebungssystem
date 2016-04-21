@@ -48,10 +48,10 @@ def create(db, sheet_id, student_id, timestamp, files_path):
     return Submission(submission_id, sheet_id, student_id, timestamp, files_path)
 
 
-def add_file(self, submission_id, hash, filename):
+def add_file(self, submission_id, hash, filename, size):
     self.cursor.execute(
-        """INSERT INTO file (submission_id, hash, filename)
-           VALUES(?, ?, ?)""", (submission_id, hash, filename))
+        """INSERT INTO file (submission_id, hash, filename, size)
+           VALUES(?, ?, ?, ?)""", (submission_id, hash, filename, size))
     self.database.commit()
 
 
@@ -95,11 +95,12 @@ def handle_mail(config, db, imapmail, uid, message):
 
             payload_name = helper.escape_filename(fn)
             payload_path = os.path.join(files_path, payload_name)
+            payload_size = len(payload)
             hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()
             with open(payload_path, "wb") as payload_file:
                 payload_file.write(payload)
 
-            add_file(db, subm.id, hash_str, payload_name)
+            add_file(db, subm.id, hash_str, payload_name, payload_size)
 
         commands.move(config, imapmail, uid, "Abgaben")
 
@@ -165,3 +166,8 @@ def get_from_id(db, submission_id):
     if not row:
         raise ValueError('Cannot find submission')
     return Submission(*row)
+
+
+def get_readable_time_from_id(db, submission_id):
+    subm = get_from_id(db, submission_id)
+    return datetime.datetime.fromtimestamp(subm.time).strftime("%H:%M:%S %d.%m.%Y")

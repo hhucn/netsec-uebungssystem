@@ -18,6 +18,7 @@ class SubmissionDetailHandler(NetsecHandler):
         submission_student_aliases = ", ".join(submission_student.aliases)
         tasks = task.get_for_sheet(self.application.db, requested_submission.sheet_id)
         grader = assignment.get_for_submission(self.application.db, submission_id)
+        readable_time = submission.get_readable_time_from_id(self.application.db, submission_id)
         graded_tasks = []
 
         for a_task in tasks:
@@ -27,4 +28,4 @@ class SubmissionDetailHandler(NetsecHandler):
 
         self.render('submissionDetail', {'submission': requested_submission, 'files': submission_files,
                                          'grading': graded_tasks, 'aliases': submission_student_aliases,
-                                         'grader': grader})
+                                         'grader': grader, 'readable_time': readable_time})

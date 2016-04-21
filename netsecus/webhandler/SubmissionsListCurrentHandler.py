@@ -8,7 +8,6 @@ from .. import grading
 
 class SubmissionsListCurrentHandler(NetsecHandler):
     def get(self):
-        # TODO only list newest submission
         submissions = submission.get_all_newest(self.application.db)
 
         subms = [{

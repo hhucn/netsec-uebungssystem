@@ -15,7 +15,8 @@ class SubmissionsListCurrentHandler(NetsecHandler):
             "submission": a_submission,
             "grader": ", ".join(grading.get_all_graders(self.application.db, a_submission.id)),
             "status": grading.get_submission_grade_status(self.application.db, a_submission.id),
-            "student": student.get_full_student(self.application.db, a_submission.student_id)
+            "student": student.get_full_student(self.application.db, a_submission.student_id),
+            "readable_time": submission.get_readable_time_from_id(self.application.db, a_submission.id)
         } for a_submission in submissions]
 
         for subm in subms:

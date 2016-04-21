@@ -22,7 +22,7 @@
 				{% end %}
 			</a>
 		</td>
-		<td>{{ submission["submission"].time }}</td>
+		<td>{{ submission["readable_time"] }}</td>
 		<td>{% if submission["grader"] %}
 			{{ submission["grader"] }}
 		{%else %}

@@ -1,22 +1,23 @@
 Korrekturen absenden
+	Neuer Menü-Punkt
+	Neues Flag in der Datenbank versendet
+	Mails generieren, Voransicht im Menüpunkt
+	Mails versenden
 	abgesendete Mails in den Sent-Ordner schieben
+Bei Änderung der Korrektur versendet-flag löschen
 Bei teilweiser Korrektur erscheint als fertig
 
 Übersicht -> Meine Korrekturen
-Mailtext direkt anzeigen
 tornado listen nur localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
-Übersicht über die Korrekturen
 merge students; actually use alias as intended
-require mails to start with "Abgabe [Nr]"
 Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
 
 script to autorestart on changes
 RequestHandlerWithAuth should store user id, do not parse it twice
 move submission handling out of commands into a better-named module (how about submission?)
 test with subject "AbgabeFoo"
-fix travis
 test with deliberately valid/invalid UTF8
 PGP (students / system)
 Do away with html_path configuration option

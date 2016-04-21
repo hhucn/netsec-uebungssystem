@@ -3,7 +3,8 @@
 <h1>Abgabe {{ submission.id }}</h1>
 Von <a href="/student/{{ submission.student_id }}">Student {{ submission.student_id }}</a>
 für <a href="/sheet/{{ submission.sheet_id }}">Blatt {{ submission.sheet_id }}</a>,
-abgegeben {{ submission.time }}
+abgegeben {{ submission.time }}<br>
+Alias(e) für {{ submission.student_id }}: {{ aliases }}
 
 <h2>Dateien</h2>
 

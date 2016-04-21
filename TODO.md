@@ -5,8 +5,9 @@ Korrekturen absenden
 	Mails versenden
 	abgesendete Mails in den Sent-Ordner schieben
 Bei Änderung der Korrektur versendet-flag löschen
-Bei teilweiser Korrektur erscheint als fertig
 
+Bei teilweiser Korrektur erscheint als fertig
+mass assigment
 Übersicht -> Meine Korrekturen
 tornado listen nur localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen

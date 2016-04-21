@@ -210,8 +210,20 @@ def setup_logging(config):
 
 def get_header(message, key, default=''):
     """ Get a header value as a string from an email message """
-    raw_val = message.get(key, default)
+    return decode_mail_words(message.get(key, default))
 
+
+def decode_mail_words(raw_val):
     return ''.join(
         word.decode(encoding or 'utf8') if isinstance(word, bytes) else word
         for word, encoding in email.header.decode_header(raw_val))
+
+
+def remove_duplicates(lst):
+    """ remove duplicates while keeping order """
+    res = []
+    for el in lst:
+        if el in res:
+            continue
+        res.append(el)
+    return res

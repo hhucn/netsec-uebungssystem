@@ -4,7 +4,17 @@
 Von <a href="/student/{{ submission.student_id }}">Student {{ submission.student_id }}</a>
 für <a href="/sheet/{{ submission.sheet_id }}">Blatt {{ submission.sheet_id }}</a>,
 abgegeben {{ submission.time }}<br>
-Alias(e) für {{ submission.student_id }}: {{ aliases }}
+Alias(e) für {{ submission.student_id }}: {{ aliases }}<br>
+
+<form action="/submission/{{ submission.id }}/assign" method="post">
+  {% module xsrf_form_html() %}
+  {% if grader and len(grader.grader) > 0 %}
+    Zugewiesener Korrektor: <input type="text" value="{{ grader.grader }}" placeholder="Korrektor" name="grader">
+  {% else %}
+    Noch kein zugewiesener Korrektor. <input type="text" placeholder="Neuer Korrektor" name="grader">
+  {% end %}
+  <button role="submit">Speichern</button>
+</form>
 
 <h2>Dateien</h2>
 

@@ -60,6 +60,13 @@ class Database(object):
                 `student_id` INTEGER REFERENCES student(id),
                 `alias` text UNIQUE
             )""")
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `assignment` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `grader` TEXT,
+                `sheet_id` INTEGER REFERENCES sheet(id),
+                `student_id` INTEGER REFERENCES student(id)
+            )""")
 
     def commit(self):
         return self.database.commit()

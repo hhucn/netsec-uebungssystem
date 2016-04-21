@@ -7,6 +7,7 @@ from .. import task
 from .. import student
 from .. import file
 from .. import grading
+from .. import assignment
 
 
 class SubmissionDetailHandler(NetsecHandler):
@@ -16,6 +17,7 @@ class SubmissionDetailHandler(NetsecHandler):
         submission_student = student.get_full_student(self.application.db, requested_submission.student_id)
         submission_student_aliases = ", ".join(submission_student.aliases)
         tasks = task.get_for_sheet(self.application.db, requested_submission.sheet_id)
+        grader = assignment.get_for_submission(self.application.db, submission_id)
         graded_tasks = []
 
         for a_task in tasks:
@@ -24,4 +26,5 @@ class SubmissionDetailHandler(NetsecHandler):
                                                                        requested_submission.id)})
 
         self.render('submissionDetail', {'submission': requested_submission, 'files': submission_files,
-                                         'grading': graded_tasks, 'aliases': submission_student_aliases})
+                                         'grading': graded_tasks, 'aliases': submission_student_aliases,
+                                         'grader': grader})

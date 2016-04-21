@@ -8,12 +8,15 @@ Alias(e) für {{ submission.student_id }}: {{ aliases }}<br>
 
 <form action="/submission/{{ submission.id }}/assign" method="post">
   {% module xsrf_form_html() %}
-  {% if grader and len(grader.grader) > 0 %}
-    Zugewiesener Korrektor: <input type="text" value="{{ grader.grader }}" placeholder="Korrektor" name="grader">
-  {% else %}
-    Noch kein zugewiesener Korrektor. <input type="text" placeholder="Neuer Korrektor" name="grader">
+  Korrektor: <select name="grader">
+  {% if not grader or not grader.grader %}
+    <option selected="selected" value="">nicht zugewiesen</selected>
   {% end %}
-  <button role="submit">Speichern</button>
+  {% for ag in available_graders %}
+    <option value="{{ ag }}" {% if grader and grader.grader == ag %}selected="selected"{% end %}>{{ ag }}</option>
+  {% end %}
+  </select>
+  <button role="submit">Setzen</button>
 </form>
 
 <h2>Dateien</h2>

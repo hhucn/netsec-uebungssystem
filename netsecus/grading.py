@@ -64,8 +64,12 @@ def get_submission_grade_status(db, submission_id):
     return "Fertig"
 
 
+def get_available_graders(config):
+    return list(config('korrektoren').keys())
+
+
 def assign_grader(config, submission_id):
-    all_graders = list(config('korrektoren').keys())
+    all_graders = get_available_graders(config)
     rnd = int(
         hashlib.sha512(('%s' % submission_id).encode('ascii')).hexdigest(),
         base=16)

@@ -12,12 +12,14 @@ Alias(e) für {{ submission.student_id }}: {{ aliases }}
   <tr>
     <th>Datei-ID</th>
     <th>Hash</th>
+    <th>Größe</th>
     <th>Name</th>
   </tr>
   {% for file in files %}
   <tr>
     <td>{{ file.id }}</td>
     <td>{{ file.hash }}</td>
+    <td>{{ file.size }}</td>
     <td>
       <a href="/download/{{ file.hash }}">{{ file.filename }}</a>
     </td>

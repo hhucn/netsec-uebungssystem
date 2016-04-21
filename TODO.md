@@ -1,5 +1,10 @@
 Korrekturen absenden
+	Neuer Menü-Punkt
+	Neues Flag in der Datenbank versendet
+	Mails generieren, Voransicht im Menüpunkt
+	Mails versenden
 	abgesendete Mails in den Sent-Ordner schieben
+Bei Änderung der Korrektur versendet-flag löschen
 Bei teilweiser Korrektur erscheint als fertig
 assign korrektor
 

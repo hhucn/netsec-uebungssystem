@@ -20,7 +20,7 @@
 		</td>
 		<td>{{ submission["readable_time"] }}</td>
 		<td>
-			{% if submission["assignment"].grader %}
+			{% if submission["assignment"] %}
 				{{ submission["assignment"].grader }}
 			{% else %}
 				<em>Nicht zugewiesen</em>

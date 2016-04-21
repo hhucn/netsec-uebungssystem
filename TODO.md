@@ -6,15 +6,16 @@ assign korrektor
 Übersicht -> Meine Korrekturen
 Dateigröße anzeigen
 Mailtext direkt anzeigen
-tornado nur auf localhost
+tornado listen nur localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Abgaben unter Studierende verlinkt
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 merge students; actually use alias as intended
 require mails to start with "Abgabe [Nr]"
-tag mail if exception occurs
+Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
 
+script to autorestart on changes
 RequestHandlerWithAuth should store user id, do not parse it twice
 move submission handling out of commands into a better-named module (how about submission?)
 test with subject "AbgabeFoo"
@@ -34,3 +35,4 @@ Abgabestring in die Konfiguration
 test 2 mails coming in at the same second
 improve error handling (mark mail before saving/doing anything, do not retry if mark present)
 also send text email
+alias should contain umlauts (not encoded stuff)

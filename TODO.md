@@ -7,7 +7,6 @@ assign korrektor
 Mailtext direkt anzeigen
 tornado listen nur localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
-Abgaben unter Studierende verlinkt
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 Übersicht über die Korrekturen
 merge students; actually use alias as intended

@@ -2,7 +2,6 @@ Korrekturen absenden
 	abgesendete Mails in den Sent-Ordner schieben
 Bei teilweiser Korrektur erscheint als fertig
 
-Dateigröße anzeigen
 Mailtext direkt anzeigen
 assign korrektor
 tornado nur auf localhost

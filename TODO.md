@@ -4,10 +4,11 @@ Studentennamen in der Übersicht
 Abgabezeitpunkt menschenlesbar
 Aliase in der Oberfläche
 Bei teilweiser Korrektur erscheint als fertig
+assign korrektor
 
+Übersicht -> Meine Korrekturen
 Dateigröße anzeigen
 Mailtext direkt anzeigen
-assign korrektor
 tornado nur auf localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Abgaben unter Studierende verlinkt

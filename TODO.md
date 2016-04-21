@@ -1,6 +1,5 @@
 Korrekturen absenden
 	abgesendete Mails in den Sent-Ordner schieben
-Studentennamen in der Übersicht
 Abgabezeitpunkt menschenlesbar
 Bei teilweiser Korrektur erscheint als fertig
 

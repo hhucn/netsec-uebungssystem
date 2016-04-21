@@ -19,11 +19,13 @@
 			</a>
 		</td>
 		<td>{{ submission["readable_time"] }}</td>
-		<td>{% if submission["grader"] %}
-			{{ submission["grader"] }}
-		{%else %}
-			<em>{{submission["assigned_grader"]}}</em>
-		{% end %}</td>
+		<td>
+			{% if submission["assignment"].grader %}
+				{{ submission["assignment"].grader }}
+			{% else %}
+				<em>Nicht zugewiesen</em>
+			{% end %}
+		</td>
 		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["status"] }}</a></td>
 	</tr>
 {% end %}

@@ -15,7 +15,9 @@
 			{% end %}
 			</ul></td>
 			<td><ul class="submission_list">{% for subm in fs.submissions%}
-				<li>{{ subm.id }}</li>
+				<li>
+					<a href="/submission/{{ subm.id }}">Abgabe {{ subm.id }}</a>
+				</li>
 			{% end %}
 			</ul></td>
 		</tr>

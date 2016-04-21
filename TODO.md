@@ -1,7 +1,6 @@
 Korrekturen absenden
 	abgesendete Mails in den Sent-Ordner schieben
 Bei teilweiser Korrektur erscheint als fertig
-assign korrektor
 
 Übersicht -> Meine Korrekturen
 Mailtext direkt anzeigen

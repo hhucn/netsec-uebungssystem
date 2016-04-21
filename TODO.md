@@ -4,7 +4,6 @@ Bei teilweiser Korrektur erscheint als fertig
 assign korrektor
 
 Übersicht -> Meine Korrekturen
-Dateigröße anzeigen
 Mailtext direkt anzeigen
 tornado listen nur localhost
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen

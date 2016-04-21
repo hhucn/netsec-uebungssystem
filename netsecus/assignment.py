@@ -22,11 +22,6 @@ def get_for_submission(db, submission_id):
     return get_for_student_and_sheet(db, subm.student_id, subm.sheet_id)
 
 
-def get_from_hash(db, hash):
-    db.cursor.execute("SELECT id, submission_id, hash, filename, size FROM file WHERE hash = ?", (hash, ))
-    return File(*db.cursor.fetchone())
-
-
 def set_for_student_and_sheet(db, student_id, sheet_id, grader):
     db.cursor.execute("SELECT id FROM assignment WHERE student_id = ? AND sheet_id = ?", (student_id, sheet_id))
 

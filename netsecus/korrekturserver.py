@@ -6,25 +6,27 @@ import os
 import tornado.ioloop
 import tornado.web
 
-from .webhandler.TableHandler import TableHandler
-from .webhandler.SheetsHandler import SheetsHandler
+from .webhandler.DownloadHandler import DownloadHandler
+from .webhandler.GradingSendHandler import GradingSendHandler
 from .webhandler.SheetCreateHandler import SheetCreateHandler
 from .webhandler.SheetDeleteHandler import SheetDeleteHandler
 from .webhandler.SheetEditEndHandler import SheetEditEndHandler
-from .webhandler.SheetRestoreHandler import SheetRestoreHandler
-from .webhandler.TaskCreateHandler import TaskCreateHandler
-from .webhandler.TaskEditHandler import TaskEditHandler
-from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.SheetHandler import SheetHandler
-from .webhandler.StudentsHandler import StudentsHandler
+from .webhandler.SheetRestoreHandler import SheetRestoreHandler
+from .webhandler.SheetsHandler import SheetsHandler
 from .webhandler.StudentHandler import StudentHandler
-from .webhandler.SubmissionsListCurrentHandler import SubmissionsListCurrentHandler
-from .webhandler.SubmissionsListAllHandler import SubmissionsListAllHandler
+from .webhandler.StudentsHandler import StudentsHandler
+from .webhandler.SubmissionAssignHandler import SubmissionAssignHandler
 from .webhandler.SubmissionDetailHandler import SubmissionDetailHandler
 from .webhandler.SubmissionGradeAllHandler import SubmissionGradeAllHandler
-from .webhandler.SubmissionAssignHandler import SubmissionAssignHandler
-from .webhandler.DownloadHandler import DownloadHandler
+from .webhandler.SubmissionsListAllHandler import SubmissionsListAllHandler
+from .webhandler.SubmissionsListCurrentHandler import SubmissionsListCurrentHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
+from .webhandler.TableHandler import TableHandler
+from .webhandler.TaskCreateHandler import TaskCreateHandler
+from .webhandler.TaskDeleteHandler import TaskDeleteHandler
+from .webhandler.TaskEditHandler import TaskEditHandler
+
 
 from . import database
 
@@ -71,6 +73,7 @@ def mainloop(config):
         (r"/submission/([0-9]+)/([0-9]+)", SubmissionStudentSheetHandler),
         (r"/submission/([0-9]+)/grade_all", SubmissionGradeAllHandler),
         (r"/submission/([0-9]+)/assign", SubmissionAssignHandler),
+        (r"/grading/send", GradingSendHandler),
         (r"/download/(.*)", DownloadHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")

@@ -32,6 +32,8 @@ class Database(object):
                 `time` BIGINT,
                 `files_path` text
             )""")
+
+        # Legacy table - remove
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `grading` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +44,19 @@ class Database(object):
                 `decipoints` INTEGER,
                 `grader` TEXT
             )""")
+
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS `grading_result` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `student_id` INTEGER REFERENCES student(id),
+                `sheet_id` INTEGER REFERENCES sheet(id),
+                `submission_id` INTEGER REFERENCES submission(id),
+                `reviews_json` TEXT,
+                `decipoints` INTEGER,
+                `grader` TEXT,
+                `sent_mail_uid` INTEGER
+            )""")
+
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `file` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,

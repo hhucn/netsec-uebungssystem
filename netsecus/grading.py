@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import collections
 import hashlib
+import json
 
 from . import task
 
@@ -64,8 +65,117 @@ def get_submission_grade_status(db, submission_id):
     return "Fertig"
 
 
+def create_grading_result(db, gr):
+    db.cursor.execute(
+        """INSERT INTO grading_result
+        (student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid)
+        VALUES (?, ?, ?, ?, ?, ?, ?)""", (
+            gr['student_id'],
+            gr['sheet_id'],
+            gr['submission_id'],
+            json.dumps(gr['reviews'], ensure_ascii=False, sort_keys=True),
+            gr['decipoints'],
+            gr['grader'],
+            gr['sent_mail_uid'],
+    ))
+
+
+def update_grading_results(db):
+    """ This is a temporary workaround until the new data structure is wholly in place.
+    A grading result is the result of the (presumabl newest) submission of a student for a sheet.
+    """
+
+    db.cursor.execute(
+        """SELECT
+            submission.student_id,
+            submission.sheet_id,
+            grading.submission_id,
+            grading.task_id,
+            grading.comment,
+            grading.time,
+            grading.decipoints,
+            grading.grader
+        FROM grading, submission
+        WHERE 
+            grading.submission_id = submission.id
+        AND grading.submission_id NOT IN (
+            SELECT submission_id FROM grading_result
+        )
+        ORDER BY grading.submission_id DESC, grading.task_id ASC
+        """)
+    rows = db.cursor.fetchall()
+
+    grs = {}  # key is (student_id, submission_id), value the new object to insert
+    for row in rows:
+        student_id, sheet_id, submission_id, task_id, comment, timestamp, decipoints, grader = row
+        key = (student_id, submission_id)
+
+        if key not in grs:
+            grs[key] = {
+                'student_id': student_id,
+                'sheet_id': sheet_id,
+                'submission_id': submission_id,
+                'reviews': [],
+                'decipoints': 0,
+                'grader': grader,
+                'sent_mail_uid': None,
+            }
+
+        gr = grs[key]
+        if gr['submission_id'] != submission_id:
+            continue  # this row pertains to a prior submission
+        review = {
+            'task_id': task_id,
+            'comment': comment,
+            'timestamp': timestamp,
+            'decipoints': decipoints,
+            'grader': grader,
+        }
+        gr['reviews'].append(review)
+        gr['decipoints'] += review['decipoints']
+
+    for gr in grs.values():
+        create_grading_result(db, gr)
+
+    db.database.commit()
+
+
+def unsent_results(db):
+    update_grading_results(db)
+
+    db.cursor.execute(
+        """SELECT
+            id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid
+        FROM grading_result
+        WHERE 
+            sent_mail_uid IS NULL
+        ORDER BY grading_result.submission_id ASC
+        """)
+    rows = db.cursor.fetchall()
+
+    res = [{
+        'id': id,
+        'student_id': student_id,
+        'sheet_id': sheet_id,
+        'submission_id': submission_id,
+        'reviews': json.loads(reviews_json),
+        'decipoints': decipoints,
+        'grader': grader,
+        'sent_mail_uid': sent_mail_uid,
+    } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid) in rows]
+
+    # Write in various properties for template
+    tasks = task.get_all_dict(db)
+    for r in res:
+        for review in r['reviews']:
+            review['task'] = tasks[review['task_id']]
+        review['student'] = student.get_full_student(db, review['student_id'])
+
+    return res
+
+
 def get_available_graders(config):
-    return list(config('korrektoren').keys())
+    return sorted(config('korrektoren').keys())
 
 
 def assign_grader(config, submission_id):

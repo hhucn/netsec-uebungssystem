@@ -1,0 +1,22 @@
+{%include ../../templates/header.html %}
+
+{% for gr in grading_results %}
+	<div class="review">
+	<div>
+		{{gr['student_id']}}
+		<a href="/submission/{{gr['submission_id']}}">Abgabe {{gr['submission_id']}}</a>
+		Blatt {{gr['sheet_id']}}
+		{{template_helper.format_points(gr['decipoints'])}} / TODO:max Punkte
+	</div>
+
+
+	{% for review in gr['reviews'] %}
+	<div>
+		<div><strong>{{review['task'].name}} ({{template_helper.format_points(review['decipoints'])}} / {{template_helper.format_points(review['task'].decipoints)}})</strong> ({{review['grader']}})</div>
+		<div>{{review['comment']}}</div>
+	</div>
+	{% end %}
+	</div>
+{% end %}
+
+{%include ../../templates/footer.html %}

@@ -20,3 +20,12 @@ def format_student(student):
     if usernames:
         return '/'.join(usernames)
     return '%s' % student.id
+
+
+def format_points(decipoints):
+    points = (decipoints / 10.)
+
+    if points == int(points):
+        points = int(points)
+
+    return '%s' % points

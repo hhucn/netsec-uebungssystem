@@ -35,3 +35,7 @@ input[type=number] {
 .alias_list>li, .submission_list>li {
 	list-style-type: none;
 }
+
+.review {
+	margin: 2em 0 2em 0;
+}

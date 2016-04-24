@@ -5,15 +5,24 @@ Korrekturen absenden
 	Mails versenden
 	abgesendete Mails in den Sent-Ordner schieben
 Bei Änderung der Korrektur versendet-flag löschen
+make sure we store submission email
+	write an update script
 
+create view newest_grading_result
+support multiple grading_results
+move to new data structure grading_results
 Bei teilweiser Korrektur erscheint als fertig
 mass assigment
 Übersicht -> Meine Korrekturen
-tornado listen nur localhost
+tornado listen nur localhost (mit Konfigurationsoption)
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 merge students; actually use alias as intended
 Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
+Links unter Student auf Abgabe falsch
+Antwortmail sollte alle Punkte bisher enthalten
+Übersicht der Punkte pro Student in der Weboberfläche
+switch to nedb-like interface? (Discuss with Martin)
 
 script to autorestart on changes
 RequestHandlerWithAuth should store user id, do not parse it twice

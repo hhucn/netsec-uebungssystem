@@ -5,21 +5,27 @@ import collections
 Task = collections.namedtuple("Task", ["id", "sheet_id", "name", "decipoints"])
 
 
-def get_by_id(database, task_id):
-    database.cursor.execute(
+def get_by_id(db, task_id):
+    db.cursor.execute(
         """SELECT id, sheet_id, name, decipoints FROM task
            WHERE id = ?""", (task_id, ))
-    row = database.cursor.fetchone()
+    row = db.cursor.fetchone()
     if row:
         return Task(*row)
     else:
         return None
 
 
-def get_for_sheet(database, sheet_id):
-    database.cursor.execute("""SELECT id, name, decipoints FROM task WHERE
+def get_all_dict(db):
+    db.cursor.execute(
+        """SELECT id, sheet_id, name, decipoints FROM task""")
+    return {row[0]: Task(*row) for row in db.cursor.fetchall()}
+
+
+def get_for_sheet(db, sheet_id):
+    db.cursor.execute("""SELECT id, name, decipoints FROM task WHERE
                                sheet_id = ?""", (sheet_id, ))
-    tasks = database.cursor.fetchall()
+    tasks = db.cursor.fetchall()
 
     result = []
 

@@ -1,27 +1,22 @@
-Korrekturen absenden
-	Mails versenden
-
 upload sent mails via IMAP
 Bei Änderung der Korrektur versendet-flag löschen
-Bei Änderung der Korrektur grading_results neu erstellen
+Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
+Korrekturmails mit SHA-Summen/Dateigrößen etc.
+Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
+Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
+Übersicht -> Korrigieren ...
+mass assigment
 
-Korrektur mit SHA-Summen/Dateigrößen etc.
 handle errors when sending mail
 create view newest_grading_result
 support multiple grading_results over time
 move to new data structure grading_results
 Bei teilweiser Korrektur erscheint als fertig
-mass assigment
-Übersicht -> Meine Korrekturen
 tornado listen nur localhost (mit Konfigurationsoption)
 Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 merge students; actually use alias as intended
 Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
-Links unter Student auf Abgabe falsch
-Antwortmail sollte alle Punkte bisher enthalten
-Übersicht der Punkte pro Student in der Weboberfläche
-make sure we correctly encode subject in answer mails
 switch to nedb-like interface for grading_results? (Discuss with Martin)
 
 script to autorestart on changes

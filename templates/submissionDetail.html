@@ -55,7 +55,7 @@ Alias(e) für {{ submission.student_id }}: {{ aliases }}<br>
   </td>
   <td>
     <input type="number" name="points_{{ grade["task"].id }}" value="{% if grade["grading"] %}{{ float(grade["grading"].decipoints) / 10 }}{% end %}" step="0.5">
-     von {{ (float(grade["task"].decipoints) / 10) }}
+     von {{ template_helper.format_points(grade["task"].decipoints) }}
   </td>
   <td>
     {% if grade["grading"] %}

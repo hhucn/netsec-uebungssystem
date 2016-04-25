@@ -7,13 +7,13 @@ import itertools
 import os.path
 import re
 import time
-from .helper import MailProcessingError
 
 from . import (
     commands,
     helper,
     sheet,
     student,
+    sendmail,
 )
 
 Submission = collections.namedtuple(
@@ -104,23 +104,10 @@ def handle_mail(config, db, imapmail, uid, message):
 
         commands.move(config, imapmail, uid, "Abgaben")
 
-        respond_to_mail(config, alias, "Mail erhalten: %s" % subject, "mail_received.html")
+        sendmail.send_template(config, alias, "Mail erhalten: %s" % subject, "mail_received.html")
     except helper.MailError as me:
-        respond_to_mail(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
+        sendmail.send_template(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
         raise me
-
-
-def respond_to_mail(config, to, subject, template):
-    template_path = os.path.join(config.module_path, "templates", template)
-
-    if not os.path.exists(template_path):
-        raise MailProcessingError("Template %s not found" % template_path)
-
-    with open(template_path) as template_file:
-        header = "Subject: %s\nTo: %s\nContent-Type: text/html" % (subject, to)
-        body = template_file.read()
-        mail = "%s\n\n%s" % (header, body)
-        helper.smtpMail(config, to, mail)
 
 
 def get_for_student(db, student_id):

@@ -3,20 +3,25 @@
 {% for gr in grading_results %}
 	<div class="review">
 	<div>
-		{{gr['student_id']}}
+		<a href="/student/{{gr['student_id']}}">{{template_helper.format_student(gr['named_student'])}}</a>
 		<a href="/submission/{{gr['submission_id']}}">Abgabe {{gr['submission_id']}}</a>
 		Blatt {{gr['sheet_id']}}
-		{{template_helper.format_points(gr['decipoints'])}} / TODO:max Punkte
+		{{template_helper.format_points(gr['decipoints'])}}/{{template_helper.format_points(gr['max_decipoints'])}} Punkte
 	</div>
 
 
 	{% for review in gr['reviews'] %}
 	<div>
 		<div><strong>{{review['task'].name}} ({{template_helper.format_points(review['decipoints'])}} / {{template_helper.format_points(review['task'].decipoints)}})</strong> ({{review['grader']}})</div>
-		<div>{{review['comment']}}</div>
+		<div class="review_comment">{{review['comment']}}</div>
 	</div>
 	{% end %}
 	</div>
 {% end %}
+
+<form method="post" action="/grading/mails/send_all">
+	{% module xsrf_form_html() %}
+	<button role="submit">{{len(grading_results)}} E-Mails versenden</button>
+</form>
 
 {%include ../../templates/footer.html %}

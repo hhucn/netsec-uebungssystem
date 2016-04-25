@@ -39,3 +39,7 @@ input[type=number] {
 .review {
 	margin: 2em 0 2em 0;
 }
+.review_comment {
+	font-family: monospace;
+	white-space: pre-wrap;
+}

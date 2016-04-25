@@ -5,6 +5,7 @@ import hashlib
 import json
 
 from . import task
+from . import student
 
 Grading = collections.namedtuple('Grading', ['id', 'submission_id', 'task_id',
                                  'comment', 'time', 'decipoints', 'grader'])
@@ -77,12 +78,13 @@ def create_grading_result(db, gr):
             gr['decipoints'],
             gr['grader'],
             gr['sent_mail_uid'],
-    ))
+        )
+    )
 
 
 def update_grading_results(db):
     """ This is a temporary workaround until the new data structure is wholly in place.
-    A grading result is the result of the (presumabl newest) submission of a student for a sheet.
+    A grading result is the result of the (presumably newest) submission of a student for a sheet.
     """
 
     db.cursor.execute(
@@ -96,7 +98,7 @@ def update_grading_results(db):
             grading.decipoints,
             grading.grader
         FROM grading, submission
-        WHERE 
+        WHERE
             grading.submission_id = submission.id
         AND grading.submission_id NOT IN (
             SELECT submission_id FROM grading_result
@@ -140,6 +142,14 @@ def update_grading_results(db):
     db.database.commit()
 
 
+def on_send_result(db, grading_result_id, sent_mail_uid):
+    db.cursor.execute(
+        """UPDATE grading_result
+        SET sent_mail_uid = ?
+        WHERE id = ?""", (sent_mail_uid, grading_result_id))
+    db.database.commit()
+
+
 def unsent_results(db):
     update_grading_results(db)
 
@@ -147,13 +157,13 @@ def unsent_results(db):
         """SELECT
             id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid
         FROM grading_result
-        WHERE 
+        WHERE
             sent_mail_uid IS NULL
         ORDER BY grading_result.submission_id ASC
         """)
     rows = db.cursor.fetchall()
 
-    res = [{
+    return [{
         'id': id,
         'student_id': student_id,
         'sheet_id': sheet_id,
@@ -164,14 +174,18 @@ def unsent_results(db):
         'sent_mail_uid': sent_mail_uid,
     } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid) in rows]
 
+
+def enrich_results(db, grading_results):
+    """ Utility function that fetches the various other database objects referenced. """
     # Write in various properties for template
     tasks = task.get_all_dict(db)
-    for r in res:
-        for review in r['reviews']:
+    for gr in grading_results:
+        for review in gr['reviews']:
             review['task'] = tasks[review['task_id']]
-        review['student'] = student.get_full_student(db, review['student_id'])
-
-    return res
+        gr['named_student'] = student.get_named_student(db, gr['student_id'])
+        gr['max_decipoints'] = sum(
+            review['task'].decipoints
+            for review in gr['reviews'])
 
 
 def get_available_graders(config):

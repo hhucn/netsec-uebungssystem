@@ -7,7 +7,8 @@ import tornado.ioloop
 import tornado.web
 
 from .webhandler.DownloadHandler import DownloadHandler
-from .webhandler.GradingSendHandler import GradingSendHandler
+from .webhandler.GradingPreviewMailsHandler import GradingPreviewMailsHandler
+from .webhandler.GradingSendMailsHandler import GradingSendMailsHandler
 from .webhandler.SheetCreateHandler import SheetCreateHandler
 from .webhandler.SheetDeleteHandler import SheetDeleteHandler
 from .webhandler.SheetEditEndHandler import SheetEditEndHandler
@@ -73,7 +74,8 @@ def mainloop(config):
         (r"/submission/([0-9]+)/([0-9]+)", SubmissionStudentSheetHandler),
         (r"/submission/([0-9]+)/grade_all", SubmissionGradeAllHandler),
         (r"/submission/([0-9]+)/assign", SubmissionAssignHandler),
-        (r"/grading/send", GradingSendHandler),
+        (r"/grading/mails/preview", GradingPreviewMailsHandler),
+        (r"/grading/mails/send_all", GradingSendMailsHandler),
         (r"/download/(.*)", DownloadHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")

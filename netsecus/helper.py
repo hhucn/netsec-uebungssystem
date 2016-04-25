@@ -5,7 +5,6 @@ import email
 import imaplib
 import logging
 import re
-import smtplib
 import sys
 
 import tornado.web
@@ -49,19 +48,6 @@ def uidCommand(imapmail, command, *args):
     else:
         err = "Server responded with Code '%s' for '%s %s'." % (code, command, args)
         raise MailConnectionError(err)
-
-
-def smtpMail(config, to, what):
-    try:
-        username = config('mail.username')
-    except KeyError:
-        username = config('mail.address')
-
-    smtpmail = smtplib.SMTP_SSL(config("mail.smtp_server"))
-    smtpmail.ehlo()
-    smtpmail.login(username, config("mail.password"))
-    smtpmail.sendmail(config("mail.address"), to, what)
-    smtpmail.quit()
 
 
 def patch_imaplib():

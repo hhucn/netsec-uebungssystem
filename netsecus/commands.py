@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import email
-import hashlib
 import logging
 
 from . import helper
@@ -21,33 +20,6 @@ def filter(config, imapmail, mails, filterCriteria, mailbox="inbox"):
             _mail_info, mail_bytes = helper.uidCommand(imapmail, "FETCH", uid, "(rfc822)")
             message = email.message_from_bytes(mail_bytes)
             mails.append((uid, message))
-    return mails
-
-
-def answer(config, imapmail, mails, subject, text, address="(back)"):
-    # see http://tools.ietf.org/html/rfc3501#section-6.4.6 (for store)
-    for mail in mails:
-        stringToHash = "%s: %s" % (subject, text)
-        hashObject = hashlib.sha256()
-        hashObject.update(stringToHash.encode("utf-8"))
-        subjectHash = hashObject.hexdigest()
-
-        if address == "(back)":
-            clientMailAddress = mail.variables["MAILFROM"]
-        else:
-            clientMailAddress = address
-
-        mail_flags = helper.imapCommand(imapmail, "UID", "FETCH", mail.uid, "FLAGS")
-        if "NETSEC-Answered-" + subjectHash in mail_flags.encode("utf-8"):
-            logging.error(
-                "Error: Tried to answer to mail (uid %s, addr '%s', Subject '%s') which was already answered." % (
-                    mail.uid, clientMailAddress, subject))
-        else:
-            headers = ("Content-Type:text/html\nSubject: %s\n\n%s" % (
-                helper.processVariable(mail.variables, subject),
-                helper.processVariable(mail.variables, text)))
-            helper.smtpMail(config, clientMailAddress, headers)
-            flag(config, imapmail, [mail], "NETSEC-Answered-" + subjectHash)
     return mails
 
 

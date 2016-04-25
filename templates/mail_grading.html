@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+<style type="text/css">
+.review {
+	margin: 1em 0;
+}
+.review_comment {
+	font-family: monospace;
+	white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+{{grader}} hat Deine Abgabe korrigiert. Du hast ingesamt {{template_helper.format_points(decipoints)}} von {{template_helper.format_points(max_decipoints)}} Punkten erhalten:
+
+{% for review in reviews %}
+<div class="review">
+
+<div>
+	<strong>{{review['task'].name}} ({{template_helper.format_points(review['decipoints'])}} / {{template_helper.format_points(review['task'].decipoints)}})</strong> ({{review['grader']}})</div>
+	<div class="review_comment">{{review['comment']}}</div>
+</div>
+{% end %}
+
+<p>Solltest Du Fragen oder Anmerkungen haben, kannst Du einfach auf diese E-Mail antworten.</p>
+
+<hr />
+<i>netsec-&Uuml;bungssystem</i>
+
+</body>
+</html>

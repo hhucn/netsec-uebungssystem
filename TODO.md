@@ -1,15 +1,14 @@
 Korrekturen absenden
-	Neuer Menü-Punkt
-	Neues Flag in der Datenbank versendet
-	Mails generieren, Voransicht im Menüpunkt
 	Mails versenden
-	abgesendete Mails in den Sent-Ordner schieben
-Bei Änderung der Korrektur versendet-flag löschen
-make sure we store submission email
-	write an update script
 
+upload sent mails via IMAP
+Bei Änderung der Korrektur versendet-flag löschen
+Bei Änderung der Korrektur grading_results neu erstellen
+
+Korrektur mit SHA-Summen/Dateigrößen etc.
+handle errors when sending mail
 create view newest_grading_result
-support multiple grading_results
+support multiple grading_results over time
 move to new data structure grading_results
 Bei teilweiser Korrektur erscheint als fertig
 mass assigment
@@ -22,7 +21,8 @@ Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
 Links unter Student auf Abgabe falsch
 Antwortmail sollte alle Punkte bisher enthalten
 Übersicht der Punkte pro Student in der Weboberfläche
-switch to nedb-like interface? (Discuss with Martin)
+make sure we correctly encode subject in answer mails
+switch to nedb-like interface for grading_results? (Discuss with Martin)
 
 script to autorestart on changes
 RequestHandlerWithAuth should store user id, do not parse it twice

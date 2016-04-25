@@ -11,6 +11,14 @@ class NetsecHandler(helper.RequestHandlerWithAuth):
         TEMPLATE_PATH = os.path.join(self.application.config.module_path, "templates")
         data['template_helper'] = template_helper
 
-        super(NetsecHandler, self).render(
+        return super(NetsecHandler, self).render(
+            os.path.join(TEMPLATE_PATH, "%s.html" % template),
+            **data)
+
+    def render2string(self, template, data):
+        TEMPLATE_PATH = os.path.join(self.application.config.module_path, "templates")
+        data['template_helper'] = template_helper
+
+        return self.render_string(
             os.path.join(TEMPLATE_PATH, "%s.html" % template),
             **data)

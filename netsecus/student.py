@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import collections
 
 Student = collections.namedtuple('Student', ['id'])
+NamedStudent = collections.namedtuple('Student', ['student', 'aliases'])
 FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])
 
 
@@ -46,6 +47,17 @@ def get_full_student(db, student_id):
     if len(fss) != 1:
         raise ValueError('Expected exactly one student')
     return fss[0]
+
+
+def get_named_student(db, student_id):
+    db.cursor.execute(
+        '''SELECT alias.alias FROM alias
+           WHERE alias.student_id = ?
+           ORDER BY alias.id''', (student_id,))
+    rows = db.cursor.fetchall()
+    if len(rows) != 1:
+        raise ValueError('Expected exactly one student')
+    return NamedStudent(Student(student_id), [row[0] for row in rows])
 
 
 def resolve_alias(db, alias):

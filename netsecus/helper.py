@@ -201,8 +201,16 @@ def get_header(message, key, default=''):
 
 def decode_mail_words(raw_val):
     return ''.join(
-        word.decode(encoding or 'utf8') if isinstance(word, bytes) else word
+        word.decode(encoding or 'utf-8') if isinstance(word, bytes) else word
         for word, encoding in email.header.decode_header(raw_val))
+
+
+def encode_mail_words(val):
+    m = re.match(r'^(.*?)([ <>.@a-zA-Z0-9!#$%&\'*+/=?^_`{|}~-]*)$', val)
+    needs_encoding = m.group(1) if m else val
+    rest = m.group(2) if m else ''
+    header = email.header.Header(needs_encoding, 'utf-8')
+    return header.encode() + rest
 
 
 def remove_duplicates(lst):

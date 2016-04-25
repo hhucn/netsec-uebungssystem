@@ -1,4 +1,3 @@
-To-Header bei E-Mail-Versand ist kaputt (see TODO note in sendmail.py)
 upload sent mails via IMAP
 Bei Änderung der Korrektur versendet-flag löschen
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)

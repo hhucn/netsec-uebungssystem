@@ -27,4 +27,14 @@ class TestHelper(unittest.TestCase):
             }, 'Subject'),
             'SubjectäXü')
 
+    def test_encode_mail_words(self):
+        self.assertEqual(netsecus.helper.encode_mail_words(''), '')
+        self.assertEqual(netsecus.helper.encode_mail_words('foobar'), 'foobar')
+        self.assertEqual(netsecus.helper.encode_mail_words(
+            'Philipp Hagemeister <phi-hag@phihag.de>'),
+            'Philipp Hagemeister <phi-hag@phihag.de>')
+        self.assertEqual(netsecus.helper.encode_mail_words(
+            'Philipp Hägemeister <phi-hag@phihag.de>'),
+            '=?utf-8?q?Philipp_H=C3=A4?=gemeister <phi-hag@phihag.de>')
+
 tutils.main(__name__)

@@ -36,7 +36,6 @@ class Mailer(object):
 
     def smtp_send(self, to, what):
         logging.debug('Sending mail to %s' % to)
-        assert 'phihag' in to
         self.smtpmail.sendmail(self.config("mail.address"), to, what)
 
     def smtp_connect(self):

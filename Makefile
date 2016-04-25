@@ -1,8 +1,11 @@
 INSTALL_PACKAGE=pip3 install --user
 
 test:
-	flake8 .
 	python3 -m unittest discover test/
+	@$(MAKE) lint
+
+lint:
+	flake8 .
 
 deps:
 	${INSTALL_PACKAGE} setuptools
@@ -26,5 +29,5 @@ run:
 deps-dev: deps
 	flake8 --version >/dev/null 2>&1 || ${INSTALL_PACKAGE} install flake8
 
-.PHONY: test run install install-dev install-service uninstall-service
+.PHONY: lint test run install install-dev install-service uninstall-service
 

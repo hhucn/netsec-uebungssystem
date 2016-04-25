@@ -153,8 +153,3 @@ def get_from_id(db, submission_id):
     if not row:
         raise ValueError('Cannot find submission')
     return Submission(*row)
-
-
-def get_readable_time_from_id(db, submission_id):
-    subm = get_from_id(db, submission_id)
-    return datetime.datetime.fromtimestamp(subm.time).strftime("%H:%M:%S %d.%m.%Y")

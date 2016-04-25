@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import datetime
 import re
 
 from . import helper
@@ -29,3 +30,7 @@ def format_points(decipoints):
         points = int(points)
 
     return '%s' % points
+
+
+def format_timestamp(ts):
+    return datetime.datetime.fromtimestamp(ts).strftime('%d.%m.%Y %H:%M:%S')

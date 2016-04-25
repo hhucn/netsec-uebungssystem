@@ -15,10 +15,8 @@ class SubmissionDetailHandler(NetsecHandler):
         requested_submission = submission.get_from_id(self.application.db, submission_id)
         submission_files = file.get_for_submission(self.application.db, requested_submission.id)
         submission_student = student.get_full_student(self.application.db, requested_submission.student_id)
-        submission_student_aliases = ", ".join(submission_student.aliases)
         tasks = task.get_for_sheet(self.application.db, requested_submission.sheet_id)
         grader = assignment.get_for_submission(self.application.db, submission_id)
-        readable_time = submission.get_readable_time_from_id(self.application.db, submission_id)
         available_graders = grading.get_available_graders(self.application.config)
 
         graded_tasks = [{
@@ -31,8 +29,7 @@ class SubmissionDetailHandler(NetsecHandler):
             'submission': requested_submission,
             'files': submission_files,
             'grading': graded_tasks,
-            'aliases': submission_student_aliases,
+            'fstudent': submission_student,
             'grader': grader,
-            'readable_time': readable_time,
             'available_graders': available_graders,
         })

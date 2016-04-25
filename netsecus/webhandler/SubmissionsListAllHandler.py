@@ -13,7 +13,6 @@ class SubmissionsListAllHandler(NetsecHandler):
         subms = [{
             "submission": a_submission,
             "student": student.get_full_student(self.application.db, a_submission.student_id),
-            "readable_time": submission.get_readable_time_from_id(self.application.db, a_submission.id)
         } for a_submission in submissions]
 
         self.render('submissions_list_all', {'submissions': subms})

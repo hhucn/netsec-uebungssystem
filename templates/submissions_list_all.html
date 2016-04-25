@@ -18,7 +18,7 @@
 				{{ template_helper.format_student(submission["student"]) }}
 			</a>
 		</td>
-		<td>{{ submission["readable_time"] }}</td>
+		<td>{{ template_helper.format_timestamp(submission['submission'].time) }}</td>
 	</tr>
 {% end %}
 </table>

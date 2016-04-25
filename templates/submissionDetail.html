@@ -1,10 +1,10 @@
 {%include ../../templates/header.html %}
 
 <h1>Abgabe {{ submission.id }}</h1>
-Von <a href="/student/{{ submission.student_id }}">Student {{ submission.student_id }}</a>
+Von <a href="/student/{{ submission.student_id }}">{{ template_helper.format_student(fstudent) }}</a>
 für <a href="/sheet/{{ submission.sheet_id }}">Blatt {{ submission.sheet_id }}</a>,
-abgegeben {{ readable_time }}<br>
-Alias(e) für {{ submission.student_id }}: {{ aliases }}<br>
+abgegeben {{ template_helper.format_timestamp(submission.time) }}<br>
+<br>
 
 <form action="/submission/{{ submission.id }}/assign" method="post">
   {% module xsrf_form_html() %}

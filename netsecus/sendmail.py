@@ -30,7 +30,7 @@ class Mailer(object):
         msg = email.mime.text.MIMEText(body, 'html', 'utf-8')
         # TODO improve this encoding (only do MIME encoding when not only simple ASCII)
         msg['Subject'] = email.header.Header(subject, 'utf-8')
-        msg['To'] = email.header.Header(to, 'utf-8')
+        msg['To'] = email.header.Header(to, 'utf-8') # TODO split up email address into encoded and un-encoded part; HHU mail server adds @uni-duesseldorf.de otherwise
         mail = msg.as_string()
         self.smtp_send(to, mail)
 

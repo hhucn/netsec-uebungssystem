@@ -4,7 +4,6 @@ Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattde
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
-Statt Übersicht-Link  "Meine Korrekturen", wo nur assigned-Korrekturen angzeiegt werden
 mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)
 
 handle errors when sending mail

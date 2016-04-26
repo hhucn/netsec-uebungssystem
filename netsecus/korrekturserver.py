@@ -7,6 +7,7 @@ import tornado.ioloop
 import tornado.web
 
 from .webhandler.DownloadHandler import DownloadHandler
+from .webhandler.OverviewHandler import OverviewHandler
 from .webhandler.GradingPreviewMailsHandler import GradingPreviewMailsHandler
 from .webhandler.GradingSendMailsHandler import GradingSendMailsHandler
 from .webhandler.SheetCreateHandler import SheetCreateHandler
@@ -56,7 +57,7 @@ def web_main(config):
 
 def mainloop(config):
     application = KorrekturApp(config, [
-        (r"/", TableHandler),
+        (r"/", OverviewHandler),
         (r"/sheets", SheetsHandler),
         (r"/sheet/create", SheetCreateHandler),
         (r"/sheet/([0-9]+)/delete", SheetDeleteHandler),

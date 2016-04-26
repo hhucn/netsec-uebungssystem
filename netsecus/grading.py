@@ -9,7 +9,9 @@ from . import student
 
 Grading = collections.namedtuple('Grading', ['id', 'submission_id', 'task_id',
                                  'comment', 'time', 'decipoints', 'grader'])
-
+Grading_Result = collections.namedtuple('Grading_Result', ['id', 'student_id',
+                                        'sheet_id', 'submission_id', 'reviews_json',
+                                        'decipoints', 'grader', 'sent_mail_uid'])
 
 def get_grade_for_task(db, task_id, submission_id):
     db.cursor.execute(
@@ -49,6 +51,14 @@ def get_all_graders(db, submission_id):
             all_graders.append(grader)
 
     return all_graders
+
+
+def get_grades_for_grader(db, grader):
+    db.cursor.execute("""SELECT id, student_id, sheet_id, submission_id, reviews_json,
+                         decipoints, grader, sent_mail_uid FROM grading_result WHERE grader = ?""", (grader, ))
+    rows = db.cursor.fetchall()
+
+    return [ Grading_Result(*row) for row in rows ]
 
 
 def get_submission_grade_status(db, submission_id):

@@ -99,6 +99,9 @@ def update_grading_results(db):
     """
 
     db.cursor.execute(
+        """DELETE FROM grading_result WHERE sent_mail_uid IS NULL""")
+
+    db.cursor.execute(
         """SELECT
             submission.student_id,
             submission.sheet_id,
@@ -170,7 +173,7 @@ def unsent_results(db):
         FROM grading_result
         WHERE
             sent_mail_uid IS NULL
-        ORDER BY grading_result.submission_id ASC
+        ORDER BY grading_result.submission_id ASC, grading_result.id DESC
         """)
     rows = db.cursor.fetchall()
 

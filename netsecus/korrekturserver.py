@@ -24,7 +24,6 @@ from .webhandler.SubmissionGradeAllHandler import SubmissionGradeAllHandler
 from .webhandler.SubmissionsListAllHandler import SubmissionsListAllHandler
 from .webhandler.SubmissionsListCurrentHandler import SubmissionsListCurrentHandler
 from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHandler
-from .webhandler.TableHandler import TableHandler
 from .webhandler.TaskCreateHandler import TaskCreateHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.TaskEditHandler import TaskEditHandler

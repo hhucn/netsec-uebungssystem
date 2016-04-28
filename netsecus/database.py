@@ -33,7 +33,7 @@ class Database(object):
                 `files_path` text
             )""")
 
-        # Legacy table - remove
+        # TODO: Reference grading_result here
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `grading` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,

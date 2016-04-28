@@ -1,8 +1,9 @@
+Overview
+Übersicht sollte wie Abgaben aussehen (gleiches Template nehmen, Punkte in beiden Seiten einbauen)
 Bei Änderung der Korrektur versendet-flag löschen
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
-nicht zugewiesen als Option
-
 upload sent mails via IMAP
+
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen

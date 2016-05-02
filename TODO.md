@@ -1,4 +1,3 @@
-Keine böse Mail auf Re: Abgabe
 alte Abgaben von Studenten fehlen (immer nur neuestes Blatt)!
 Fertig wird angezeigt wenn nicht alles korrigiert wurde! (=> neues flag in grading_result?)
 Übersicht sollte wie Abgaben aussehen (gleiches Template nehmen, Punkte in beiden Seiten einbauen)

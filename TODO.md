@@ -1,8 +1,10 @@
-fix auf nicht zugewiesen setzen (setzt im Moment leer)
-Overview
+Keine böse Mail auf Re: Abgabe
+alte Abgaben von Studenten fehlen (immer nur neuestes Blatt)!
+Fertig wird angezeigt wenn nicht alles korrigiert wurde! (=> neues flag in grading_result?)
 Übersicht sollte wie Abgaben aussehen (gleiches Template nehmen, Punkte in beiden Seiten einbauen)
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP
+fix auf nicht zugewiesen setzen (setzt im Moment leer)
 
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen

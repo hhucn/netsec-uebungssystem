@@ -1,3 +1,4 @@
+Teste Änderung der Korrektur nach Herausschicken an den Studenten
 alte Abgaben von Studenten fehlen (immer nur neuestes Blatt)!
 Übersicht sollte wie Abgaben aussehen (gleiches Template nehmen, Punkte in beiden Seiten einbauen)
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)

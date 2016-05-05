@@ -1,5 +1,4 @@
 alte Abgaben von Studenten fehlen (immer nur neuestes Blatt)!
-Fertig wird angezeigt wenn nicht alles korrigiert wurde! (=> neues flag in grading_result?)
 Übersicht sollte wie Abgaben aussehen (gleiches Template nehmen, Punkte in beiden Seiten einbauen)
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP

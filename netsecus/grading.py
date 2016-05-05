@@ -65,11 +65,13 @@ def get_grades_for_grader(db, grader):
 def get_submission_grade_status(db, submission_id):
     db.cursor.execute("SELECT decipoints FROM grading WHERE submission_id = ?", (submission_id, ))
     graded_amount = len(db.cursor.fetchall())
+    db.cursor.execute("SELECT sheet_id FROM submission WHERE id = ?", (submission_id, ))
+    sheet_id = db.cursor.fetchone()[0]
 
     if graded_amount == 0:
         return "Unbearbeitet"
 
-    task_amount = len(task.get_for_sheet(db, submission_id))
+    task_amount = len(task.get_for_sheet(db, sheet_id))
 
     if task_amount > graded_amount:
         return "Angefangen"

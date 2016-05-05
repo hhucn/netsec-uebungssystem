@@ -5,6 +5,7 @@ Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattde
 upload sent mails via IMAP
 fix auf nicht zugewiesen setzen (setzt im Moment leer)
 
+Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen

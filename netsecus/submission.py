@@ -21,9 +21,13 @@ Submission = collections.namedtuple(
     ['id', 'sheet_id', 'student_id', 'time', 'files_path'])
 
 
+def _match_subject(subject):
+    return re.match(r'^Abgabe\s*(?P<id>[0-9]+)', subject)
+
+
 def sheet_by_mail(db, uid, message):
     subject = helper.get_header(message, 'Subject', '')
-    sheet_m = re.match(r'^Abgabe\s*(?P<id>[0-9]+)', subject)
+    sheet_m = _match_subject(subject)
     if not sheet_m:
         raise helper.MailError(uid, 'Invalid subject line, found: %s' % subject)
     sheet_id_str = sheet_m.group('id')
@@ -56,9 +60,11 @@ def add_file(self, submission_id, hash, filename, size):
 
 
 def handle_mail(config, db, imapmail, uid, message):
-    alias = message.get('From', 'anonymous')
     subject = message.get('Subject', '(None)')
+    if not match_subject(subject):
+        continue  # Interactive mail, we don't care about those
 
+    alias = message.get('From', 'anonymous')
     try:
         stu = student.resolve_alias(db, alias)
         sheet = sheet_by_mail(db, uid, message)

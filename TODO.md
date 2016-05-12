@@ -1,10 +1,12 @@
+improve performance of main views (only 1 query per view)
+add unfinished view for all unfinished corrections
+database upgrade path
+
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
-alte Abgaben von Studenten fehlen (immer nur neuestes Blatt)!
 Übersicht sollte wie Abgaben aussehen (gleiches Template nehmen, Punkte in beiden Seiten einbauen)
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP
 fix auf nicht zugewiesen setzen (setzt im Moment leer)
-improve performance of main views (only 1 query per view)
 
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.

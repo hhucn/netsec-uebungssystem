@@ -23,7 +23,7 @@ Submission = collections.namedtuple(
 
 def sheet_by_mail(db, uid, message):
     subject = helper.get_header(message, 'Subject', '')
-    sheet_m = re.match(r'(?:Re:\s*)*Abgabe\s*(?P<id>[0-9]+)', subject)
+    sheet_m = re.match(r'^Abgabe\s*(?P<id>[0-9]+)', subject)
     if not sheet_m:
         raise helper.MailError(uid, 'Invalid subject line, found: %s' % subject)
     sheet_id_str = sheet_m.group('id')

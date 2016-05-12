@@ -131,17 +131,15 @@ def get_all_newest(db):
     db.cursor.execute("""SELECT id, sheet_id, student_id, time, files_path FROM
                          submission ORDER BY time DESC""")
     rows = db.cursor.fetchall()
-    submissions = []
 
+    registered = set()
+    submissions = []
     for row in rows:
         id, sheet_id, student_id, time, files_path = row
-        is_newest = True
-        for submission in submissions:
-            if submission.student_id == student_id:
-                is_newest = False
-                break
-        if is_newest:
-            submissions.append(Submission(*row))
+        if (sheet_id, student_id) in registered:
+            continue
+        registered.add((sheet_id, student_id))
+        submissions.append(Submission(*row))
 
     return submissions
 

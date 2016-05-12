@@ -4,6 +4,7 @@ alte Abgaben von Studenten fehlen (immer nur neuestes Blatt)!
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP
 fix auf nicht zugewiesen setzen (setzt im Moment leer)
+improve performance of main views (only 1 query per view)
 
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.

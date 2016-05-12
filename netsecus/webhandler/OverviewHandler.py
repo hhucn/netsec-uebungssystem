@@ -15,7 +15,7 @@ class OverviewHandler(NetsecHandler):
 
         for a_submission in submissions:
             assigned_grader = assignment.get_for_submission(self.application.db, a_submission.id)
-            if assigned_grader.grader == grader:
+            if assigned_grader and assigned_grader.grader == grader:
                 subms.append({
                     "submission": a_submission,
                     "assignment": assigned_grader,

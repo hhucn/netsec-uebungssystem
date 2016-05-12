@@ -56,7 +56,6 @@ def add_file(self, submission_id, hash, filename, size):
 
 
 def handle_mail(config, db, imapmail, uid, message):
-    print("Lets handle this")
     alias = message.get('From', 'anonymous')
     subject = message.get('Subject', '(None)')
 

@@ -1,3 +1,4 @@
+Verschicken sollte nur grading_result mit state=finished anzeigen
 improve performance of main views (only 1 query per view)
 add unfinished view for all unfinished corrections
 database upgrade path

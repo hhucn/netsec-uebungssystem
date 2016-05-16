@@ -11,7 +11,30 @@ Grading = collections.namedtuple('Grading', ['id', 'submission_id', 'task_id',
                                  'comment', 'time', 'decipoints', 'grader'])
 Grading_Result = collections.namedtuple('Grading_Result', ['id', 'student_id',
                                                            'sheet_id', 'submission_id', 'reviews_json',
-                                                           'decipoints', 'grader', 'sent_mail_uid'])
+                                                           'decipoints', 'grader', 'sent_mail_uid',
+                                                           'status'])
+# status is one of {'started', 'done'}
+
+def calc_status(reviews):
+    all_done = all(r.get('decipoints') is not None for r in reviews)
+    return 'done' if all_done else 'started'
+
+
+def save(db, student_id, sheet_id, submission_id, reviews, grader):
+    reviews_json = json.dumps(reviews)
+    status = calc_status(reviews)
+    decipoints = sum(r['decipoints'] for r in reviews) if status == 'done' else None
+
+    # TODO this should be solved with a view for the newest Grading_Result
+    db.cursor.execute(
+        """DELETE FROM grading_result
+        WHERE student_id = ? AND sheet_id = ?""", (student_id, sheet_id))
+    db.cursor.execute(
+        """INSERT INTO grading_result
+            (student_id, sheet_id, submission_id, reviews_json, decipoints, grader, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?);""", (
+            student_id, sheet_id, submission_id, reviews_json, decipoints, grader, status))
+    db.database.commit()
 
 
 def get_grade_for_task(db, task_id, submission_id):
@@ -99,6 +122,8 @@ def update_grading_results(db):
     """ This is a temporary workaround until the new data structure is wholly in place.
     A grading result is the result of the (presumably newest) submission of a student for a sheet.
     """
+
+    return  # disabled for now
 
     db.cursor.execute(
         """DELETE FROM grading_result WHERE sent_mail_uid IS NULL""")

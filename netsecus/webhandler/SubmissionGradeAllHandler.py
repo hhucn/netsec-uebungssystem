@@ -7,6 +7,7 @@ from .. import submission
 from .. import task
 
 import datetime
+import time
 
 
 class SubmissionGradeAllHandler(ProtectedPostHandler):
@@ -18,6 +19,24 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
         grader = self.request.netsecus_user
         assert grader
 
+        reviews = []
+        now = time.time()
+        for t in tasks:
+            decipoints_str = self.get_argument("points_%s" % t.id)
+            decipoints = int(round(float(decipoints_str) * 10)) if decipoints_str else None
+
+            reviews.append({
+                'task_id': t.id,
+                'comment': self.get_argument("comment_%s" % t.id),
+                'decipoints': decipoints,
+                'timestamp': now,
+                'grader': grader,
+            })
+
+        grading.save(
+            self.application.db, subm.student_id, subm.sheet_id, submission_id, reviews, grader)
+
+        # legacy code follows
         for t in tasks:
             comment = self.get_argument("comment_%s" % t.id)
             decipoints_str = self.get_argument("points_%s" % t.id)

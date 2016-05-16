@@ -54,7 +54,8 @@ class Database(object):
                 `reviews_json` TEXT,
                 `decipoints` INTEGER,
                 `grader` TEXT,
-                `sent_mail_uid` INTEGER
+                `sent_mail_uid` INTEGER,
+                `status` TEXT
             )""")
 
         self.cursor.execute(

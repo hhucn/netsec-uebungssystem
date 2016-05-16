@@ -1,5 +1,3 @@
-Verschicken sollte nur grading_result mit state=finished anzeigen
-Bei Punkteänderung wird keine neue Mail erzeugt!
 First link of http://netsec.cs.uni-duesseldorf.de/submission/132 yields wrong file
 improve performance of main views (only 1 query per view)
 add unfinished view for all unfinished corrections

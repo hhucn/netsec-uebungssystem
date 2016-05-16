@@ -1,4 +1,5 @@
 Verschicken sollte nur grading_result mit state=finished anzeigen
+Bei Punkteänderung wird keine neue Mail angezeigt!
 improve performance of main views (only 1 query per view)
 add unfinished view for all unfinished corrections
 database upgrade path

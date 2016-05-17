@@ -27,7 +27,11 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
             comment = self.get_argument("comment_%s" % t.id)
 
             prev_decipoints_str = self.get_argument("prev_decipoints_%s" % t.id, default=None)
-            prev_decipoints = None if (prev_decipoints_str is None or prev_decipoints_str == '') else int(prev_decipoints_str)
+            prev_decipoints = (
+                None
+                if (prev_decipoints_str is None or prev_decipoints_str == '')
+                else int(prev_decipoints_str)
+            )
             prev_comment = self.get_argument("prev_comment_%s" % t.id, default=None)
             prev_time = self.get_argument("prev_time_%s" % t.id, default=None)
             prev_grader = self.get_argument("prev_grader_%s" % t.id, default=None)

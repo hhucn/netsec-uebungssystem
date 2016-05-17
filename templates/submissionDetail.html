@@ -46,6 +46,12 @@ abgegeben {{ template_helper.format_timestamp(submission.time) }}<br>
 <thead><tr><th>Aufgabe</th><th>Kommentar</th><th>Punktzahl</th><th>Korrektor</th></tr></thead>
 <tbody>
 {% for grade in grading %}
+{% if grade["grading"] %}
+<input type="hidden" name="prev_time_{{ grade["task"].id }}" value="{{ grade["grading"].time }}" />
+<input type="hidden" name="prev_grader_{{ grade["task"].id }}" value="{{ grade["grading"].grader }}" />
+<input type="hidden" name="prev_comment_{{ grade["task"].id }}" value="{{ grade["grading"].comment }}" />
+<input type="hidden" name="prev_decipoints_{{ grade["task"].id }}" value="{{ grade["grading"].decipoints }}" />
+{% end %}
 <tr>
   <th>{{ grade["task"].name }}</th>
   <td>

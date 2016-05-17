@@ -15,6 +15,7 @@ Grading_Result = collections.namedtuple('Grading_Result', ['id', 'student_id',
                                                            'status'])
 # status is one of {'started', 'done'}
 
+
 def calc_status(reviews):
     all_done = all(r.get('decipoints') is not None for r in reviews)
     return 'done' if all_done else 'started'

@@ -3,6 +3,7 @@ __pycache__
 *~
 *.sqlite
 *.db
+.*
 logfile.log
 config.json
 submissions

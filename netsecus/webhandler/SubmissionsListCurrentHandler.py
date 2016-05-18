@@ -19,4 +19,4 @@ class SubmissionsListCurrentHandler(NetsecHandler):
             "student": student.get_full_student(self.application.db, a_submission.student_id),
         } for a_submission in submissions]
 
-        self.render('submissions_list_current', {'submissions': subms})
+        self.render('submissions_list', {'submissions': subms, 'heading': "Aktuelle Abgaben"})

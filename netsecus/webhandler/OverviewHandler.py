@@ -23,4 +23,4 @@ class OverviewHandler(NetsecHandler):
                     "student": student.get_full_student(self.application.db, a_submission.student_id),
                 })
 
-        self.render('submissions_list_current', {'submissions': subms})
+        self.render('submissions_list', {'submissions': subms, 'heading': "Abgaben für %s" % grader})

@@ -1,8 +1,10 @@
 failure to answer mails when coming From: =?UTF-8?Q?Stadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeister?= <stadtmeisterschaft@aufschlagwechsel.de>
-First link of http://netsec.cs.uni-duesseldorf.de/submission/132 yields wrong file
+First link of http://netsec.cs.uni-duesseldorf.de/submission/132 yields wrong file: 'mail' file is overwritten if multiple message parts exist
 improve performance of main views (only 1 query per view)
 database upgrade path
 
+remove 'assignment' table, use 'grading_result'
+remove 'grading' table, use 'grading_result'
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP

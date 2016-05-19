@@ -1,4 +1,3 @@
-failure to answer mails when coming From: =?UTF-8?Q?Stadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeister?= <stadtmeisterschaft@aufschlagwechsel.de>
 First link of http://netsec.cs.uni-duesseldorf.de/submission/132 yields wrong file: 'mail' file is overwritten if multiple message parts exist
 improve performance of main views (only 1 query per view)
 database upgrade path

@@ -60,7 +60,7 @@ def add_file(self, submission_id, hash, filename, size):
 
 
 def handle_mail(config, db, imapmail, uid, message):
-    subject = message.get('Subject', '(None)')
+    subject = helper.get_header(message, 'Subject', '(none)')
     if not _match_subject(subject):
         return  # Interactive mail, we don't care about those
 

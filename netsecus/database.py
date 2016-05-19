@@ -68,7 +68,8 @@ class Database(object):
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `student` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `primary_alias` text
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `alias` (

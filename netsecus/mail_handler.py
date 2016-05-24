@@ -75,7 +75,7 @@ def mainloop(config, db, ignored_uids):
         while True:
             line = imapmail.readline().decode("utf-8")
             if not line:
-                raise helper.MailError('Connection interrupted')
+                raise helper.MailConnectionError('Connection interrupted')
             if "EXISTS" in line:
                 # We got mail!
                 idle_loop()

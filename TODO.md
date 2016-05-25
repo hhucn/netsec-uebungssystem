@@ -1,4 +1,3 @@
-First link of http://netsec.cs.uni-duesseldorf.de/submission/132 yields wrong file: 'mail' file is overwritten if multiple message parts exist
 improve performance of main views (only 1 query per view)
 database upgrade path
 

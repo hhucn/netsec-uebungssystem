@@ -88,6 +88,8 @@ def handle_mail(config, db, imapmail, uid, message):
 
         subm = create(db, sheet.id, stu.id, int(now_ts), files_path)
 
+        mailtext = b""
+
         os.makedirs(files_path)
         for subpart in message.walk():
             fn = subpart.get_filename()
@@ -96,17 +98,31 @@ def handle_mail(config, db, imapmail, uid, message):
             if not payload:
                 continue
 
-            if not fn:
-                fn = 'mail'
+            if fn:
+                # file part
+                payload_name = helper.escape_filename(fn)
+                payload_path = os.path.join(files_path, payload_name)
+                payload_size = len(payload)
+                hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()
+                with open(payload_path, "wb") as payload_file:
+                    payload_file.write(payload)
 
-            payload_name = helper.escape_filename(fn)
-            payload_path = os.path.join(files_path, payload_name)
-            payload_size = len(payload)
-            hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()
+                add_file(db, subm.id, hash_str, payload_name, payload_size)
+            else:
+                # message part
+                if mailtext:
+                    mailtext += b"\n\n--- Part ---\n"
+                mailtext += payload
+
+        if mailtext:
+            # write "mail" file
+            payload_path = os.path.join(files_path, "mail")
+            payload_size = len(mailtext)
+            hash_str = 'sha256-%s' % hashlib.sha256(mailtext).hexdigest()
             with open(payload_path, "wb") as payload_file:
-                payload_file.write(payload)
+                payload_file.write(mailtext)
 
-            add_file(db, subm.id, hash_str, payload_name, payload_size)
+            add_file(db, subm.id, hash_str, "mail", payload_size)
 
         commands.move(config, imapmail, uid, "Abgaben")
 

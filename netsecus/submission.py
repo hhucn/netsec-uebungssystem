@@ -180,7 +180,7 @@ def get_all_full(db):
             "primary_alias": row[5],
             "grader": row[6],
             "decipoints": row[7],
-            "status": row[8]
+            "status": row[8] if row[8] else "Unbearbeitet"
         } for row in rows
     ]
 

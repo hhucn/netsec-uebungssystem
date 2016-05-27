@@ -1,11 +1,8 @@
-database upgrade path
-
 remove 'assignment' table, use 'grading_result'
 remove 'grading' table, use 'grading_result'
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP
-fix auf nicht zugewiesen setzen (setzt im Moment leer)
 
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.

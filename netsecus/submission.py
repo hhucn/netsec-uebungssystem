@@ -149,6 +149,42 @@ def get_all(db):
     return [Submission(*row) for row in rows]
 
 
+def get_all_full(db):
+    db.cursor.execute("""SELECT
+                         submission.id,
+                         submission.sheet_id,
+                         submission.student_id,
+                         submission.time,
+                         submission.files_path,
+                         student.primary_alias,
+                         assignment.grader,
+                         grading_result.decipoints,
+                         grading_result.status
+                         FROM
+                         submission
+                         INNER JOIN student ON
+                         submission.student_id = student.id
+                         LEFT OUTER JOIN grading_result ON
+                         submission.id = grading_result.submission_id
+                         LEFT OUTER JOIN assignment ON
+                         submission.sheet_id = assignment.sheet_id AND
+                         submission.student_id = assignment.student_id""")
+    rows = db.cursor.fetchall()
+    return [
+        {
+            "id": row[0],
+            "sheet_id": row[1],
+            "student_id": row[2],
+            "time": row[3],
+            "files_path": row[4],
+            "primary_alias": row[5],
+            "grader": row[6],
+            "decipoints": row[7],
+            "status": row[8]
+        } for row in rows
+    ]
+
+
 def get_all_newest(db):
     db.cursor.execute("""SELECT id, sheet_id, student_id, time, files_path FROM
                          submission ORDER BY time DESC""")

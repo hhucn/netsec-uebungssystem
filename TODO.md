@@ -1,4 +1,3 @@
-improve performance of main views (only 1 query per view)
 database upgrade path
 
 remove 'assignment' table, use 'grading_result'

@@ -13,22 +13,22 @@
 	</tr>
 {% for submission in submissions %}
 	<tr>
-		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["submission"].id }}</a></td>
-		<td><a href="/sheet/{{ submission["submission"].sheet_id }}">{{ submission["submission"].sheet_id }}</a></td>
+		<td><a href="/submission/{{ submission["id"] }}">{{ submission["id"] }}</a></td>
+		<td><a href="/sheet/{{ submission["sheet_id"] }}">{{ submission["sheet_id"] }}</a></td>
 		<td>
-			<a href="/student/{{ submission["submission"].student_id }}">
-				{{ template_helper.format_student(submission["student"]) }}
+			<a href="/student/{{ submission["student_id"] }}">
+				{{ submission["primary_alias"] }}
 			</a>
 		</td>
-		<td>{{ template_helper.format_timestamp(submission['submission'].time) }}</td>
+		<td>{{ template_helper.format_timestamp(submission["time"]) }}</td>
 		<td>
-			{% if submission["assignment"] %}
-				{{ submission["assignment"].grader }}
+			{% if submission["grader"] %}
+				{{ submission["grader"] }}
 			{% else %}
 				<em>Nicht zugewiesen</em>
 			{% end %}
 		</td>
-		<td><a href="/submission/{{ submission["submission"].id }}">{{ submission["status"] }}</a></td>
+		<td><a href="/submission/{{ submission["id"] }}">{{ submission["status"] }}</a></td>
 	</tr>
 {% end %}
 </table>

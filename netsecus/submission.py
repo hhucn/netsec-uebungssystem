@@ -185,6 +185,30 @@ def get_all_full(db):
     ]
 
 
+def get_current_full(db):
+    current_submission = []
+
+    for sub in get_all_full(db):
+        found_older_submission_index = -1
+        found_correct_student_and_sheet = False
+
+        for index, cursub in enumerate(current_submission):
+            if sub["student_id"] == cursub["student_id"] and sub["sheet_id"] == cursub["sheet_id"]:
+                found_correct_student_and_sheet = True
+                if sub["time"] > cursub["time"]:
+                    found_older_submission_index = index
+                break
+
+        if not found_correct_student_and_sheet:
+            # We found no previous submission from this student for this sheet
+            current_submission.append(sub)
+        elif found_older_submission_index > -1:
+            # We found the student/sheet combination but it is older (based on the timestamp) than the one we are checking for
+            current_submission[found_older_submission_index] = sub
+
+    return current_submission
+
+
 def get_all_newest(db):
     db.cursor.execute("""SELECT id, sheet_id, student_id, time, files_path FROM
                          submission ORDER BY time DESC""")

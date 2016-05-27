@@ -12,7 +12,7 @@ class OverviewHandler(NetsecHandler):
         grader = self.request.netsecus_user
         submissions = []
         
-        for sub in submission.get_all_full(self.application.db):
+        for sub in submission.get_current_full(self.application.db):
             if sub["grader"] == grader:
                 submissions.append(sub)
 

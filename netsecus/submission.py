@@ -170,19 +170,24 @@ def get_all_full(db):
                          submission.sheet_id = assignment.sheet_id AND
                          submission.student_id = assignment.student_id""")
     rows = db.cursor.fetchall()
-    return [
-        {
-            "id": row[0],
-            "sheet_id": row[1],
-            "student_id": row[2],
-            "time": row[3],
-            "files_path": row[4],
-            "primary_alias": row[5],
-            "grader": row[6],
-            "decipoints": row[7],
-            "status": row[8] if row[8] else "Unbearbeitet"
-        } for row in rows
-    ]
+
+    all_full = []
+
+    for row in rows:
+        id, sheet_id, student_id, time, files_path, primary_alias, grader, decipoints, status = row
+        all_full.append({
+            "id": id,
+            "sheet_id": sheet_id,
+            "student_id": student_id,
+            "time": time,
+            "files_path": files_path,
+            "primary_alias": primary_alias,
+            "grader": grader,
+            "decipoints": decipoints,
+            "status": status if status else "Unbearbeitet"
+        })
+
+    return all_full
 
 
 def get_current_full(db):

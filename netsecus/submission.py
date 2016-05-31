@@ -208,7 +208,8 @@ def get_current_full(db):
             # We found no previous submission from this student for this sheet
             current_submission.append(sub)
         elif found_older_submission_index > -1:
-            # We found the student/sheet combination but it is older (based on the timestamp) than the one we are checking for
+            # We found the student/sheet combination but it is older (based on the timestamp)
+            # than the one we are checking for
             current_submission[found_older_submission_index] = sub
 
     return current_submission

@@ -157,18 +157,18 @@ def get_all_full(db):
                          submission.time,
                          submission.files_path,
                          student.primary_alias,
-                         assignment.grader,
+                         grading_result.grader,
                          grading_result.decipoints,
                          grading_result.status
                          FROM
                          submission
                          INNER JOIN student ON
                          submission.student_id = student.id
+                         %s
                          LEFT OUTER JOIN grading_result ON
                          submission.id = grading_result.submission_id
-                         LEFT OUTER JOIN assignment ON
-                         submission.sheet_id = assignment.sheet_id AND
-                         submission.student_id = assignment.student_id""")
+                         """ %
+                         (" AND %s" % filter if filter else ""))
     rows = db.cursor.fetchall()
 
     all_full = []

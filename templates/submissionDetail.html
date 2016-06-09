@@ -9,9 +9,9 @@ abgegeben {{ template_helper.format_timestamp(submission.time) }}<br>
 <form action="/submission/{{ submission.id }}/assign" method="post">
   {% module xsrf_form_html() %}
   Korrektor: <select name="grader">
-  <option{% if not grader or not grader.grader %} selected="selected"{% end %} value="">nicht zugewiesen</selected>
+  <option{% if not grader %} selected="selected"{% end %} value="">nicht zugewiesen</selected>
   {% for ag in available_graders %}
-    <option value="{{ ag }}" {% if grader and grader.grader == ag %}selected="selected"{% end %}>{{ ag }}</option>
+    <option value="{{ ag }}" {% if grader == ag %}selected="selected"{% end %}>{{ ag }}</option>
   {% end %}
   </select>
   <button role="submit">Setzen</button>

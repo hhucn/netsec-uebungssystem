@@ -1,4 +1,3 @@
-remove 'assignment' table, use 'grading_result'
 remove 'grading' table, use 'grading_result'
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)

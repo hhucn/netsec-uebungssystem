@@ -149,7 +149,15 @@ def get_all(db):
     return [Submission(*row) for row in rows]
 
 
+def get_full_by_id(db, id):
+    return get_full_sql(db, "submission.id = %s" % id)[0]
+
+
 def get_all_full(db):
+    return get_full_sql(db, "")
+
+
+def get_full_sql(db, filter):
     db.cursor.execute("""SELECT
                          submission.id,
                          submission.sheet_id,

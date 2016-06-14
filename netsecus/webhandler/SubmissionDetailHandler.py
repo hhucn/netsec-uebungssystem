@@ -12,24 +12,22 @@ from .. import assignment
 
 class SubmissionDetailHandler(NetsecHandler):
     def get(self, submission_id):
-        requested_submission = submission.get_from_id(self.application.db, submission_id)
-        submission_files = file.get_for_submission(self.application.db, requested_submission.id)
-        submission_student = student.get_full_student(self.application.db, requested_submission.student_id)
-        tasks = task.get_for_sheet(self.application.db, requested_submission.sheet_id)
-        grader = assignment.get_for_submission(self.application.db, submission_id)
+        realsubmission = submission.get_full_by_id(self.application.db, submission_id)
+        submission_files = file.get_for_submission(self.application.db, realsubmission["id"])
+        tasks = task.get_for_sheet(self.application.db, realsubmission["sheet_id"])
         available_graders = grading.get_available_graders(self.application.config)
 
         graded_tasks = [{
             "task": a_task,
             "grading": grading.get_grade_for_task(
-                self.application.db, a_task.id, requested_submission.id),
+                self.application.db, a_task.id, realsubmission["id"]),
         } for a_task in tasks]
 
         self.render('submissionDetail', {
-            'submission': requested_submission,
+            'submission': realsubmission,
             'files': submission_files,
             'grading': graded_tasks,
-            'fstudent': submission_student,
-            'grader': grader,
+            'alias': realsubmission["primary_alias"],
+            'grader': realsubmission["grader"],
             'available_graders': available_graders,
         })

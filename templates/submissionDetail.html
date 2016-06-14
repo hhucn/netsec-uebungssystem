@@ -1,12 +1,12 @@
 {%include ../../templates/header.html %}
 
-<h1>Abgabe {{ submission.id }}</h1>
-Von <a href="/student/{{ submission.student_id }}">{{ template_helper.format_student(fstudent) }}</a>
-für <a href="/sheet/{{ submission.sheet_id }}">Blatt {{ submission.sheet_id }}</a>,
-abgegeben {{ template_helper.format_timestamp(submission.time) }}<br>
+<h1>Abgabe {{ submission["id"] }}</h1>
+Von <a href="/student/{{ submission["student_id"] }}">{{ alias }}</a>
+für <a href="/sheet/{{ submission["sheet_id"] }}">Blatt {{ submission["sheet_id"] }}</a>,
+abgegeben {{ template_helper.format_timestamp(submission["time"]) }}<br>
 <br>
 
-<form action="/submission/{{ submission.id }}/assign" method="post">
+<form action="/submission/{{ submission["id"] }}/assign" method="post">
   {% module xsrf_form_html() %}
   Korrektor: <select name="grader">
   <option{% if not grader %} selected="selected"{% end %} value="">nicht zugewiesen</selected>
@@ -40,7 +40,7 @@ abgegeben {{ template_helper.format_timestamp(submission.time) }}<br>
 
 <h2>Korrektur</h2>
 
-<form action="/submission/{{ submission.id }}/grade_all" method="post">
+<form action="/submission/{{ submission["id"] }}/grade_all" method="post">
 {% module xsrf_form_html() %}
 <table>
 <thead><tr><th>Aufgabe</th><th>Kommentar</th><th>Punktzahl</th><th>Korrektor</th></tr></thead>

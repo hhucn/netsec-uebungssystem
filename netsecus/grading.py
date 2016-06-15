@@ -50,57 +50,12 @@ def get_grade_for_task(db, task_id, submission_id):
     return Grading(id, submission_id, task_id, comment, time, decipoints, grader)
 
 
-def set_grade_for_task(db, task_id, submission_id, comment, time, decipoints, grader):
-    db.cursor.execute("SELECT id FROM grading WHERE submission_id = ? AND task_id = ?", (submission_id, task_id))
-
-    if db.cursor.fetchone():
-        # Grading already exists; update
-        db.cursor.execute("""UPDATE grading SET comment = ?, time = ?, decipoints = ?, grader = ? WHERE
-                             submission_id = ? AND task_id = ?""", (comment, time, decipoints, grader,
-                                                                    submission_id, task_id))
-    else:
-        # Grading does not exist, create
-        db.cursor.execute("""INSERT INTO grading (task_id, submission_id, comment, time, decipoints, grader)
-                             VALUES(?, ?, ?, ?, ?, ?)""", (task_id, submission_id, comment, time, decipoints, grader))
-    db.database.commit()
-
-
-def get_all_graders(db, submission_id):
-    db.cursor.execute("SELECT grader FROM grading WHERE submission_id = ?", (submission_id, ))
-    rows = db.cursor.fetchall()
-    all_graders = []
-
-    for row in rows:
-        grader = row[0]
-        if grader not in all_graders:
-            all_graders.append(grader)
-
-    return all_graders
-
-
 def get_grades_for_grader(db, grader):
     db.cursor.execute("""SELECT id, student_id, sheet_id, submission_id, reviews_json,
                          decipoints, grader, sent_mail_uid FROM grading_result WHERE grader = ?""", (grader, ))
     rows = db.cursor.fetchall()
 
     return [Grading_Result(*row) for row in rows]
-
-
-def get_submission_grade_status(db, submission_id):
-    db.cursor.execute("SELECT decipoints FROM grading WHERE submission_id = ?", (submission_id, ))
-    graded_amount = len(db.cursor.fetchall())
-    db.cursor.execute("SELECT sheet_id FROM submission WHERE id = ?", (submission_id, ))
-    sheet_id = db.cursor.fetchone()[0]
-
-    if graded_amount == 0:
-        return "Unbearbeitet"
-
-    task_amount = len(task.get_for_sheet(db, sheet_id))
-
-    if task_amount > graded_amount:
-        return "Angefangen"
-
-    return "Fertig"
 
 
 def create_grading_result(db, gr):

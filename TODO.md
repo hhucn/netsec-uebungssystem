@@ -1,13 +1,14 @@
 remove 'assignment' table, use 'grading_result'
 remove 'grading' table, use 'grading_result'
+Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
+Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
+
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
-Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 upload sent mails via IMAP
+Zeige Text der E-Mail (falls vorhanden) direkt inline!
 
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
-Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
-Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)
 
 handle errors when sending mail
@@ -22,6 +23,7 @@ merge students; actually use alias as intended
 Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
 switch to nedb-like interface for grading_results? (Discuss with Martin)
 
+Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 script to autorestart on changes
 RequestHandlerWithAuth should store user id, do not parse it twice
 move submission handling out of commands into a better-named module (how about submission?)

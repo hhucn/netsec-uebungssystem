@@ -68,6 +68,10 @@ abgegeben {{ template_helper.format_timestamp(submission["time"]) }}<br>
 </td>
 </tr>
 {% end %}
+<tr>
+  <th colspan="2"></th>
+  <th colspan=2>{{ float(reached_score)/10 }} von {{ float(total_score)/10 }} Punkten</th>
+</tr>
 </tbody></table>
 
 <button role="submit">Korrigieren</button>

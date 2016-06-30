@@ -32,7 +32,7 @@
 		<td><a href="/submission/{{ submission["id"] }}">{{ template_helper.translate_status(submission["status"]) }}</a></td>
 		<td>
 			{% if submission["decipoints"] %}
-				{{ float(submission["decipoints"])/10 }}
+				{{ template_helper.format_points(submission["decipoints"]) }}
 			{% else %}
 				0
 			{% end %}

@@ -32,7 +32,7 @@
 {% end %}
 </tbody></table>
 
-<p>Insgesamt hast Du damit {{template_helper.format_points(total_decipoints)}} von {{template_helper.format_points(total_max_decipoints)}} Punkten (<strong>{{int(round(total_decipoints * 100.0 / total_max_decipoints))}}%</strong>) erreicht.</p>
+<p>Insgesamt hast Du damit {{template_helper.format_points(total_decipoints)}} von {{template_helper.format_points(total_max_decipoints)}} Punkten (<strong>{{ template_helper.format_percent(total_decipoints/total_max_decipoints) }}</strong>) erreicht.</p>
 
 <p>Solltest Du Fragen oder Anmerkungen haben, kannst Du einfach auf diese E-Mail antworten.</p>
 

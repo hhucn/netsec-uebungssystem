@@ -39,6 +39,10 @@ def format_timestamp(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%d.%m.%Y %H:%M:%S')
 
 
+def format_percent(quotient):
+    return "%i%%" % int(quotient * 100)
+
+
 def translate_status(status):
     if status == "started":
         return "Angefangen"

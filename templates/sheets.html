@@ -22,7 +22,7 @@
 			<td><a href="/sheet/{{ sheet.id }}">Blatt {{ sheet.id }}</a></td>
 			<td>
 					{% for task in tasks %}
-						{{ task.name }} ({{task.decipoints / 10.}})<br>
+						{{ task.name }} ({{ template_helper.format_points(task.decipoints)}})<br>
 					{% end %}
 			</td>
 			<td>{{ sheet.end }}</td>
@@ -42,5 +42,7 @@
 		</tr>
 	{% end %}
 </table>
+
+<b>Insgesamt erreichbar: {{ template_helper.format_points(total_score) }} Punkte</b>
 
 {%include ../../templates/footer.html %}

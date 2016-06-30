@@ -100,6 +100,41 @@ def unsent_results(db):
     } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid) in rows]
 
 
+def get_student_track(db, all_sheet_points, student_id):
+    db.cursor.execute(
+        """SELECT
+            sheet_id, submission_id, decipoints
+        FROM grading_result
+        WHERE student_id = ? AND status = 'done'
+        ORDER BY sheet_id ASC
+        """, (student_id,))
+    grading_rows = db.cursor.fetchall()
+
+    db.cursor.execute(
+        """SELECT
+            sheet_id
+        FROM submission
+        WHERE student_id = ?
+        ORDER BY sheet_id ASC
+        """, (student_id,))
+    sheet_rows = db.cursor.fetchall()
+    submitted_sheets = set(sr[0] for sr in sheet_rows)
+
+    res = [{
+        'sheet_id': asp['sheet_id'],
+        'submitted': asp['sheet_id'] in submitted_sheets,
+        'max_decipoints': asp['decipoints'],
+    } for asp in all_sheet_points]
+    sheet_by_id = {s['sheet_id']: s for s in res}
+
+    for gr in grading_rows:
+        sheet_id = gr[0]
+        sheet = sheet_by_id[sheet_id]
+        sheet['decipoints'] = gr[2]
+
+    return res
+
+
 def enrich_results(db, grading_results):
     """ Utility function that fetches the various other database objects referenced. """
     # Write in various properties for template

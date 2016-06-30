@@ -21,6 +21,32 @@ def get_all(database):
     return [Sheet(*row) for row in database.cursor.fetchall()]
 
 
+def get_all_total_score(database):
+    database.cursor.execute("""SELECT
+                               sheet.id,
+                               task.id,
+                               task.decipoints
+                               FROM sheet
+                               LEFT OUTER JOIN task
+                               ON task.sheet_id = sheet.id
+                               """)
+    return [
+        {
+            "sheet_id": row[0],
+            "task_id": row[1],
+            "decipoints": row[2] if row[2] else 0
+        } for row in database.cursor.fetchall()]
+
+
+def get_all_total_score_number(database):
+    total_score = 0
+
+    for sheet_task in get_all_total_score(database):
+        total_score += sheet_task["decipoints"]
+
+    return total_score
+
+
 def create(database):
     database.cursor.execute("INSERT INTO sheet (end, deleted) VALUES (NULL, 0)")
     database.commit()

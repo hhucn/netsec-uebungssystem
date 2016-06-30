@@ -176,7 +176,7 @@ def get_full_sql(db, filter):
                          LEFT OUTER JOIN grading_result ON
                          submission.id = grading_result.submission_id
                          """ %
-                         (" AND %s" % filter if filter else ""))
+                      (" AND %s" % filter if filter else ""))
     rows = db.cursor.fetchall()
 
     all_full = []

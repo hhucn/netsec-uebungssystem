@@ -4,10 +4,8 @@ from .NetsecHandler import NetsecHandler
 
 from .. import submission
 from .. import task
-from .. import student
 from .. import file
 from .. import grading
-from .. import assignment
 
 
 class SubmissionDetailHandler(NetsecHandler):
@@ -23,7 +21,7 @@ class SubmissionDetailHandler(NetsecHandler):
 
         for a_task in tasks:
             grading_for_task = grading.get_grade_for_task(self.application.db, a_task.id, realsubmission["id"])
-            graded_tasks.append({ "task": a_task, "grading": grading_for_task })
+            graded_tasks.append({"task": a_task, "grading": grading_for_task})
             total_score += a_task.decipoints
             if grading_for_task:
                 reached_score += grading_for_task.decipoints

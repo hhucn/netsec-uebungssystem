@@ -6,7 +6,6 @@ from .. import grading
 from .. import submission
 from .. import task
 
-import datetime
 import time
 
 
@@ -15,7 +14,6 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
         subm = submission.get_from_id(self.application.db, submission_id)
         tasks = task.get_for_sheet(self.application.db, subm.sheet_id)
 
-        timestamp = datetime.datetime.utcnow()
         grader = self.request.netsecus_user
         assert grader
 
@@ -61,6 +59,5 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
 
         grading.save(
             self.application.db, subm.student_id, subm.sheet_id, submission_id, reviews, grader)
-
 
         self.redirect("/submission/%s" % submission_id)

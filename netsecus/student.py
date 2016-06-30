@@ -73,7 +73,7 @@ def resolve_alias(db, alias):
     if res:
         return Student(res[0])
 
-    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (template_helper.alias2name(alias), ))
+    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (alias, ))
     student = Student(db.cursor.lastrowid)
     db.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, alias))
     db.database.commit()

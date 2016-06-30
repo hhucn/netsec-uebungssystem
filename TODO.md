@@ -1,5 +1,3 @@
-check prev_json in SubmissionGradeAllHandler
-
 remove 'grading' table, use 'grading_result'
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen

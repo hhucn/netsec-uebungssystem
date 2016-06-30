@@ -29,7 +29,7 @@
 				<em>Nicht zugewiesen</em>
 			{% end %}
 		</td>
-		<td><a href="/submission/{{ submission["id"] }}">{{ submission["status"] }}</a></td>
+		<td><a href="/submission/{{ submission["id"] }}">{{ template_helper.translate_status(submission["status"]) }}</a></td>
 		<td>
 			{% if submission["decipoints"] %}
 				{{ float(submission["decipoints"])/10 }}

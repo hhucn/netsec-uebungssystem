@@ -37,3 +37,12 @@ def format_points(decipoints):
 
 def format_timestamp(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%d.%m.%Y %H:%M:%S')
+
+
+def translate_status(status):
+    if status == "started":
+        return "Angefangen"
+    elif status == "done":
+        return "Fertig"
+
+    return "Unbearbeitet"

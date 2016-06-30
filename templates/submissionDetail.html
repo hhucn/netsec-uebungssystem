@@ -45,32 +45,29 @@ abgegeben {{ template_helper.format_timestamp(submission["time"]) }}<br>
 <table>
 <thead><tr><th>Aufgabe</th><th>Kommentar</th><th>Punktzahl</th><th>Korrektor</th></tr></thead>
 <tbody>
-{% for grade in grading %}
-{% if grade["grading"] %}
-<input type="hidden" name="prev_time_{{ grade["task"].id }}" value="{{ grade["grading"].time }}" />
-<input type="hidden" name="prev_grader_{{ grade["task"].id }}" value="{{ grade["grading"].grader }}" />
-<input type="hidden" name="prev_comment_{{ grade["task"].id }}" value="{{ grade["grading"].comment }}" />
-<input type="hidden" name="prev_decipoints_{{ grade["task"].id }}" value="{{ grade["grading"].decipoints }}" />
+{% for grt in graded_tasks %}
+{% if grt["review_json"] %}
+<input type="hidden" name="prev_json_{{ grt["task"].id }}" value="{{ grt["review_json"] }}" />
 {% end %}
 <tr>
-  <th>{{ grade["task"].name }}</th>
+  <th>{{ grt["task"].name }}</th>
   <td>
-    <textarea name="comment_{{ grade["task"].id }}" placeholder="Kommentar" cols="70" rows="4">{% if grade["grading"] %}{{ grade["grading"].comment }}{% end %}</textarea>
+    <textarea name="comment_{{ grt["task"].id }}" placeholder="Kommentar" cols="70" rows="4">{% if grt["review"] %}{{ grt["review"]["comment"] }}{% end %}</textarea>
   </td>
   <td>
-    <input type="number" name="points_{{ grade["task"].id }}" value="{% if grade["grading"] %}{{ float(grade["grading"].decipoints) / 10 }}{% end %}" step="0.5">
-     von {{ template_helper.format_points(grade["task"].decipoints) }}
+    <input type="number" name="points_{{ grt["task"].id }}" value="{% if grt["review"] %}{{ template_helper.format_points(grt["review"]["decipoints"])}}{% end %}" step="0.5">
+     von {{ template_helper.format_points(grt["task"].decipoints) }}
   </td>
   <td>
-    {% if grade["grading"] %}
-    {{ grade["grading"].grader }}
+    {% if grt["review"] %}
+    {{ grt["review"]["grader"] }}
     {% end %}
 </td>
 </tr>
 {% end %}
 <tr>
   <th colspan="2"></th>
-  <th colspan=2>{{ float(reached_score)/10 }} von {{ float(total_score)/10 }} Punkten</th>
+  <th colspan=2>{{ template_helper.format_points(reached_score) }} von {{ template_helper.format_points(total_score) }} Punkten</th>
 </tr>
 </tbody></table>
 

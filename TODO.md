@@ -1,6 +1,6 @@
 Sortierreihenfolge falschrum
-Unbearbeitet wenn leer
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
+Bei einigen Abgaben Studentenname None in der Produktion
 
 test with gmail
 Teste Änderung der Korrektur nach Herausschicke	n an den Studenten

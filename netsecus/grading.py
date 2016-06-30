@@ -67,7 +67,7 @@ def unsent_results(db):
             id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid
         FROM grading_result
         WHERE
-            sent_mail_uid IS NULL
+            sent_mail_uid IS NULL AND status = 'done'
         ORDER BY grading_result.submission_id ASC, grading_result.id DESC
         """)
     rows = db.cursor.fetchall()

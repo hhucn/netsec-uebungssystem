@@ -38,24 +38,19 @@ def save(db, student_id, sheet_id, submission_id, reviews, grader):
     db.database.commit()
 
 
-def get_grade_for_task(db, task_id, submission_id):
+def get_for_submission(db, submission_id):
     db.cursor.execute(
-        """SELECT id, comment, time, decipoints, grader FROM grading WHERE
-           submission_id = ? AND task_id = ?""", (submission_id, task_id))
-    row = db.cursor.fetchone()
-    if not row:
-        return None
-
-    id, comment, time, decipoints, grader = row
-    return Grading(id, submission_id, task_id, comment, time, decipoints, grader)
-
-
-def get_grades_for_grader(db, grader):
-    db.cursor.execute("""SELECT id, student_id, sheet_id, submission_id, reviews_json,
-                         decipoints, grader, sent_mail_uid FROM grading_result WHERE grader = ?""", (grader, ))
+        """SELECT
+                id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid, status
+            FROM grading_result
+            WHERE submission_id = ?""", (submission_id,))
     rows = db.cursor.fetchall()
-
-    return [Grading_Result(*row) for row in rows]
+    lst = [Grading_Result(*row) for row in rows]
+    assert len(lst) <= 1
+    if lst:
+        return lst[0]
+    else:
+        return None
 
 
 def create_grading_result(db, gr):

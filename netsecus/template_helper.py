@@ -24,6 +24,9 @@ def format_student(student):
 
 
 def format_points(decipoints):
+    if decipoints is None:
+        return ''
+
     points = (decipoints / 10.)
 
     if points == int(points):

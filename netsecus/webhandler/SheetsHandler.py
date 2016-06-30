@@ -13,4 +13,6 @@ class SheetsHandler(NetsecHandler):
             task.get_for_sheet(self.application.db, single_sheet.id)
             for single_sheet in sheets)
 
-        self.render('sheets', {'sheets_tasks': sheets_tasks, 'sheets': sheets})
+        self.render('sheets', {'sheets_tasks': sheets_tasks,
+                               'sheets': sheets,
+                               'total_score': sheet.get_all_total_score_number(self.application.db)})

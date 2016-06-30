@@ -6,6 +6,7 @@ from .. import grading
 from .. import submission
 from .. import task
 
+import json
 import time
 
 
@@ -24,18 +25,14 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
             decipoints = int(round(float(decipoints_str) * 10)) if decipoints_str else None
             comment = self.get_argument("comment_%s" % t.id)
 
-            # TODO: check prev_json here
-            prev_decipoints_str = self.get_argument("prev_decipoints_%s" % t.id, default=None)
-            prev_decipoints = (
-                None
-                if (prev_decipoints_str is None or prev_decipoints_str == '')
-                else int(prev_decipoints_str)
+            # Check whether anything has changed
+            prev_json = self.get_argument("prev_json_%s" % t.id, default=None)
+            prev = (json.loads(prev_json) if prev_json else {})
+            changed = (
+                prev.get('decipoints') != decipoints or
+                prev.get('comment') != comment
             )
-            prev_comment = self.get_argument("prev_comment_%s" % t.id, default=None)
-            prev_time = self.get_argument("prev_time_%s" % t.id, default=None)
-            prev_grader = self.get_argument("prev_grader_%s" % t.id, default=None)
 
-            changed = True # TODO: check keys here
             if changed:
                 review = {
                     'task_id': t.id,
@@ -49,8 +46,8 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
                     'task_id': t.id,
                     'comment': comment,
                     'decipoints': decipoints,
-                    'timestamp': prev_time,
-                    'grader': prev_grader,
+                    'timestamp': prev.get('time'),
+                    'grader': prev.get('grader'),
                 }
 
             reviews.append(review)

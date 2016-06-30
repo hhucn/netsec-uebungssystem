@@ -40,11 +40,8 @@ def format_timestamp(ts):
 
 
 def translate_status(status):
-    if status == "started":
-        return "Angefangen"
-    elif status == "done":
-        return "Fertig"
-    elif status == "assigned":
-        return "Zugewiesen"
-
-    return "Unbearbeitet"
+    return {
+        "started": "Angefangen",
+        "done": "Fertig",
+        "assigned": "Zugewiesen",
+    }.get(status, "Unbearbeitet")

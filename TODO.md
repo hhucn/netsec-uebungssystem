@@ -1,6 +1,3 @@
-zugewiesen klappt nicht mehr
-improve template_helper.render_status
-
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei einigen Abgaben Studentenname None in der Produktion
 

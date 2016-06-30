@@ -24,6 +24,7 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
             decipoints = int(round(float(decipoints_str) * 10)) if decipoints_str else None
             comment = self.get_argument("comment_%s" % t.id)
 
+            # TODO: check prev_json here
             prev_decipoints_str = self.get_argument("prev_decipoints_%s" % t.id, default=None)
             prev_decipoints = (
                 None
@@ -34,10 +35,7 @@ class SubmissionGradeAllHandler(ProtectedPostHandler):
             prev_time = self.get_argument("prev_time_%s" % t.id, default=None)
             prev_grader = self.get_argument("prev_grader_%s" % t.id, default=None)
 
-            changed = (
-                (prev_decipoints != decipoints) or
-                (comment != prev_comment)
-            )
+            changed = True # TODO: check keys here
             if changed:
                 review = {
                     'task_id': t.id,

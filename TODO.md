@@ -1,9 +1,15 @@
+points
+	create an empty grading_result for sheet|user upon submission
+	eingereicht | nicht abgegeben
+check prev_json in SubmissionGradeAllHandler
+status should be German
+
 remove 'grading' table, use 'grading_result'
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 
 test with gmail
-Teste Änderung der Korrektur nach Herausschicken an den Studenten
+Teste Änderung der Korrektur nach Herausschicke	n an den Studenten
 upload sent mails via IMAP
 Zeige Text der E-Mail (falls vorhanden) direkt inline!
 

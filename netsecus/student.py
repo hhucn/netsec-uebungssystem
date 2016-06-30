@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 
 import collections
 
+from . import template_helper
+
 Student = collections.namedtuple('Student', ['id'])
 NamedStudent = collections.namedtuple('Student', ['student', 'aliases'])
 FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])
@@ -71,7 +73,7 @@ def resolve_alias(db, alias):
     if res:
         return Student(res[0])
 
-    db.cursor.execute("INSERT INTO student (id) VALUES (null)")
+    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (template_helper.alias2name(alias), ))
     student = Student(db.cursor.lastrowid)
     db.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, alias))
     db.database.commit()

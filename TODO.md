@@ -1,6 +1,12 @@
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei einigen Abgaben Studentenname None in der Produktion
 
+To ist falsch wenn
+	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=
+ =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
+	(mit newline)
+
+To header with exotic email addresses, like
 test with gmail
 Teste Änderung der Korrektur nach Herausschicke	n an den Studenten
 upload sent mails via IMAP

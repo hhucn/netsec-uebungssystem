@@ -53,22 +53,6 @@ def get_for_submission(db, submission_id):
         return None
 
 
-def create_grading_result(db, gr):
-    db.cursor.execute(
-        """INSERT INTO grading_result
-        (student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid)
-        VALUES (?, ?, ?, ?, ?, ?, ?)""", (
-            gr['student_id'],
-            gr['sheet_id'],
-            gr['submission_id'],
-            json.dumps(gr['reviews'], ensure_ascii=False, sort_keys=True),
-            gr['decipoints'],
-            gr['grader'],
-            gr['sent_mail_uid'],
-        )
-    )
-
-
 def on_send_result(db, grading_result_id, sent_mail_uid):
     db.cursor.execute(
         """UPDATE grading_result
@@ -83,7 +67,7 @@ def unsent_results(db):
             id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid
         FROM grading_result
         WHERE
-            sent_mail_uid IS NULL
+            sent_mail_uid IS NULL AND status = 'done'
         ORDER BY grading_result.submission_id ASC, grading_result.id DESC
         """)
     rows = db.cursor.fetchall()

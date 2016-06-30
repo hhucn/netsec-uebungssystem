@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 import collections
 
-from . import template_helper
-
 Student = collections.namedtuple('Student', ['id'])
 NamedStudent = collections.namedtuple('Student', ['student', 'aliases'])
 FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])

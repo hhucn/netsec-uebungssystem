@@ -11,9 +11,7 @@ class SubmissionAssignHandler(ProtectedPostHandler):
         subm = submission.get_from_id(self.application.db, submission_id)
         grader = self.get_argument("grader")
 
-        assignment.set_for_student_and_sheet(self.application.db,
-                                             subm.student_id,
-                                             subm.sheet_id,
-                                             grader)
+        assignment.set_for_submission(
+            self.application.db, subm, grader)
 
         self.redirect("/submission/%s" % submission_id)

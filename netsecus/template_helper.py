@@ -44,9 +44,8 @@ def format_percent(quotient):
 
 
 def translate_status(status):
-    if status == "started":
-        return "Angefangen"
-    elif status == "done":
-        return "Fertig"
-
-    return "Unbearbeitet"
+    return {
+        "started": "Angefangen",
+        "done": "Fertig",
+        "assigned": "Zugewiesen",
+    }.get(status, "Unbearbeitet")

@@ -1,6 +1,6 @@
-remove 'grading' table, use 'grading_result'
+Sortierreihenfolge falschrum
+Unbearbeitet wenn leer
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
-Bei Korrekturen Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 
 test with gmail
 Teste Änderung der Korrektur nach Herausschicke	n an den Studenten

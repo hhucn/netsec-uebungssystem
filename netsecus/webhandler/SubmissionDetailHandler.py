@@ -18,7 +18,7 @@ class SubmissionDetailHandler(NetsecHandler):
         available_graders = grading.get_available_graders(self.application.config)
         gr = grading.get_for_submission(self.application.db, submission_id)
 
-        all_reviews = json.loads(gr.reviews_json) if gr else {}
+        all_reviews = json.loads(gr.reviews_json) if (gr and gr.reviews_json) else {}
         reviews_by_task = {r['task_id']: r for r in all_reviews}
 
         total_score = 0

@@ -44,5 +44,7 @@ def translate_status(status):
         return "Angefangen"
     elif status == "done":
         return "Fertig"
+    elif status == "assigned":
+        return "Zugewiesen"
 
     return "Unbearbeitet"

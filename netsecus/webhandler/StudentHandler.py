@@ -23,7 +23,6 @@ class StudentHandler(NetsecHandler):
 
         for subm in fs.submissions:
             student_score = 0
-            total_score = 0
 
             for grade in grading_results:
                 if grade["student_id"] == int(student_id):
@@ -41,7 +40,6 @@ class StudentHandler(NetsecHandler):
             )
 
             student_total_score = student_total_score + student_score
-            reachable_total_score = reachable_total_score + total_score
 
         self.render('student', {
             'student': fs.student,

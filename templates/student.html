@@ -17,9 +17,13 @@
 		{% for subm in submissions %}
 		<tr>
 			<td>
-				<a href="/submission/{{ subm.id }}">Abgabe {{ subm.id }}</a>
+				<a href="/submission/{{ subm["submission"].id }}">Abgabe {{ subm["submission"].id }}</a>
 			</td>
-			<td><a href="/sheet/{{ subm.sheet_id }}">Blatt {{ subm.sheet_id }}</a></td>
+			<td><a href="/sheet/{{ subm["submission"].sheet_id }}">Blatt {{ subm["submission"].sheet_id }}</a></td>
+			<td>
+				{{ template_helper.format_points(subm["student_score"]) }} von {{ template_helper.format_points(subm["total_score"]) }} Punkten
+				({{ template_helper.format_percent(subm["student_score"]/subm["total_score"]) }})
+			</td>
 		</tr>
 		{% end %}
 	</table>

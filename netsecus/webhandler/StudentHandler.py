@@ -19,7 +19,6 @@ class StudentHandler(NetsecHandler):
 
         submission_with_score = []
         student_total_score = 0
-        reachable_total_score = 0
 
         for subm in fs.submissions:
             student_score = 0

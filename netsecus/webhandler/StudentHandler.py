@@ -45,6 +45,5 @@ class StudentHandler(NetsecHandler):
             'student': fs.student,
             'aliases': fs.aliases,
             'submissions': submission_with_score,
-            'student_total_score': student_total_score,
-            'reachable_total_score': total_score
+            'student_total_score': student_total_score
         })

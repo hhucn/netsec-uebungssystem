@@ -1,6 +1,7 @@
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei einigen Abgaben Studentenname None in der Produktion
 
+Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft
 To ist falsch wenn
 	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>

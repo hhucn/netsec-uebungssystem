@@ -18,6 +18,8 @@ class StudentHandler(NetsecHandler):
             gr['total_decipoints'] = sum(st.get('decipoints', 0) for st in gr['student_track'])
 
         submission_with_score = []
+        student_total_score = 0
+        reachable_total_score = 0
 
         for subm in fs.submissions:
             student_score = 0
@@ -38,8 +40,13 @@ class StudentHandler(NetsecHandler):
                 }
             )
 
+            student_total_score = student_total_score + student_score
+            reachable_total_score = reachable_total_score + total_score
+
         self.render('student', {
             'student': fs.student,
             'aliases': fs.aliases,
             'submissions': submission_with_score,
+            'student_total_score': student_total_score,
+            'reachable_total_score': total_score
         })

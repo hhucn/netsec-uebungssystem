@@ -28,6 +28,7 @@
 		{% end %}
 	</table>
 
-	<b>Insgesamt wurden {{ template_helper.format_points(student_total_score) }} Punkte erreicht.</b>
+	<b>Insgesamt wurden {{ template_helper.format_points(student_total_score) }} von {{ template_helper.format_points(reachable_total_score) }} Punkten erreicht.</b>
+	Dies entspricht {{ template_helper.format_percent(student_total_score / reachable_total_score) }}
 
 {%include ../../templates/footer.html %}

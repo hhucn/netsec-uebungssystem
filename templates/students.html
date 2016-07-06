@@ -5,21 +5,25 @@
 		<th>Student-ID</th>
 		<th>Namen</th>
 		<th>Abgaben</th>
+		<th>Punkte</th>
 	</tr></thead>
 	<tbody>
 	{% for fs in full_students %}
 		<tr>
-			<td><a href="/student/{{ fs.student.id }}">{{ fs.student.id }}</a></td>
-			<td><ul class="alias_list">{% for alias in fs.aliases%}
-				<li><a href="/student/{{ fs.student.id }}">{{ alias }}</a></li>
+			<td><a href="/student/{{ fs["student"].student.id }}">{{ fs["student"].student.id }}</a></td>
+			<td><ul class="alias_list">{% for alias in fs["student"].aliases%}
+				<li><a href="/student/{{ fs["student"].student.id }}">{{ alias }}</a></li>
 			{% end %}
 			</ul></td>
-			<td><ul class="submission_list">{% for subm in fs.submissions%}
+			<td><ul class="submission_list">{% for subm in fs["student"].submissions%}
 				<li>
 					<a href="/submission/{{ subm.id }}">Abgabe {{ subm.id }}</a>
 				</li>
 			{% end %}
 			</ul></td>
+			<td>
+				{{ template_helper.format_points(fs["score"]) }} Punkte
+			</td>
 		</tr>
 	{% end %}
 	</tbody>

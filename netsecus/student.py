@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from . import grading
+
 import collections
 
 Student = collections.namedtuple('Student', ['id'])
@@ -76,3 +78,19 @@ def resolve_alias(db, alias):
     db.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, alias))
     db.database.commit()
     return student
+
+
+def get_student_total_score(db, student_id):
+    fs = get_full_student(db, student_id)
+    grading_results = grading.unsent_results(db)
+
+    student_total_score = 0
+
+    for subm in fs.submissions:
+        for grade in grading_results:
+            if grade["student_id"] == int(student_id):
+                if grade["sheet_id"] == subm.sheet_id:
+                    student_total_score = student_total_score + grade["decipoints"]
+                    break
+
+    return student_total_score

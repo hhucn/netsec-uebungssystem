@@ -1,5 +1,3 @@
-Bei einigen Abgaben Studentenname None in der Produktion
-
 mergen!
 Nicht "0 Punkte" wenn noch nicht geschafft
 Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft
@@ -8,7 +6,7 @@ To ist falsch wenn
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
 	(mit newline)
 
-To header with exotic email addresses, like
+set a "To" header
 test with gmail
 Teste Änderung der Korrektur nach Herausschicke	n an den Studenten
 upload sent mails via IMAP

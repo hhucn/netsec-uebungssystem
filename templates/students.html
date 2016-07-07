@@ -22,7 +22,7 @@
 			{% end %}
 			</ul></td>
 			<td>
-				{{ template_helper.format_points(fs["score"]) }} Punkte
+				{{ template_helper.format_points(fs["score"]) }} Punkte, {{ template_helper.format_percent(fs["score"] / total_score) }}
 			</td>
 		</tr>
 	{% end %}

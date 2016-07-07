@@ -51,5 +51,13 @@ class TestHelper(unittest.TestCase):
         self.assertEqual(netsecus.helper.alias2mail('test <abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org>'),
             'abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org')
 
+        # hhu.de and uni-duesseldorf.de
+        self.assertEqual(netsecus.helper.alias2mail('Philipp <philipp@hhu.de>'),
+            'philipp@uni-duesseldorf.de')
+
+        # Capitalization (seems to change randomly for our students)
+        self.assertEqual(netsecus.helper.alias2mail('Philipp <PhiliPp@example.de>'),
+            'philipp@example.de')
+
 
 tutils.main(__name__)

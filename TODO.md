@@ -1,4 +1,3 @@
-Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei einigen Abgaben Studentenname None in der Produktion
 
 Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft

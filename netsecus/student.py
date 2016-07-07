@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from . import helper
 from . import grading
 
 import collections
@@ -65,17 +66,19 @@ def get_named_student(db, student_id):
 def resolve_alias(db, alias):
     """ Fetches or creates the student """
 
+    mail = helper.alias2mail(alias)
+
     db.cursor.execute(
         """SELECT student.id FROM alias, student
         WHERE alias.alias = ? AND student.id = alias.student_id""",
-        (alias, ))
+        (mail, ))
     res = db.cursor.fetchone()
     if res:
         return Student(res[0])
 
-    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (alias, ))
+    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (mail, ))
     student = Student(db.cursor.lastrowid)
-    db.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, alias))
+    db.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, mail))
     db.database.commit()
     return student
 

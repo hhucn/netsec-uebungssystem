@@ -221,3 +221,12 @@ def remove_duplicates(lst):
             continue
         res.append(el)
     return res
+
+
+def alias2mail(alias):
+    a_decoded = decode_mail_words(alias)
+
+    m = re.match(r'^.*?\s*<(.*@.*)>$', a_decoded)
+    mail = m.group(1) if m else a_decoded
+
+    return mail

@@ -40,23 +40,33 @@ class TestHelper(unittest.TestCase):
     def test_alias2mail(self):
         self.assertEqual(netsecus.helper.alias2mail('a@b.de'), 'a@b.de')
         self.assertEqual(
-            netsecus.helper.alias2mail('Philipp Hagemeister <phi-hag_@phihag.de>'),
+            netsecus.helper.alias2mail(
+                'Philipp Hagemeister <phi-hag_@phihag.de>'),
             'phi-hag_@phihag.de')
         self.assertEqual(
-            netsecus.helper.alias2mail('=?UTF-8?Q?D=c3=bcsseldorf_-_Philipp_Hagemeist?=\n'
+            netsecus.helper.alias2mail(
+                '=?UTF-8?Q?D=c3=bcsseldorf_-_Philipp_Hagemeist?=\n' +
                 '=?UTF-8?Q?er?= <foo@bar.de>'),
             'foo@bar.de')
-        self.assertEqual(netsecus.helper.alias2mail('<x@y.de> <foo@bar.museum>'),
+        self.assertEqual(
+            netsecus.helper.alias2mail(
+                '<x@y.de> <foo@bar.museum>'),
             'foo@bar.museum')
-        self.assertEqual(netsecus.helper.alias2mail('test <abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org>'),
+        self.assertEqual(
+            netsecus.helper.alias2mail(
+                'test <abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org>'),
             'abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org')
 
         # hhu.de and uni-duesseldorf.de
-        self.assertEqual(netsecus.helper.alias2mail('Philipp <philipp@hhu.de>'),
+        self.assertEqual(
+            netsecus.helper.alias2mail(
+                'Philipp <philipp@hhu.de>'),
             'philipp@uni-duesseldorf.de')
 
         # Capitalization (seems to change randomly for our students)
-        self.assertEqual(netsecus.helper.alias2mail('Philipp <PhiliPp@example.de>'),
+        self.assertEqual(
+            netsecus.helper.alias2mail(
+                'Philipp <PhiliPp@example.de>'),
             'philipp@example.de')
 
 

@@ -226,14 +226,14 @@ def remove_duplicates(lst):
 def alias2mail(alias):
     a_decoded = decode_mail_words(alias)
 
-    m = re.match(r'^.*?\s*<(.*@.*)>$', a_decoded)
+    m = re.match(r'^.*?\s*<([-a-zA-Z0-9._.!#$%&\'*+/=?^_`{|}~]+@[-a-zA-Z0-9._]+)>$', a_decoded)
     mail = m.group(1) if m else a_decoded
 
     mail = mail.lower()
 
     # Unify hhu.de and uni-duesseldorf.de
-    m = re.match(r'^(.*@)hhu\.de$', mail)
+    m = re.match(r'^(.*)@hhu\.de$', mail)
     if m:
-        mail = m[1] + '@uni-duesseldorf.de'
+        mail = m.group(1) + '@uni-duesseldorf.de'
 
     return mail

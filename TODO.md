@@ -1,3 +1,4 @@
+set a "From" header
 mergen!
 Nicht "0 Punkte" wenn noch nicht geschafft
 Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft
@@ -6,9 +7,8 @@ To ist falsch wenn
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
 	(mit newline)
 
-set a "To" header
 test with gmail
-Teste Änderung der Korrektur nach Herausschicke	n an den Studenten
+Teste Änderung der Korrektur nach Herausschicken an den Studenten
 upload sent mails via IMAP
 Zeige Text der E-Mail (falls vorhanden) direkt inline!
 

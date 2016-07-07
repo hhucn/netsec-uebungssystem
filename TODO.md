@@ -1,6 +1,8 @@
 Bei Studenten Gesamtpunktzahl über alle Blätter inkl. Prozent anzeigen
 Bei einigen Abgaben Studentenname None in der Produktion
 
+mergen!
+Nicht "0 Punkte" wenn noch nicht geschafft
 Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft
 To ist falsch wenn
 	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=

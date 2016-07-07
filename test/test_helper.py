@@ -37,4 +37,19 @@ class TestHelper(unittest.TestCase):
             'Philipp Hägemeister <phi-hag@phihag.de>'),
             '=?utf-8?q?Philipp_H=C3=A4?=gemeister <phi-hag@phihag.de>')
 
+    def test_alias2mail(self):
+        self.assertEqual(netsecus.helper.alias2mail('a@b.de'), 'a@b.de')
+        self.assertEqual(
+            netsecus.helper.alias2mail('Philipp Hagemeister <phi-hag_@phihag.de>'),
+            'phi-hag_@phihag.de')
+        self.assertEqual(
+            netsecus.helper.alias2mail('=?UTF-8?Q?D=c3=bcsseldorf_-_Philipp_Hagemeist?=\n'
+                '=?UTF-8?Q?er?= <foo@bar.de>'),
+            'foo@bar.de')
+        self.assertEqual(netsecus.helper.alias2mail('<x@y.de> <foo@bar.museum>'),
+            'foo@bar.museum')
+        self.assertEqual(netsecus.helper.alias2mail('test <abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org>'),
+            'abcdefz0123456789.!#$%&\'*+-/=?^_`{|}~@example.org')
+
+
 tutils.main(__name__)

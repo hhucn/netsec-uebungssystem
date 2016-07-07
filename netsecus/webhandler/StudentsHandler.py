@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from .NetsecHandler import NetsecHandler
+from .. import sheet
 from .. import student
 
 
@@ -15,4 +16,9 @@ class StudentsHandler(NetsecHandler):
                 "score": student.get_student_total_score(self.application.db, fs.student.id)
             })
 
-        self.render('students', {'full_students': students_with_scores})
+        total_score = sheet.get_all_total_score_number(self.application.db)
+
+        self.render('students', {
+            'full_students': students_with_scores,
+            'total_score': total_score,
+        })

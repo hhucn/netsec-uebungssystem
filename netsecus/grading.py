@@ -5,7 +5,6 @@ import hashlib
 import json
 
 from . import task
-from . import student
 
 Grading = collections.namedtuple('Grading', ['id', 'submission_id', 'task_id',
                                  'comment', 'time', 'decipoints', 'grader'])
@@ -122,6 +121,8 @@ def get_student_track(db, all_sheet_points, student_id):
 def enrich_results(db, grading_results):
     """ Utility function that fetches the various other database objects referenced. """
     # Write in various properties for template
+    from . import student
+
     tasks = task.get_all_dict(db)
     for gr in grading_results:
         for review in gr['reviews']:

@@ -66,19 +66,19 @@ def get_named_student(db, student_id):
 def resolve_alias(db, alias):
     """ Fetches or creates the student """
 
-    mail = helper.alias2mail(alias)
+    email = helper.alias2mail(alias)
 
     db.cursor.execute(
         """SELECT student.id FROM alias, student
-        WHERE alias.alias = ? AND student.id = alias.student_id""",
-        (mail, ))
+        WHERE alias.email = ? AND student.id = alias.student_id""",
+        (email, ))
     res = db.cursor.fetchone()
     if res:
         return Student(res[0])
 
-    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (mail, ))
+    db.cursor.execute("INSERT INTO student (id, primary_alias) VALUES (null, ?)", (alias, ))
     student = Student(db.cursor.lastrowid)
-    db.cursor.execute("INSERT INTO alias (student_id, alias) VALUES (?, ?)", (student.id, mail))
+    db.cursor.execute("INSERT INTO alias (student_id, alias, email) VALUES (?, ?, ?)", (student.id, alias, email))
     db.database.commit()
     return student
 

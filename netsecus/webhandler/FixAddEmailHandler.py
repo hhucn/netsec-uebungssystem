@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from .NetsecHandler import NetsecHandler
 from .. import helper
 
+
 # Adds emails to the alias table
 class FixAddEmailHandler(NetsecHandler):
     def get(self):
@@ -12,7 +13,7 @@ class FixAddEmailHandler(NetsecHandler):
             db.cursor.execute(
                 '''ALTER TABLE alias ADD email TEXT''')
         except sqlite3.OperationalError:
-            pass # Column name exists already
+            pass  # Column name exists already
 
         db.cursor.execute(
                 '''SELECT id, alias FROM alias''')

@@ -10,7 +10,6 @@ check that Björn Ebbinghaus is not constantly getting new accounts
 allow config to prevent logfile creation (for local debugging)
 Abgabe 357 ist falsch geparst => Testcase bauen!
 test with gmail
-Teste Änderung der Korrektur nach Herausschicken an den Studenten
 upload sent mails via IMAP
 Zeige Text der E-Mail (falls vorhanden) direkt inline!
 keep Mails with Subject Abgabe 99:
@@ -30,7 +29,6 @@ Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 merge students; actually use alias as intended
 Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
-switch to nedb-like interface for grading_results? (Discuss with Martin)
 
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
 script to autorestart on changes

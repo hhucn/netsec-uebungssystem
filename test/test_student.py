@@ -25,6 +25,12 @@ def _testable_subs(subs):
     return sorted(map(tutils.remove_id, subs), key=lambda sub: sub.time)
 
 
+def _testable_track(track):
+    return [
+        {k: v for k, v in t.items() if k not in ('submission_id',)}
+        for t in track]
+
+
 class TestStudent(unittest.TestCase):
     def test_resolve_alias(self):
         db = tutils.make_db()
@@ -96,7 +102,7 @@ class TestStudent(unittest.TestCase):
             submission.Submission(id=None, sheet_id=4, student_id=1, time=1004, files_path='', deleted=0),
             submission.Submission(id=None, sheet_id=4, student_id=2, time=1005, files_path='', deleted=0),
         ])
-        grs = grading.get_student_track(db, all_sheet_points, s.id)
+        grs = _testable_track(grading.get_student_track(db, all_sheet_points, s.id))
         self.assertEqual(grs, [
             {'sheet_id': 1, 'max_decipoints': 210, 'submitted': True, 'decipoints': 11},
             {'sheet_id': 2, 'max_decipoints': 220, 'submitted': False},
@@ -105,7 +111,7 @@ class TestStudent(unittest.TestCase):
             {'sheet_id': 5, 'max_decipoints': 250, 'submitted': False},
             {'sheet_id': 6, 'max_decipoints': 260, 'submitted': False},
         ])
-        grs = grading.get_student_track(db, all_sheet_points, s2.id)
+        grs = _testable_track(grading.get_student_track(db, all_sheet_points, s2.id))
         self.assertEqual(grs, [
             {'sheet_id': 1, 'max_decipoints': 210, 'submitted': False},
             {'sheet_id': 2, 'max_decipoints': 220, 'submitted': True, 'decipoints': 13},
@@ -134,7 +140,7 @@ class TestStudent(unittest.TestCase):
             submission.Submission(id=None, sheet_id=4, student_id=1, time=1004, files_path='', deleted=0),
         ])
 
-        grs = grading.get_student_track(db, all_sheet_points, s.id)
+        grs = _testable_track(grading.get_student_track(db, all_sheet_points, s.id))
         self.assertEqual(grs, [
             {'sheet_id': 1, 'max_decipoints': 210, 'submitted': True, 'decipoints': 11},
             {'sheet_id': 2, 'max_decipoints': 220, 'submitted': True, 'decipoints': 13},

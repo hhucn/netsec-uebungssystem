@@ -15,7 +15,7 @@ class MergeSelectHandler(NetsecHandler):
         merged_Student = next(s for s in all_students if s['id'] == student_id)
         other_students = sorted(
             (s for s in all_students if s['id'] != student_id),
-            key=lambda s: s['primary_alias'])       
+            key=lambda s: s['primary_alias'])
 
         self.render('merge_select', {
             'merged_student': merged_Student,

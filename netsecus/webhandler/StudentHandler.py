@@ -42,5 +42,5 @@ class StudentHandler(NetsecHandler):
             'aliases': fs.aliases,
             'submissions': submission_with_score,
             'student_total_score': student_total_score,
-            'reachable_total_score': sheet.get_all_total_score_number(self.application.db)
+            'reachable_total_score': sheet.get_all_total_score_number(self.application.db),
         })

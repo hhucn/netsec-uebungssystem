@@ -6,8 +6,11 @@ To ist falsch wenn
 	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
 	(mit newline)
-Abgabe 357 ist falsch geparst => Testcase bauen!
+check that Björn Ebbinghaus is not constantly getting new accounts
+add option to mail current scores to student
 
+allow config to prevent logfile creation (for local debugging)
+Abgabe 357 ist falsch geparst => Testcase bauen!
 test with gmail
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
 upload sent mails via IMAP

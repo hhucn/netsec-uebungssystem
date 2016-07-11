@@ -31,4 +31,6 @@
 	<b>Insgesamt wurden {{ template_helper.format_points(student_total_score) }} von {{ template_helper.format_points(reachable_total_score) }} Punkten erreicht.</b>
 	Dies entspricht {{ template_helper.format_percent(student_total_score / reachable_total_score) }}
 
+	<p><a href="/merge/{{student.id}}/select">Mergen ...</a></p>
+
 {%include ../../templates/footer.html %}

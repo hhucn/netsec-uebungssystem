@@ -43,3 +43,10 @@ input[type=number] {
 	font-family: monospace;
 	white-space: pre-wrap;
 }
+
+.merge_preview {
+	border-collapse: collapse;
+}
+.merge_preview td, .merge_preview th {
+	border: 1px solid #000;
+}

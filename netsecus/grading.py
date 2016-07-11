@@ -98,17 +98,18 @@ def get_student_track(db, all_sheet_points, student_id):
 
     db.cursor.execute(
         """SELECT
-            sheet_id
+            id, sheet_id
         FROM submission
         WHERE student_id = ?
-        ORDER BY sheet_id ASC
+        ORDER BY sheet_id ASC, id ASC
         """, (student_id,))
     sheet_rows = db.cursor.fetchall()
-    submitted_sheets = set(sr[0] for sr in sheet_rows)
+    submitted_sheets = {sheet_id: submission_id for (submission_id, sheet_id) in sheet_rows}
 
     res = [{
         'sheet_id': asp['sheet_id'],
         'submitted': asp['sheet_id'] in submitted_sheets,
+        'submission_id': submitted_sheets.get(asp['sheet_id']),
         'max_decipoints': asp['decipoints'],
     } for asp in all_sheet_points]
     sheet_by_id = {s['sheet_id']: s for s in res}
@@ -117,6 +118,7 @@ def get_student_track(db, all_sheet_points, student_id):
         sheet_id = gr[0]
         sheet = sheet_by_id[sheet_id]
         sheet['decipoints'] = gr[2]
+        sheet['submission_id'] = gr[1]
 
     return res
 

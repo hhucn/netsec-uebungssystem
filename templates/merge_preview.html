@@ -1,0 +1,51 @@
+{%include ../../templates/header.html %}
+
+<h2>Merge <a href="/student/{{merged_student.student.id}}">{{merged_student.primary_alias}} ({{merged_student.student.id}})</a> nach <a href="/student/{{main_student.student.id}}">{{main_student.primary_alias}} ({{main_student.student.id}})</a></h2>
+
+<form method="post" action="/merge/{{merged_student.student.id}}/merge">
+{% module xsrf_form_html() %}
+<input type="hidden" name="main_id" value="{{main_student.student.id}}" />
+
+<table class="merge_preview">
+<thead>
+	<tr>
+	<th>Blatt</th>
+	<th>{{main_student.primary_alias}} ({{main_student.student.id}})</th>
+	<th>{{merged_student.primary_alias}} ({{merged_student.student.id}})</th>
+	</tr>
+</thead>
+<tbody>
+{% for main_t, merged_t in zip(main_track, merged_track) %}
+	<tr>
+	<td>{{main_t['sheet_id']}}</td>
+	<td>
+		{% if main_t['submitted'] %}<a href="/submission/{{main_t['submission_id']}}">abgegeben
+		{% if main_t.get('decipoints') is not None %}
+			{{template_helper.format_points(main_t['decipoints'])}}
+			({{template_helper.format_percent(main_t['decipoints'] / main_t['max_decipoints'])}})
+		{% end %}</a>
+		{% else %}
+			{% if merged_t['submitted'] %}
+			&#x2190;
+			{% end %}
+		{% end %}
+	</td>
+	<td>
+		{% if merged_t['submitted'] %}<a href="/submission/{{merged_t['submission_id']}}">abgegeben
+		{% if merged_t.get('decipoints') is not None %}
+			{{template_helper.format_points(merged_t['decipoints'])}}
+			({{template_helper.format_percent(merged_t['decipoints'] / merged_t['max_decipoints'])}})
+		{% end %}</a>
+		{% else %}{% end %}
+	</td>
+	</tr>
+{% end %}
+</tbody>
+</table>
+
+<button role="submit" style="font-size: 150%; padding: 0.8	em 2em; margin: 1em 0;">Mergen</button>
+</form>
+
+<p><a href="/merge/{{merged_student.student.id}}/select">Zurück</a></p>
+
+{%include ../../templates/footer.html %}

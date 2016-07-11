@@ -7,14 +7,14 @@ import collections
 
 Student = collections.namedtuple('Student', ['id'])
 NamedStudent = collections.namedtuple('Student', ['student', 'aliases'])
-FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions'])
+FullStudent = collections.namedtuple('FullStudent', ['student', 'aliases', 'submissions', 'primary_alias'])
 
 
 def get_full_students(db, where_sql='', filter_params=tuple()):
     from . import submission
 
-    db.cursor.execute('SELECT id FROM student WHERE deleted IS NOT 1' + where_sql, filter_params)
-    res = [FullStudent(Student(*row), [], []) for row in db.cursor.fetchall()]
+    db.cursor.execute('SELECT id, primary_alias FROM student WHERE deleted IS NOT 1' + where_sql, filter_params)
+    res = [FullStudent(Student(row[0]), [], [], row[1]) for row in db.cursor.fetchall()]
     res_dict = {
         fs.student.id: fs for fs in res
     }
@@ -51,6 +51,20 @@ def get_full_student(db, student_id):
     if len(fss) != 1:
         raise ValueError('Expected exactly one student')
     return fss[0]
+
+
+def get_studentname_info(db, where_sql='', where_params=[]):
+    db.cursor.execute('''
+        SELECT
+            student.id,
+            student.primary_alias
+        FROM student
+        WHERE (student.deleted IS NOT 1)%s''' % where_sql, where_params)
+    rows = db.cursor.fetchall()
+    return [{
+        'id': row[0],
+        'primary_alias': row[1],
+    } for row in rows]
 
 
 def get_named_student(db, student_id):

@@ -1,0 +1,10 @@
+{%include ../../templates/header.html %}
+
+<form method="get" action="/merge/{{merged_student['id']}}/preview">
+<strong>Merge {{merged_student['primary_alias']}}({{merged_student['id']}}) ...</strong> nach <select name="main_id" size="1">
+{% for s in other_students %}<option value="{{s['id']}}">{{s['primary_alias']}} ({{s['id']}})</option>{% end %}
+</select>
+<button role="submit">Weiter</button>
+</form>
+
+{%include ../../templates/footer.html %}

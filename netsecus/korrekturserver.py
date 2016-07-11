@@ -29,6 +29,11 @@ from .webhandler.TaskCreateHandler import TaskCreateHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.TaskEditHandler import TaskEditHandler
 from .webhandler.UpdateDatabaseHandler import UpdateDatabaseHandler
+from .webhandler.merge import (
+    MergeSelectHandler,
+    MergePreviewHandler,
+    MergeHandler,
+)
 
 from . import database
 
@@ -78,6 +83,9 @@ def mainloop(config):
         (r"/submission/([0-9]+)/assign", SubmissionAssignHandler),
         (r"/grading/mails/preview", GradingPreviewMailsHandler),
         (r"/grading/mails/send_all", GradingSendMailsHandler),
+        (r"/merge/([0-9]+)/select", MergeSelectHandler),
+        (r"/merge/([0-9]+)/preview", MergePreviewHandler),
+        (r"/merge/([0-9]+)/merge", MergeHandler),
         (r"/download/(.*)", DownloadHandler),
         (r"/updb", UpdateDatabaseHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {

@@ -22,3 +22,7 @@ class NetsecHandler(helper.RequestHandlerWithAuth):
         return self.render_string(
             os.path.join(TEMPLATE_PATH, "%s.html" % template),
             **data)
+
+    @property
+    def db(self):
+        return self.application.db

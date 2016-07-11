@@ -29,6 +29,10 @@ from .webhandler.TaskCreateHandler import TaskCreateHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.TaskEditHandler import TaskEditHandler
 from .webhandler.UpdateDatabaseHandler import UpdateDatabaseHandler
+from .webhandler.contact import (
+    ContactCraftHandler,
+    ContactSendHandler,
+)
 from .webhandler.merge import (
     MergeSelectHandler,
     MergePreviewHandler,
@@ -86,6 +90,8 @@ def mainloop(config):
         (r"/merge/([0-9]+)/select", MergeSelectHandler),
         (r"/merge/([0-9]+)/preview", MergePreviewHandler),
         (r"/merge/([0-9]+)/merge", MergeHandler),
+        (r"/contact/([0-9]+)", ContactCraftHandler),
+        (r"/contact/([0-9]+)/send", ContactSendHandler),
         (r"/download/(.*)", DownloadHandler),
         (r"/updb", UpdateDatabaseHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {

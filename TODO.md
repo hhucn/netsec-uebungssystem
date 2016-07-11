@@ -7,7 +7,6 @@ To ist falsch wenn
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
 	(mit newline)
 check that Björn Ebbinghaus is not constantly getting new accounts
-add option to mail current scores to student
 
 allow config to prevent logfile creation (for local debugging)
 Abgabe 357 ist falsch geparst => Testcase bauen!

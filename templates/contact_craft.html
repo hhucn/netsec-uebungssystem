@@ -1,0 +1,19 @@
+{%include ../../templates/header.html %}
+
+<h2>{{fs.primary_alias}} kontaktieren</h2>
+
+<form method="post" action="/contact/{{fs.student.id}}/send">
+{% module xsrf_form_html() %}
+
+<p><textarea name="message" cols="100" rows="10"></textarea></p>
+
+<div class="contact_mail_tracksheet">
+{%include ../../templates/mail_tracksheet.html%}
+</div>
+
+<button role="submit" style="font-size: 150%; padding: 0.8em 2em; margin: 0 0 1em 0;">Absenden</button>
+</form>
+
+<p><a href="/student/{{fs.student.id}}">Zurück</a></p>
+
+{%include ../../templates/footer.html %}

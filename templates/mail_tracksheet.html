@@ -1,0 +1,7 @@
+<table><tbody>
+{% for track_sheet in student_track %}
+<tr><td>Übung {{track_sheet["sheet_id"]}}</td><td>{% if "decipoints" in track_sheet %}{{template_helper.format_points(track_sheet["decipoints"])}} / {{template_helper.format_points(track_sheet["max_decipoints"])}} Punkte{% elif track_sheet["submitted"] %}Abgegeben (max {{template_helper.format_points(track_sheet["max_decipoints"])}} Punkte){% else %}- ({{template_helper.format_points(track_sheet["max_decipoints"])}} Punkte){% end %}</td></tr>
+{% end %}
+</tbody></table>
+
+<p>Insgesamt hast Du damit {{template_helper.format_points(total_decipoints)}} von {{template_helper.format_points(total_max_decipoints)}} Punkten (<strong>{{ template_helper.format_percent(total_decipoints/total_max_decipoints) }}</strong>) erreicht.</p>

@@ -178,7 +178,7 @@ def get_full_sql(db, filter_sql, filter_params=[]):
                          submission.id = grading_result.submission_id
                          ORDER BY submission.id DESC
                          """ %
-                      (" AND %s" % filter if filter else ""), filter_params)
+                      (" AND %s" % filter_sql if filter_sql else ""), filter_params)
     rows = db.cursor.fetchall()
 
     all_full = []

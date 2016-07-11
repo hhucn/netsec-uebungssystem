@@ -81,6 +81,7 @@ def all_results(db, where_filter="status='done'", where_args=[]):
         'status': status,
     } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid, status) in rows]
 
+
 def unsent_results(db):
     return all_results(db, "sent_mail_uid IS NULL AND status = 'done'")
 

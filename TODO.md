@@ -1,5 +1,4 @@
 set a "From" header
-mergen!
 Nicht "0 Punkte" wenn noch nicht geschafft
 Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft
 To ist falsch wenn
@@ -14,7 +13,9 @@ test with gmail
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
 upload sent mails via IMAP
 Zeige Text der E-Mail (falls vorhanden) direkt inline!
+keep Mails with Subject Abgabe 99:
 
+store outgoing contacts in the system
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
 mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)

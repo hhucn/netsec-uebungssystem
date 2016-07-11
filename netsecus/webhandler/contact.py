@@ -43,3 +43,30 @@ class ContactSendHandler(ProtectedPostHandler):
             mailer.send(to, subject, body)
 
         self.redirect('/student/%d?sent' % data['fs'].student.id)
+
+
+class ContactAllCraftHandler(NetsecHandler):
+    def get(self):
+        student_count = len(student.get_studentname_info(self.db))
+        self.render('contact_all_craft', {
+            'student_count': student_count,
+        })
+
+
+class ContactAllSendHandler(ProtectedPostHandler):
+    def postPassedCSRF(self):
+        student_infos = student.get_studentname_info(self.db)
+
+        subject = self.get_argument('subject')
+
+        data = {
+            'message': self.get_argument('message'),
+        }
+        body = self.render2string('contact_all_mail', data)
+
+        with sendmail.Mailer(self.application.config) as mailer:
+            for si in student_infos:
+                to = si['primary_alias']
+                mailer.send(to, subject, body)
+
+        self.redirect('/students?sent')

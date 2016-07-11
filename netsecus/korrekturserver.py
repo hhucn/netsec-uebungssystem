@@ -32,6 +32,8 @@ from .webhandler.UpdateDatabaseHandler import UpdateDatabaseHandler
 from .webhandler.contact import (
     ContactCraftHandler,
     ContactSendHandler,
+    ContactAllCraftHandler,
+    ContactAllSendHandler,
 )
 from .webhandler.merge import (
     MergeSelectHandler,
@@ -92,6 +94,8 @@ def mainloop(config):
         (r"/merge/([0-9]+)/merge", MergeHandler),
         (r"/contact/([0-9]+)", ContactCraftHandler),
         (r"/contact/([0-9]+)/send", ContactSendHandler),
+        (r"/contact/all", ContactAllCraftHandler),
+        (r"/contact/all/send", ContactAllSendHandler),
         (r"/download/(.*)", DownloadHandler),
         (r"/updb", UpdateDatabaseHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {

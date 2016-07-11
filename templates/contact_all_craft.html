@@ -1,0 +1,15 @@
+{%include ../../templates/header.html %}
+
+<h2>Alle {{student_count}} Studierende anschreiben</h2>
+
+<form method="post" action="/contact/all/send">
+{% module xsrf_form_html() %}
+
+<label>Subject: <input name="subject" size="50" required="required" /></label>
+
+<p><textarea name="message" cols="100" rows="10" required="required"></textarea></p>
+
+<button role="submit" style="font-size: 150%; padding: 0.8em 2em; margin: 0 0 1em 0;">Absenden</button>
+</form>
+
+{%include ../../templates/footer.html %}

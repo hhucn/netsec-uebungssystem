@@ -12,6 +12,7 @@ test with gmail
 upload sent mails via IMAP
 Zeige Text der E-Mail (falls vorhanden) direkt inline!
 keep Mails with Subject Abgabe 99:
+correctly format =?UTF-8?Q?Bj=C3=B6rn_Ebbinghaus?= <Bjoern.Ebbinghaus@uni-duesseldorf.de>
 
 store outgoing contacts in the system itself (+ IMAP)
 Punktezahl im Studententeil stimmt nicht bei mehreren submissions/Sheet (Richtig unter Kontakt)

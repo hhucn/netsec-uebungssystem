@@ -32,7 +32,13 @@ class Mailer(object):
         # TODO improve this encoding (only do MIME encoding when not only simple ASCII)
         msg['Subject'] = helper.encode_mail_words(subject)
         msg['To'] = helper.encode_mail_words(to)
-        msg['From'] = helper.encode_mail_words("%s <%s>" % (self.config("mail.label"), self.config("mail.address")))
+
+        try:
+            address = self.config("mail.username")
+        except KeyError:
+            address = self.config("mail.address")
+
+        msg['From'] = helper.encode_mail_words("%s <%s>" % (self.config("mail.label"), address))
         mail = msg.as_string()
         self.smtp_send(to, mail)
 

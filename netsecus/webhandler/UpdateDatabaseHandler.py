@@ -31,7 +31,7 @@ class UpdateDatabaseHandler(NetsecHandler):
             pass  # Column name exists already
 
         db.cursor.execute(
-                '''SELECT id, alias FROM alias''')
+            '''SELECT id, alias FROM alias''')
         arows = db.cursor.fetchall()
 
         for arow in arows:

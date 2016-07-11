@@ -28,8 +28,7 @@ from .webhandler.SubmissionStudentSheetHandler import SubmissionStudentSheetHand
 from .webhandler.TaskCreateHandler import TaskCreateHandler
 from .webhandler.TaskDeleteHandler import TaskDeleteHandler
 from .webhandler.TaskEditHandler import TaskEditHandler
-
-from .webhandler.FixAddEmailHandler import FixAddEmailHandler
+from .webhandler.UpdateDatabaseHandler import UpdateDatabaseHandler
 
 from . import database
 
@@ -80,7 +79,7 @@ def mainloop(config):
         (r"/grading/mails/preview", GradingPreviewMailsHandler),
         (r"/grading/mails/send_all", GradingSendMailsHandler),
         (r"/download/(.*)", DownloadHandler),
-        (r"/fix/add_email", FixAddEmailHandler),
+        (r"/updb", UpdateDatabaseHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {
             "path": os.path.join(config.module_path, "static")
         }),

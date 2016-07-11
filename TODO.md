@@ -6,6 +6,7 @@ To ist falsch wenn
 	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
 	(mit newline)
+Abgabe 357 ist falsch geparst => Testcase bauen!
 
 test with gmail
 Teste Änderung der Korrektur nach Herausschicken an den Studenten
@@ -49,3 +50,4 @@ test 2 mails coming in at the same second
 improve error handling (mark mail before saving/doing anything, do not retry if mark present)
 also send text email
 alias should contain umlauts (not encoded stuff)
+clean up db interface (add function query that returns all rows, do not use internals so much, prevent using .cursor.commit instead of commit etc.)

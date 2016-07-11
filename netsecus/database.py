@@ -30,19 +30,8 @@ class Database(object):
                 `sheet_id` INTEGER REFERENCES sheet(id),
                 `student_id` INTEGER REFERENCES student(id),
                 `time` BIGINT,
-                `files_path` text
-            )""")
-
-        # Legacy table - remove
-        self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS `grading` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `submission_id` INTEGER REFERENCES submission(id),
-                `task_id` INTEGER REFERENCES task(id),
-                `comment` TEXT,
-                `time` BIGINT,
-                `decipoints` INTEGER,
-                `grader` TEXT
+                `files_path` TEXT,
+                `deleted` INTEGER(1)
             )""")
 
         self.cursor.execute(
@@ -69,7 +58,8 @@ class Database(object):
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `student` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `primary_alias` text
+                `primary_alias` TEXT,
+                `deleted` INTEGER(1)
             )""")
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `alias` (

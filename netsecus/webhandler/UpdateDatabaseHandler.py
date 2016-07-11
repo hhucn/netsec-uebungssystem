@@ -3,12 +3,27 @@ from __future__ import unicode_literals
 from .NetsecHandler import NetsecHandler
 from .. import helper
 
+import sqlite3
 
-# Adds emails to the alias table
-class FixAddEmailHandler(NetsecHandler):
+
+class UpdateDatabaseHandler(NetsecHandler):
     def get(self):
         db = self.application.db
-        import sqlite3
+
+        # Add deleted field to student and submission table (for merged)
+        try:
+            db.cursor.execute(
+                '''ALTER TABLE student ADD deleted INTEGER(1)''')
+        except sqlite3.OperationalError:
+            pass  # Column name exists already
+        try:
+            db.cursor.execute(
+                '''ALTER TABLE submission ADD deleted INTEGER(1)''')
+        except sqlite3.OperationalError:
+            pass  # Column name exists already
+        db.commit()
+
+        # Add emails to alias table
         try:
             db.cursor.execute(
                 '''ALTER TABLE alias ADD email TEXT''')

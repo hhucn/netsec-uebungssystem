@@ -6,13 +6,11 @@ import json
 
 from . import task
 
-Grading = collections.namedtuple('Grading', ['id', 'submission_id', 'task_id',
-                                 'comment', 'time', 'decipoints', 'grader'])
 Grading_Result = collections.namedtuple('Grading_Result', ['id', 'student_id',
                                                            'sheet_id', 'submission_id', 'reviews_json',
                                                            'decipoints', 'grader', 'sent_mail_uid',
                                                            'status'])
-# status is one of {'started', 'done'}
+# status is one of {'assigned', 'started', 'done'}
 
 
 def calc_status(reviews):

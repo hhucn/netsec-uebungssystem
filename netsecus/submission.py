@@ -18,7 +18,7 @@ from . import (
 
 Submission = collections.namedtuple(
     'Submission',
-    ['id', 'sheet_id', 'student_id', 'time', 'files_path'])
+    ['id', 'sheet_id', 'student_id', 'time', 'files_path', 'deleted'])
 
 
 def _match_subject(subject):
@@ -40,16 +40,16 @@ def sheet_by_mail(db, uid, message):
     return res
 
 
-def create(db, sheet_id, student_id, timestamp, files_path):
+def create(db, sheet_id, student_id, timestamp, files_path, deleted=0):
     db.cursor.execute(
         """INSERT INTO submission
-            (sheet_id, student_id, time, files_path)
-            VALUES (?, ?, ?, ?)""",
-        (sheet_id, student_id, timestamp, files_path)
+            (sheet_id, student_id, time, files_path, deleted)
+            VALUES (?, ?, ?, ?, ?)""",
+        (sheet_id, student_id, timestamp, files_path, deleted)
     )
     submission_id = db.cursor.lastrowid
     db.database.commit()
-    return Submission(submission_id, sheet_id, student_id, timestamp, files_path)
+    return Submission(submission_id, sheet_id, student_id, timestamp, files_path, 0)
 
 
 def add_file(self, submission_id, hash, filename, size):
@@ -133,18 +133,17 @@ def handle_mail(config, db, imapmail, uid, message):
 
 
 def get_for_student(db, student_id):
-    db.cursor.execute("SELECT id, sheet_id, time, files_path FROM submission WHERE student_id = ?", (student_id,))
+    db.cursor.execute(
+        """SELECT id, sheet_id, student_id, time, files_path, deleted
+           FROM submission WHERE student_id = ?""", (student_id,))
     rows = db.cursor.fetchall()
-    result = []
-
-    for row in rows:
-        result.append(Submission(*row))
-
-    return result
+    return [Submission(*row) for row in rows]
 
 
 def get_all(db):
-    db.cursor.execute("SELECT id, sheet_id, student_id, time, files_path FROM submission")
+    db.cursor.execute(
+        """SELECT id, sheet_id, student_id, time, files_path, deleted
+           FROM submission WHERE deleted IS NOT 1""")
     rows = db.cursor.fetchall()
     return [Submission(*row) for row in rows]
 
@@ -172,6 +171,8 @@ def get_full_sql(db, filter):
                          submission
                          INNER JOIN student ON
                          submission.student_id = student.id
+                         AND student.deleted IS NOT 1
+                         AND submission.deleted IS NOT 1
                          %s
                          LEFT OUTER JOIN grading_result ON
                          submission.id = grading_result.submission_id

@@ -19,6 +19,12 @@ def make_db():
     return netsecus.database.Database(test_config)
 
 
+def remove_id(ntpl):
+    dct = ntpl._asdict()
+    dct['id'] = None
+    return type(ntpl)(**dct)
+
+
 def main(name):
     if name == '__main__':
         unittest.main()

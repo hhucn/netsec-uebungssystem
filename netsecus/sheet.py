@@ -36,8 +36,20 @@ def get_all_total_score(database):
     } for row in database.cursor.fetchall()]
 
 
+def get_all_total_score_by_sheet(database):
+    database.cursor.execute(
+        """SELECT
+            sheet.id,
+            SUM(task.decipoints) AS decipoints
+            FROM sheet
+            LEFT OUTER JOIN task ON task.sheet_id = sheet.id
+            GROUP BY(sheet.id)
+        """)
+    return {row[0]: row[1] if row[1] else 0 for row in database.cursor.fetchall()}
+
+
 def get_all_total_score_number(database):
-    return sum(sheet_points["decipoints"] for sheet_points in get_all_total_score(database))
+    return sum(get_all_total_score_by_sheet(database).values())
 
 
 def create(database):

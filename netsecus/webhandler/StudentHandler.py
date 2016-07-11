@@ -10,12 +10,12 @@ class StudentHandler(NetsecHandler):
     def get(self, student_id):
         fs = student.get_full_student(self.application.db, student_id)
 
-        grading_results = grading.unsent_results(self.application.db)
-
-        all_sheet_points = sheet.get_all_total_score(self.application.db)
+        grading_results = grading.all_results(
+            self.application.db,
+            'status=? AND student_id=?', ('done', student_id,))
+        max_decipoints = sheet.get_all_total_score_by_sheet(self.application.db)
         for gr in grading_results:
-            gr['student_track'] = grading.get_student_track(self.application.db, all_sheet_points, gr['student_id'])
-            gr['total_decipoints'] = sum(st.get('decipoints', 0) for st in gr['student_track'])
+            gr['total_decipoints'] = max_decipoints[gr['sheet_id']]
 
         submission_with_score = []
         student_total_score = 0
@@ -23,22 +23,19 @@ class StudentHandler(NetsecHandler):
         for subm in fs.submissions:
             student_score = 0
 
-            for grade in grading_results:
-                if grade["student_id"] == int(student_id):
-                    if grade["sheet_id"] == subm.sheet_id:
-                        student_score = grade["decipoints"]
-                        total_score = grade["total_decipoints"]
-                        break
-
-            submission_with_score.append(
-                {
-                    "submission": subm,
-                    "student_score": student_score,
-                    "total_score": total_score
-                }
-            )
-
-            student_total_score = student_total_score + student_score
+            for gr in grading_results:
+                if gr["sheet_id"] == subm.sheet_id:
+                    student_score = gr["decipoints"]
+                    if student_score is None:
+                        print('gr: %r' % gr)
+                    total_score = gr["total_decipoints"]
+                    submission_with_score.append({
+                        "submission": subm,
+                        "student_score": student_score,
+                        "total_score": total_score,
+                    })
+                    student_total_score += student_score
+                    break
 
         self.render('student', {
             'student': fs.student,

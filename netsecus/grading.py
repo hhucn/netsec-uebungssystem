@@ -58,15 +58,15 @@ def on_send_result(db, grading_result_id, sent_mail_uid):
     db.database.commit()
 
 
-def unsent_results(db):
+def all_results(db, where_filter="status='done'", where_args=[]):
     db.cursor.execute(
         """SELECT
-            id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid
+            id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid, status
         FROM grading_result
         WHERE
-            sent_mail_uid IS NULL AND status = 'done'
+            1 AND %s
         ORDER BY grading_result.submission_id ASC, grading_result.id DESC
-        """)
+        """ % where_filter, where_args)
     rows = db.cursor.fetchall()
 
     return [{
@@ -78,7 +78,11 @@ def unsent_results(db):
         'decipoints': decipoints,
         'grader': grader,
         'sent_mail_uid': sent_mail_uid,
-    } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid) in rows]
+        'status': status,
+    } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid, status) in rows]
+
+def unsent_results(db):
+    return all_results("sent_mail_uid IS NULL AND status = 'done'")
 
 
 def get_student_track(db, all_sheet_points, student_id):

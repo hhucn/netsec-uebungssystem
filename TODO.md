@@ -7,14 +7,15 @@ To ist falsch wenn
 	(mit newline)
 check that Björn Ebbinghaus is not constantly getting new accounts
 
-allow config to prevent logfile creation (for local debugging)
 Abgabe 357 ist falsch geparst => Testcase bauen!
 test with gmail
 upload sent mails via IMAP
 Zeige Text der E-Mail (falls vorhanden) direkt inline!
 keep Mails with Subject Abgabe 99:
 
-store outgoing contacts in the system
+store outgoing contacts in the system itself (+ IMAP)
+Punktezahl im Studententeil stimmt nicht bei mehreren submissions/Sheet (Richtig unter Kontakt)
+Studentenübersicht sollte Blattnummern der submissions anzeigen
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 Korrekturmails mit SHA-Summen/Dateigrößen etc.
 mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)
@@ -23,9 +24,7 @@ handle errors when sending mail
 create view newest_grading_result
 support multiple grading_results over time
 move to new data structure grading_results
-Bei teilweiser Korrektur erscheint als fertig
 tornado listen nur localhost (mit Konfigurationsoption)
-Bei Abgabe Punktzahl/Status der bisherigen Übungen anzeigen
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
 merge students; actually use alias as intended
 Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten

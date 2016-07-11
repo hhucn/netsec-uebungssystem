@@ -185,9 +185,10 @@ def setup_logging(config):
     root_logger = logging.getLogger()
     root_logger.setLevel(loglevel)
 
-    file_handler = logging.FileHandler(logfile)
-    file_handler.setFormatter(formatter)
-    root_logger.addHandler(file_handler)
+    if logfile:
+        file_handler = logging.FileHandler(logfile)
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
 
     stderr_handler = logging.StreamHandler()
     stderr_handler.setFormatter(formatter)

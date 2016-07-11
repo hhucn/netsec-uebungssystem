@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from . import helper
 from . import grading
-from . import submission
 
 import collections
 
@@ -86,6 +85,8 @@ def resolve_alias(db, alias):
 
 
 def merge(db, main_student_id, merged_student_id):
+    from . import submission
+
     def _get_student_data(student_id):
         db.cursor.execute("""SELECT
             submission.id,

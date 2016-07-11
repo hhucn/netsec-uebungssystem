@@ -85,22 +85,6 @@ def resolve_alias(db, alias):
     return student
 
 
-def get_student_total_score(db, student_id):
-    fs = get_full_student(db, student_id)
-    grading_results = grading.unsent_results(db)
-
-    student_total_score = 0
-
-    for subm in fs.submissions:
-        for grade in grading_results:
-            if grade["student_id"] == int(student_id):
-                if grade["sheet_id"] == subm.sheet_id:
-                    student_total_score = student_total_score + grade["decipoints"]
-                    break
-
-    return student_total_score
-
-
 def merge(db, main_student_id, merged_student_id):
     def _get_student_data(student_id):
         db.cursor.execute("""SELECT

@@ -82,7 +82,7 @@ def all_results(db, where_filter="status='done'", where_args=[]):
     } for (id, student_id, sheet_id, submission_id, reviews_json, decipoints, grader, sent_mail_uid, status) in rows]
 
 def unsent_results(db):
-    return all_results("sent_mail_uid IS NULL AND status = 'done'")
+    return all_results(db, "sent_mail_uid IS NULL AND status = 'done'")
 
 
 def get_student_track(db, all_sheet_points, student_id):
@@ -118,6 +118,18 @@ def get_student_track(db, all_sheet_points, student_id):
         sheet['decipoints'] = gr[2]
 
     return res
+
+
+def get_student_total_score(db, student_id):
+    db.cursor.execute(
+        """SELECT
+            decipoints
+        FROM grading_result
+        WHERE student_id = ? AND status = 'done'
+        ORDER BY sheet_id ASC
+        """, (student_id,))
+    decipoint_rows = db.cursor.fetchall()
+    return sum(dpr[0] for dpr in decipoint_rows)
 
 
 def enrich_results(db, grading_results):

@@ -23,11 +23,11 @@ class Mailer(object):
         except KeyError:
             username = config('mail.address')
         self.imap = mail_handler.loginIMAP(
-                                           config("mail.imap_server"),
-                                           username,
-                                           config("mail.password"),
-                                           config("mail.ssl"),
-                                           config("loglevel") == "debug")
+            config("mail.imap_server"),
+            username,
+            config("mail.password"),
+            config("mail.ssl"),
+            config("loglevel") == "debug")
 
     def send_template(self, to, subject, template):
         template_path = os.path.join(self.config.module_path, "templates", template)

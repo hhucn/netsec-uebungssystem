@@ -3,18 +3,31 @@ from __future__ import unicode_literals
 import email.header
 import email.mime.text
 
+import time
 import os.path
 import logging
 import smtplib
 
 from .helper import MailProcessingError
 from . import helper
+from . import mail_handler
 
 
 class Mailer(object):
     def __init__(self, config):
         self.config = config
         self.smtp_connect()
+
+        try:
+            username = config('mail.username')
+        except KeyError:
+            username = config('mail.address')
+        self.imap = mail_handler.loginIMAP(
+                                           config("mail.imap_server"),
+                                           username,
+                                           config("mail.password"),
+                                           config("mail.ssl"),
+                                           config("loglevel") == "debug")
 
     def send_template(self, to, subject, template):
         template_path = os.path.join(self.config.module_path, "templates", template)
@@ -41,6 +54,7 @@ class Mailer(object):
         msg['From'] = helper.encode_mail_words("%s <%s>" % (self.config("mail.label"), address))
         mail = msg.as_string()
         self.smtp_send(to, mail)
+        self.imap.append("Sent", "", time.localtime(), mail.encode("UTF-8"))
 
     def smtp_send(self, to, what):
         logging.debug('Sending mail to %s' % to)
@@ -62,6 +76,11 @@ class Mailer(object):
     def __exit__(self, exc_type, exc_value, traceback):
         try:
             self.smtpmail.quit()
+        except Exception:
+            pass
+
+        try:
+            self.mail_handler.logoutIMAP()
         except Exception:
             pass
 

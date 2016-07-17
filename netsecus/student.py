@@ -49,7 +49,7 @@ def get_full_students(db, where_sql='', filter_params=tuple()):
 def get_full_student(db, student_id):
     fss = get_full_students(db, ' AND student.id = ?', (student_id,))
     if len(fss) != 1:
-        raise ValueError('Expected exactly one student')
+        raise ValueError('Expected exactly one student %r' % student_id)
     return fss[0]
 
 
@@ -73,8 +73,6 @@ def get_named_student(db, student_id):
            WHERE alias.student_id = ?
            ORDER BY alias.id''', (student_id,))
     rows = db.cursor.fetchall()
-    if len(rows) != 1:
-        raise ValueError('Expected exactly one student %r' % student_id)
     return NamedStudent(Student(student_id), [row[0] for row in rows])
 
 

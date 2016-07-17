@@ -10,7 +10,7 @@ import smtplib
 
 from .helper import MailProcessingError
 from . import helper
-from . import mail_handler
+from . import mail_helper
 
 
 class Mailer(object):
@@ -22,7 +22,7 @@ class Mailer(object):
             username = config('mail.username')
         except KeyError:
             username = config('mail.address')
-        self.imap = mail_handler.loginIMAP(
+        self.imap = mail_helper.loginIMAP(
             config("mail.imap_server"),
             username,
             config("mail.password"),
@@ -80,7 +80,7 @@ class Mailer(object):
             pass
 
         try:
-            self.mail_handler.logoutIMAP()
+            mail_helper.logoutIMAP(self.imap)
         except Exception:
             pass
 

@@ -8,6 +8,7 @@ from . import database
 from . import helper
 from . import commands
 from . import submission
+from . import mail_helper
 
 
 def mail_main(config):
@@ -42,7 +43,7 @@ def mainloop(config, db, ignored_uids):
     except KeyError:
         username = config('mail.address')
 
-    imapmail = loginIMAP(
+    imapmail = mail_helper.loginIMAP(
         config("mail.imap_server"),
         username,
         config("mail.password"),
@@ -86,7 +87,7 @@ def mainloop(config, db, ignored_uids):
                 mailProcessing(config, db, imapmail, ignored_uids)
                 time.sleep(config("mail.delay"))
             except KeyboardInterrupt:
-                logoutIMAP(imapmail)
+                mail_helper.logoutIMAP(imapmail)
                 raise
 
 
@@ -101,21 +102,3 @@ def mailProcessing(config, db, imapmail, ignored_uids):
         except helper.MailError as me:
             ignored_uids.add(me.uid)
             on_error(config, me)
-
-
-def loginIMAP(server, address, password, ssl=True, debug=False):
-    if not address or not password:
-        err = "IMAP login information incomplete. (Missing address or password)"
-        logging.error(err)
-        raise ValueError(err)
-
-    imapmail = helper.create_imap_conn(server, ssl, debug)
-    imapmail.login(address, password)
-    logging.debug("IMAP login (%s on %s)" % (address, server))
-    return imapmail
-
-
-def logoutIMAP(imapmail):
-    imapmail.close()
-    imapmail.logout()
-    logging.debug("IMAP logout")

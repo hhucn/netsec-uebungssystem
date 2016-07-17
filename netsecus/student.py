@@ -74,7 +74,7 @@ def get_named_student(db, student_id):
            ORDER BY alias.id''', (student_id,))
     rows = db.cursor.fetchall()
     if len(rows) != 1:
-        raise ValueError('Expected exactly one student')
+        raise ValueError('Expected exactly one student %r' % student_id)
     return NamedStudent(Student(student_id), [row[0] for row in rows])
 
 

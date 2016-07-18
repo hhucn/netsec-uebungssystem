@@ -1,3 +1,4 @@
+mark sent mails read
 Nicht "0 Punkte" wenn noch nicht geschafft
 Übersicht sollte nur != "done" anzeigen und eine nette Nachricht wenn alles geschafft
 To ist falsch wenn

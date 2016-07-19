@@ -29,7 +29,7 @@
 	</table>
 
 	<b>Insgesamt wurden {{ template_helper.format_points(student_total_score) }} von {{ template_helper.format_points(reachable_total_score) }} Punkten erreicht.</b>
-	Dies entspricht {{ template_helper.format_percent(student_total_score / reachable_total_score) }}
+	Dies entspricht {{ template_helper.format_percent(student_total_score / reachable_total_score) if reachable_total_score else "0 Punkten" }}
 
 	<p><a href="/merge/{{student.id}}/select">Mergen ...</a> <a href="/contact/{{student.id}}">Kontaktieren ...</a></p>
 

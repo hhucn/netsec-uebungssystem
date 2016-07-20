@@ -1,17 +1,15 @@
 from __future__ import unicode_literals
 
-import os.path
 import mimetypes
 
 from ..helper import RequestHandlerWithAuth
 
 from .. import file
-from .. import submission
 
 
 class DownloadHandler(RequestHandlerWithAuth):
     def get(self, hash):
-        requested_file = file.get_from_hash(db, hash)
+        requested_file = file.get_from_hash(self.application.db, hash)
         requested_file_type, encoding = mimetypes.guess_type(requested_file.filename)
 
         if not requested_file_type:

@@ -9,7 +9,6 @@ check that Björn Ebbinghaus is not constantly getting new accounts
 
 Abgabe 357 ist falsch geparst => Testcase bauen!
 test with gmail
-Zeige Text der E-Mail (falls vorhanden) direkt inline!
 keep Mails with Subject Abgabe 99:
 correctly format =?UTF-8?Q?Bj=C3=B6rn_Ebbinghaus?= <Bjoern.Ebbinghaus@uni-duesseldorf.de>
 

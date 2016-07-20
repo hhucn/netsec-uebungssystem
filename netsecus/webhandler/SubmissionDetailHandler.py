@@ -37,6 +37,12 @@ class SubmissionDetailHandler(NetsecHandler):
             if a_review and a_review.get('decipoints') is not None:
                 reached_score += a_review['decipoints']
 
+        mailtext = ""
+        for f in submission_files:
+            if f.filename == "mail":
+                mailtext = file.get_content_for_hash(self.application.db, self.config, f.hash)
+                break
+
         self.render('submissionDetail', {
             'submission': realsubmission,
             'files': submission_files,
@@ -45,5 +51,6 @@ class SubmissionDetailHandler(NetsecHandler):
             'grader': realsubmission["grader"],
             'available_graders': available_graders,
             'reached_score': reached_score,
-            'total_score': total_score
+            'total_score': total_score,
+            'mailtext': mailtext,
         })

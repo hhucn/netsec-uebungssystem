@@ -17,6 +17,12 @@ abgegeben {{ template_helper.format_timestamp(submission["time"]) }}<br>
   <button role="submit">Setzen</button>
 </form>
 
+<h2>Nachricht</h2>
+
+<textarea contenteditable="false" cols="70" rows="4">
+  {{ mailtext }}
+</textarea>
+
 <h2>Dateien</h2>
 
 <table>

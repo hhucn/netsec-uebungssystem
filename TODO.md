@@ -5,14 +5,13 @@ To ist falsch wenn
 	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=
  =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
 	(mit newline)
-check that Björn Ebbinghaus is not constantly getting new accounts
+correctly format =?UTF-8?Q?Bj=C3=B6rn_Ebbinghaus?= <Bjoern.Ebbinghaus@uni-duesseldorf.de> everywhere
+
 
 Abgabe 357 ist falsch geparst => Testcase bauen!
 test with gmail
 keep Mails with Subject Abgabe 99:
-correctly format =?UTF-8?Q?Bj=C3=B6rn_Ebbinghaus?= <Bjoern.Ebbinghaus@uni-duesseldorf.de>
 
-store outgoing contacts in the system itself (+ IMAP)
 Punktezahl im Studententeil stimmt nicht bei mehreren submissions/Sheet (Richtig unter Kontakt)
 Studentenübersicht sollte Blattnummern der submissions anzeigen
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)

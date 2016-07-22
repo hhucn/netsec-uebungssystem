@@ -2,6 +2,12 @@
 
 <h2>{{ heading }}</h2>
 
+{% if unfinished_corrections_num %}
+<b>Nicht fertiggestellte Korrekturen: {{ unfinished_corrections_num }}</b>
+{% else %}
+<b>Alle Korrekturen in der aktuellen Übersicht fertiggestellt. :)</b>
+{% end %}
+
 <table class="table">
 	<tr>
 		<th>Abgabe</th>

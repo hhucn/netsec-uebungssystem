@@ -18,8 +18,7 @@ class OverviewHandler(NetsecHandler):
                     unfinished = unfinished + 1
 
         self.render('submissions_list', {
-                                         'submissions': submissions,
-                                         'heading': "Abgaben für %s" % grader,
-                                         'unfinished_corrections_num': unfinished,
-                                         }
-                    )
+            'submissions': submissions,
+            'heading': "Abgaben für %s" % grader,
+            'unfinished_corrections_num': unfinished
+            })

@@ -16,8 +16,7 @@ class SubmissionsListAllHandler(NetsecHandler):
                 unfinished = unfinished + 1
 
         self.render('submissions_list', {
-                                         'submissions': submissions,
-                                         'heading': "Alle Abgaben",
-                                         'unfinished_corrections_num': unfinished,
-                                         }
-                    )
+            'submissions': submissions,
+            'heading': "Alle Abgaben",
+            'unfinished_corrections_num': unfinished,
+            })

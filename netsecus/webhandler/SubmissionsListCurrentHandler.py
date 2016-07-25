@@ -15,8 +15,7 @@ class SubmissionsListCurrentHandler(NetsecHandler):
                 unfinished = unfinished + 1
 
         self.render('submissions_list', {
-                                         'submissions': current_submission,
-                                         'heading': "Aktuelle Abgaben",
-                                         'unfinished_corrections_num': unfinished,
-                                         }
-                    )
+            'submissions': current_submission,
+            'heading': "Aktuelle Abgaben",
+            'unfinished_corrections_num': unfinished,
+            })

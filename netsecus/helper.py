@@ -194,7 +194,7 @@ def remove_duplicates(lst):
 
 
 def alias2mail(alias):
-    a_decoded = email.header.decode_header(decode_mail_words(alias))
+    a_decoded = decode_mail_words(alias)
 
     m = re.match(r'^.*?\s*<([-a-zA-Z0-9._.!#$%&\'*+/=?^_`{|}~]+@[-a-zA-Z0-9._]+)>$', a_decoded)
     mail = m.group(1) if m else a_decoded

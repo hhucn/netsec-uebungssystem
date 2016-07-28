@@ -1,15 +1,15 @@
-mark sent mails read
-Nicht "0 Punkte" wenn noch nicht geschafft
+mark sent mails read [@Martin]
+Abgabe 357 ist falsch geparst => Testcase bauen! [@Martin]
+Nicht "0 Punkte" wenn noch nicht geschafft [@Martin]
+keep Mails with Subject Abgabe 99: [@Martin]
+Korrekturmails mit SHA-Summen/Dateigrößen etc.[@Martin]
 
-Abgabe 357 ist falsch geparst => Testcase bauen!
-test with gmail
-keep Mails with Subject Abgabe 99:
+test with gmail[@Alex]
+mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)[@Alex]
 
 Punktezahl im Studententeil stimmt nicht bei mehreren submissions/Sheet (Richtig unter Kontakt)
 Studentenübersicht sollte Blattnummern der submissions anzeigen
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
-Korrekturmails mit SHA-Summen/Dateigrößen etc.
-mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)
 
 handle errors when sending mail
 create view newest_grading_result

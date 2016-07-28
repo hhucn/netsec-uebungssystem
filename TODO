@@ -1,11 +1,5 @@
 mark sent mails read
 Nicht "0 Punkte" wenn noch nicht geschafft
-To ist falsch wenn
-	From: =?UTF-8?Q?Jugendstadtmeisterschaft_D=c3=bcsseldorf_-_Philipp_Hagemeist?=
- =?UTF-8?Q?er?= <jugendstadtmeisterschaft@aufschlagwechsel.de>
-	(mit newline)
-correctly format =?UTF-8?Q?Bj=C3=B6rn_Ebbinghaus?= <Bjoern.Ebbinghaus@uni-duesseldorf.de> everywhere
-
 
 Abgabe 357 ist falsch geparst => Testcase bauen!
 test with gmail

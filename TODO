@@ -3,29 +3,26 @@ Abgabe 357 ist falsch geparst => Testcase bauen! [@Martin]
 Nicht "0 Punkte" wenn noch nicht geschafft [@Martin]
 keep Mails with Subject Abgabe 99: [@Martin]
 Korrekturmails mit SHA-Summen/Dateigrößen etc.[@Martin]
+Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten [@Martin]
 
-test with gmail[@Alex]
-mass assigment von Korrekturen (assign first [input type="num" value="10"] unassigned to ...)[@Alex]
+tornado listen nur localhost (mit Konfigurationsoption) [@Alex]
+mass assigment von Korrekturen [@Alex]
+Punktezahl im Studententeil stimmt nicht bei mehreren submissions/Sheet (Richtig unter Kontakt, falsch unter /student/42) [@Alex]
+Studentenübersicht sollte Blattnummern der submissions anzeigen [@Alex]
+script to autorestart on changes [@Alex]
+test with deliberately valid/invalid UTF8 [@Alex]
 
-Punktezahl im Studententeil stimmt nicht bei mehreren submissions/Sheet (Richtig unter Kontakt)
-Studentenübersicht sollte Blattnummern der submissions anzeigen
 Erlaube manuelles Einreichen (oder besseren Workflow für Leute die die Abgaben als Antwort oder an hagemeister@cs schicken)
 
 handle errors when sending mail
 create view newest_grading_result
 support multiple grading_results over time
-move to new data structure grading_results
-tornado listen nur localhost (mit Konfigurationsoption)
 Übersicht über alle Abgaben eines Blatts inkl. Link auf Korrektur
-merge students; actually use alias as intended
-Antwortmail auf Abgabe sollte Größen/hashes aller Dateien enthalten
 
 Bei Änderung der Korrektur grading_results neu erstellen (altes lassen, stattdessen view erstellen die immer nur das neueste grading_result anzeigt, und diese view verwenden)
-script to autorestart on changes
 RequestHandlerWithAuth should store user id, do not parse it twice
 move submission handling out of commands into a better-named module (how about submission?)
 test with subject "AbgabeFoo"
-test with deliberately valid/invalid UTF8
 PGP (students / system)
 Do away with html_path configuration option
 fix rendering so that we can just include instead of ../htmldocs

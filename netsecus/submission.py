@@ -100,7 +100,7 @@ def handle_mail(config, db, imapmail, uid, message):
 
             if fn:
                 # file part
-                payload_name = helper.escape_filename(fn)
+                payload_name = helper.decode_mail_words(helper.escape_filename(fn))
                 payload_path = os.path.join(files_path, payload_name)
                 payload_size = len(payload)
                 hash_str = 'sha256-%s' % hashlib.sha256(payload).hexdigest()

@@ -130,12 +130,11 @@ def handle_mail(config, db, imapmail, uid, message):
         commands.move(config, imapmail, uid, "Abgaben")
 
         sendmail.send_template(config, alias, "Mail erhalten: %s" % subject, "mail_received.html",
-            {
-                "sheet_id": sheet.id,
-                "recv_time": now_str,
-                "files": recv_files
-            }
-        )
+                               {
+                                   "sheet_id": sheet.id,
+                                   "recv_time": now_str,
+                                   "files": recv_files
+                               })
     except helper.MailError as me:
         sendmail.send_template(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
         raise me

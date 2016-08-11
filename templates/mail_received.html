@@ -1,6 +1,27 @@
 <html>
   <body>
-    Die Abgabe wurde registriert und entgegengenommen.
+    Die Abgabe für Blatt {{ sheet_id }} wurde registriert und entgegengenommen.
+    <br>
+    {% if files %}
+      Folgende Anh&auml;nge wurden abgegeben:
+      <br>
+      <table border>
+        <tr>
+          <th>Name</th>
+          <th>Gr&ouml;&szlig;e (bytes)</th>
+          <th>Pr&uuml;fsumme</th>
+        </tr>
+        {% for file in files %}
+          <tr>
+            <td>{{ file.name }}</td>
+            <td>{{ file.size }}</td>
+            <td>{{ file.hash }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      Es wurden keine Anh&auml;nge abgegeben. Ist das korrekt?
+    {% endif %}
     <hr>
     <i>netsec-&Uuml;bungssystem</i>
   </body>

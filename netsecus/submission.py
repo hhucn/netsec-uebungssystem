@@ -73,6 +73,8 @@ def handle_mail(config, db, imapmail, uid, message):
         now_dt = datetime.datetime.fromtimestamp(now_ts)
         now_str = now_dt.strftime('%Y-%m-%d_%H-%M-%S_%f')
 
+        recv_files = []
+
         files_path = os.path.join(
             config("attachment_path"),
             helper.escape_filename(str(stu.id)),
@@ -108,6 +110,7 @@ def handle_mail(config, db, imapmail, uid, message):
                     payload_file.write(payload)
 
                 add_file(db, subm.id, hash_str, payload_name, payload_size)
+                recv_files.append({"name": payload_name, "size": payload_size, "hash": hash_str})
             else:
                 # message part
                 if mailtext:
@@ -126,7 +129,13 @@ def handle_mail(config, db, imapmail, uid, message):
 
         commands.move(config, imapmail, uid, "Abgaben")
 
-        sendmail.send_template(config, alias, "Mail erhalten: %s" % subject, "mail_received.html")
+        sendmail.send_template(config, alias, "Mail erhalten: %s" % subject, "mail_received.html",
+            {
+                "sheet_id": sheet.id,
+                "recv_time": now_str,
+                "files": recv_files
+            }
+        )
     except helper.MailError as me:
         sendmail.send_template(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
         raise me

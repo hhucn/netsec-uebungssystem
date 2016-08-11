@@ -7,6 +7,7 @@ import time
 import os.path
 import logging
 import smtplib
+from jinja2 import Template
 
 from .helper import MailProcessingError
 from . import helper
@@ -29,16 +30,19 @@ class Mailer(object):
             config("mail.ssl"),
             config("loglevel") == "debug")
 
-    def send_template(self, to, subject, template):
+    def send_template(self, to, subject, template, variables={}):
         template_path = os.path.join(self.config.module_path, "templates", template)
 
         if not os.path.exists(template_path):
             raise MailProcessingError("Template %s not found" % template_path)
 
         with open(template_path) as template_file:
-            body = template_file.read()  # TODO use actual templating engine
+            body = template_file.read()
 
-        self.send(to, subject, body)
+        template = Template(body)
+        rendered_body = template.render(variables)
+
+        self.send(to, subject, rendered_body)
 
     def send(self, to, subject, body):
         msg = email.mime.text.MIMEText(body, 'html', 'utf-8')

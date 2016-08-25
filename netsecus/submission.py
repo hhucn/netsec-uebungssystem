@@ -136,7 +136,7 @@ def handle_mail(config, db, imapmail, uid, message):
                                    "files": recv_files
                                })
     except helper.MailError as me:
-        sendmail.send_template(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
+        # sendmail.send_template(config, alias, "Mail fehlerhaft: %s" % subject, "mail_sheet_not_found.html")
         raise me
 
 

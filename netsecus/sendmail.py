@@ -58,7 +58,7 @@ class Mailer(object):
         msg['From'] = helper.encode_mail_words("%s <%s>" % (self.config("mail.label"), address))
         mail = msg.as_string()
         self.smtp_send(to, mail)
-        self.imap.append("Sent", "", time.localtime(), mail.encode("UTF-8"))
+        self.imap.append("Sent", "\Seen", time.localtime(), mail.encode("UTF-8"))
 
     def smtp_send(self, to, what):
         logging.debug('Sending mail to %s' % to)

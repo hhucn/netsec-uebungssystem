@@ -9,7 +9,7 @@ lint:
 
 deps:
 	${INSTALL_PACKAGE} setuptools
-	${INSTALL_PACKAGE} passlib tornado
+	${INSTALL_PACKAGE} passlib tornado jinja2
 
 install-service:
 	systemctl stop netsecus || true
@@ -30,4 +30,3 @@ deps-dev: deps
 	flake8 --version >/dev/null 2>&1 || ${INSTALL_PACKAGE} install flake8
 
 .PHONY: lint test run install install-dev install-service uninstall-service
-

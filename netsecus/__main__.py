@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-
 import os
 import sys
 
@@ -14,5 +13,6 @@ if not __package__:
 def _main():
     from . import main
     sys.exit(main())
+
 
 _main()

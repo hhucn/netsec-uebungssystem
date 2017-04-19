@@ -7,12 +7,12 @@ import time
 import os.path
 import logging
 import smtplib
-from jinja2 import Template
-# if jinja2 is missing: make deps
+
 
 from .helper import MailProcessingError
 from . import helper
 from . import mail_helper
+from . import template_helper
 
 
 class Mailer(object):
@@ -40,8 +40,7 @@ class Mailer(object):
         with open(template_path) as template_file:
             body = template_file.read()
 
-        template = Template(body)
-        rendered_body = template.render(variables)
+        rendered_body = template_helper.render_template(body, variables)
 
         self.send(to, subject, rendered_body)
 

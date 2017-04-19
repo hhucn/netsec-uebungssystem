@@ -9,7 +9,7 @@ lint:
 
 deps:
 	${INSTALL_PACKAGE} setuptools
-	${INSTALL_PACKAGE} passlib tornado jinja2
+	${INSTALL_PACKAGE} passlib tornado
 
 install-service:
 	systemctl stop netsecus || true

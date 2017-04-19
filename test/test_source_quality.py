@@ -127,5 +127,6 @@ class TestSourceQuality(unittest.TestCase):
                 self._test_weird_constants(fn, code)
                 self._test_internal_imports(fn, code)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -13,15 +13,15 @@
         </tr>
         {% for file in files %}
           <tr>
-            <td>{{ file.name }}</td>
-            <td>{{ file.size }}</td>
-            <td>{{ file.hash }}</td>
+            <td>{{ file['name'] }}</td>
+            <td>{{ file['size'] }}</td>
+            <td>{{ file['hash'] }}</td>
           </tr>
-        {% endfor %}
+        {% end %}
       </table>
     {% else %}
       Es wurden keine Anh&auml;nge abgegeben. Ist das korrekt?
-    {% endif %}
+    {% end %}
     <hr>
     <i>netsec-&Uuml;bungssystem</i>
   </body>

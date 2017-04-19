@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 import datetime
 import re
 
+import tornado.template
+
 from . import helper
 
 
@@ -49,3 +51,10 @@ def translate_status(status):
         "done": "Fertig",
         "assigned": "Zugewiesen",
     }.get(status, "Unbearbeitet")
+
+
+# Render from outside a tornado handler
+def render_template(template_body, variables):
+    tmpl = tornado.template.Template(template_body)
+    html = tmpl.generate(**variables)
+    return html

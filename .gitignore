@@ -8,3 +8,5 @@ logfile.log
 config.json
 submissions
 log
+config.server.json
+

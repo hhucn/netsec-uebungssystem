@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 
 import email.header
 import email.mime.text
-
-import time
-import os.path
+import io
 import logging
+import os.path
 import smtplib
+import time
 
 
 from .helper import MailProcessingError
@@ -37,7 +37,7 @@ class Mailer(object):
         if not os.path.exists(template_path):
             raise MailProcessingError("Template %s not found" % template_path)
 
-        with open(template_path) as template_file:
+        with io.open(template_path, encoding='utf-8') as template_file:
             body = template_file.read()
 
         rendered_body = template_helper.render_template(body, variables)

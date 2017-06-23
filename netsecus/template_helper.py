@@ -22,7 +22,7 @@ def format_student(student):
     usernames = helper.remove_duplicates(alias2name(a) for a in student.aliases)
     if usernames:
         return '/'.join(usernames)
-    return '%s' % student.id
+    return 'Student %s' % student.student.id
 
 
 def format_points(decipoints):

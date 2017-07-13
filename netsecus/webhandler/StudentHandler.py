@@ -19,7 +19,8 @@ class StudentHandler(NetsecHandler):
 
         submission_with_score = []
         student_total_score = 0
-
+        added_sheets = set()
+        
         for subm in fs.submissions:
             student_score = 0
 
@@ -34,7 +35,10 @@ class StudentHandler(NetsecHandler):
                         "student_score": student_score,
                         "total_score": total_score,
                     })
-                    student_total_score += student_score
+                    
+                    if subm.sheet_id not in added_sheets:
+                        student_total_score += student_score
+                        added_sheets.add(subm.sheet_id)
                     break
 
         self.render('student', {

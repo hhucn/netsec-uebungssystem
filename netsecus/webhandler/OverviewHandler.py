@@ -14,11 +14,12 @@ class OverviewHandler(NetsecHandler):
         for sub in submission.get_current_full(self.application.db):
             if sub['grader'] == grader:
                 submissions.append(sub)
-                if sub['status'] != 'started':
+                if sub['status'] != 'done':
                     unfinished = unfinished + 1
 
         self.render('submissions_list', {
             'submissions': submissions,
             'heading': "Abgaben für %s" % grader,
-            'unfinished_corrections_num': unfinished
+            'unfinished_corrections_num': unfinished,
+            'show_unfinished_corrections': True,
             })

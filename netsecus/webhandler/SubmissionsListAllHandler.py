@@ -12,11 +12,12 @@ class SubmissionsListAllHandler(NetsecHandler):
         unfinished = 0
 
         for sub in submissions:
-            if sub.status != "started":
+            if sub['status'] != "done":
                 unfinished = unfinished + 1
 
         self.render('submissions_list', {
             'submissions': submissions,
             'heading': "Alle Abgaben",
             'unfinished_corrections_num': unfinished,
+            'show_unfinished_corrections': True,
             })

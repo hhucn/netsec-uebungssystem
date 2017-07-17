@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import email.header
 import email.mime.text
+import email.utils
 import io
 import logging
 import os.path
@@ -56,6 +57,7 @@ class Mailer(object):
             address = self.config("mail.address")
 
         msg['From'] = helper.encode_mail_words("%s <%s>" % (self.config("mail.label"), address))
+        msg['Date'] = email.utils.formatdate()
         mail = msg.as_string()
         self.smtp_send(to, mail)
         self.imap.append("Sent", "\Seen", time.localtime(), mail.encode("UTF-8"))
